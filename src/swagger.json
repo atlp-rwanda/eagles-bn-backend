@@ -1,0 +1,23 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0.",
+    "title": "BeareFoot Nomand",
+    "description": "BeareFoot nomand is web Application will it solve the problems bearefoot nomand they are facing",
+    "license": {
+      "name": "Bearefoot Nomand",
+      "url": "https://opensource.org/license/NIT"
+    }
+  },
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "bearefoot nomand",
+      "description": "Documentation of of BeareFoot nomand API"
+    }
+  ],
+  "schemes": ["http", "https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {}
+}
