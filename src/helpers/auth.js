@@ -1,5 +1,5 @@
-import { config } from 'dotenv';
-import { sign } from 'jsonwebtoken';
+import  config from 'dotenv';
+import  sign  from 'jsonwebtoken';
 
 config();
 const { JWT_SECRET } = process.env;
