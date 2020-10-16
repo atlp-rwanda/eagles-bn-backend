@@ -19,5 +19,35 @@
   "schemes": ["http", "https"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
-  "paths": {}
+  "paths": {
+    "/api/auth/google": {
+      "get": {
+        "tags": [
+          "Social Auth"
+        ],
+        "summary": "Login with google",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/auth/facebook": {
+      "get": {
+        "tags": [
+          "Social Auth"
+        ],
+        "summary": "Login with facebook",
+        "responses": {
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  }
 }
