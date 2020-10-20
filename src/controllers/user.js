@@ -2,12 +2,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mailgun from "mailgun-js";
 import dotenv from "dotenv";
-import _, { result } from "lodash";
+import _ from "lodash";
 import { encryptPassword, verifyLink } from "../helpers";
 import { signToken } from "../helpers/auth";
 import { User as _user } from "../database/models/index";
-
-// const DOMAIN = "sandbox2a5a88ce88af4fc8a90005f49041a655.mailgun.org";
 
 dotenv.config();
 
@@ -17,8 +15,10 @@ const mg = mailgun({
   domain: DOMAIN_NAME,
 });
 
+// const DOMAIN = "sandbox2a5a88ce88af4fc8a90005f49041a655.mailgun.org";
+
 export default class UserController {
-  static async userSignUp(req, res, next) {
+  static async userSignUp(req, res) {
     const { first_name, last_name, email, password } = req.body;
     const foundUser = await _user.findOne({ where: { email } });
     if (foundUser) {
@@ -47,7 +47,7 @@ export default class UserController {
             <p>${process.env.USER_URL}/accountverification/${emailVerificationToken}</p>
             <p>Please note that if you do not verify your email address within 3 days, the verification code above will expire and you will need to re-register again.</p>
     
-        `
+        `,
       };
       mg.messages().send(data, (error) => {
         if (error) {
@@ -78,9 +78,9 @@ export default class UserController {
     }
   }
 
-  static async forgetPassword(req, res, next) {
-    let { email } = req.body;
-    let foundUser = await _user.findOne({ where: { email: email } });
+  static async forgetPassword(req, res) {
+    const { email } = req.body;
+    const foundUser = await _user.findOne({ where: { email } });
     if (foundUser) {
       const token = jwt.sign(
         { email: foundUser.email, _id: foundUser._id },
@@ -95,7 +95,7 @@ export default class UserController {
         subject: "please reset your Password",
         html: `click this link to reset password http://localhost:4000/api/resetPassword/${token}/${email}`,
       };
-      mg.messages().send(data, function (error) {
+      mg.messages().send(data, (error) => {
         res.status(201).json({
           token,
           message: "email has been sent please change your password",
@@ -106,9 +106,9 @@ export default class UserController {
     }
   }
 
-  static async resetPassword(req, res, next) {
+  static async resetPassword(req, res) {
     const { email } = req.params;
-    let foundUser = await _user.findOne({ where: { email: email } });
+    const foundUser = await _user.findOne({ where: { email } });
     const password = await encryptPassword(req.body.password);
     try {
       const { email } = verifyLink(req.params.token, foundUser.password);
@@ -149,7 +149,36 @@ export default class UserController {
         Message: "User confirmed Successfully!",
       });
     } catch (err) {
+      console.log(err);
       return res.status(500).send({ error: err });
     }
+  }
+
+  static async login(req, res) {
+    const user = await _user.findOne({
+      where: { email: req.body.email },
+    });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ status: 404, error: "Invalid Email or Password" });
+    }
+
+    const validPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (!validPassword) {
+      return res.status(401).json({
+        status: 401,
+        error: "Incorrect email or password",
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      token: signToken(user),
+      message: "User Logged in successfully",
+    });
   }
 }

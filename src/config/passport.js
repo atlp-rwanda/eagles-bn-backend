@@ -1,11 +1,14 @@
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { Strategy as FacebookStrategy } from 'passport-facebook';
-import models from '../database/models';
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as FacebookStrategy } from "passport-facebook";
+import { Strategy as JwtStrategey, ExtractJwt } from "passport-jwt";
+import models from "../database/models";
 
 const googleOptions = {
   clientID: process.env.GOOGLE_CONSUMER_KEY,
   clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
-  callbackURL: `${process.env.BASE_URL}:${process.env.PORT || 4000}/api/auth/google/callback`,
+  callbackURL: `${process.env.BASE_URL}:${
+    process.env.PORT || 4000
+  }/api/auth/google/callback`,
 };
 const cbFunction = async (accessToken, refreshToken, profile, done) => {
   let user;
@@ -21,8 +24,8 @@ const cbFunction = async (accessToken, refreshToken, profile, done) => {
       first_name: genUser.first_name,
       last_name: genUser.last_name,
       email: genUser.email,
-      password: 'None',
-      isConfirmed: true
+      password: "None",
+      isConfirmed: true,
     });
   }
   done(null, user.dataValues);
@@ -31,10 +34,18 @@ const cbFunction = async (accessToken, refreshToken, profile, done) => {
 const FBoptions = {
   clientID: process.env.FACEBOOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
-  profileFields: ['id', 'emails', 'name', 'displayName'],
+  profileFields: ["id", "emails", "name", "displayName"],
   callbackURL: `${process.env.BASE_URL}:${process.env.PORT}/api/auth/facebook/callback`,
+};
+
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET,
 };
 
 export default cbFunction;
 export const googleStrategy = new GoogleStrategy(googleOptions, cbFunction);
 export const facebookStrategy = new FacebookStrategy(FBoptions, cbFunction);
+export const jwtStrategy = new JwtStrategey(jwtOptions, (payload, done) =>
+  done(null, payload)
+);

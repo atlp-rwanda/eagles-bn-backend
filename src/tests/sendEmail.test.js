@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { where } from "sequelize";
 import app from "../index";
 import { User as _user } from "../database/models/index";
+import { signToken } from "../helpers/auth";
 
 dotenv.config();
 
@@ -62,14 +63,29 @@ describe("/api/", () => {
         confirmPassword: "12345678",
         isConfirmed: false,
       };
+      const token = signToken(
+        { email: "non existent" },
+        process.env.JWT_ACCOUNT_VEIRIFICATION
+      );
       chai
         .request(app)
-        .put(
-          `/api/user/email-verification/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiRGF2aWQiLCJsYXN0X25hbWUiOiJVd2F5ZXp1IiwiZW1haWwiOiJkYXZpZHV3YXllenU0MDBAZ21haWwuY29tIiwicGFzc3dvcmQiOiIxMjM0NTY3OCIsImlhdCI6MTYwMzgxNDg3MSwiZXhwIjoxNjA0MDc0MDcxfQ.voriuGGBRuk7J4d29fG-63QVFn8cSOiwlk5AuX7Dh8w`
-        )
+        .put(`/api/user/email-verification/${token}`)
 
         .end((err, res) => {
           expect(res).to.have.status(404);
+          expect(res.body).to.be.a("object");
+
+          done();
+        });
+    });
+    it("should return 500 internal server error when fake secret", (done) => {
+      const token = signToken({ email: "non existent" }, "fake secret");
+      chai
+        .request(app)
+        .put(`/api/user/email-verification/${token}`)
+
+        .end((err, res) => {
+          expect(res).to.have.status(500);
           expect(res.body).to.be.a("object");
 
           done();
