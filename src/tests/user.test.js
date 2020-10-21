@@ -1,15 +1,19 @@
+/* eslint-disable linebreak-style */
 import chai from "chai";
-import chaiHttp from "chai-http";
-import app from "../index.js";
-import { User as _user } from "../database/models/index";
-import models from "../database/models";
 import { describe, it, beforeEach } from "mocha";
-import { signToken } from "../helpers/auth.js";
-chai.use(chaiHttp);
-var expect = chai.expect;
-var request = chai.request;
+import chaiHttp from "chai-http";
+import app from "../index";
+import models from "../database/models";
+import { signToken } from "../helpers/auth";
 
-describe(" POST /api/users/resetPassword/", () => {
+chai.use(chaiHttp);
+const { expect } = chai;
+const { request } = chai;
+
+describe(" POST /api/user/resetPassword/", () => {
+  after(async () => {
+    await models.User.destroy({ where: { email: "nklbigone@gmail.com" } });
+  });
   it("It should change password", (done) => {
     const userData = {
       first_name: "alexis",
@@ -22,7 +26,7 @@ describe(" POST /api/users/resetPassword/", () => {
         const token = signToken(userData, createdUser.password);
         chai
           .request(app)
-          .put(`/api/resetPassword/${token}/${userData.email}`)
+          .put(`/api/user/resetPassword/${token}/${userData.email}`)
           .send(userData)
           .end((err, response) => {
             expect(response).to.have.status(200);
@@ -31,11 +35,11 @@ describe(" POST /api/users/resetPassword/", () => {
           });
       })
       .catch((err) => {
-        console.log("Error", err);
+        done(err);
       });
   });
   it("It should not change password if token is invalid", (done) => {
-    let userData = {
+    const userData = {
       first_name: "alexis",
       last_name: "work",
       email: "nklbigon@gmail.com",
@@ -47,7 +51,7 @@ describe(" POST /api/users/resetPassword/", () => {
         chai
           .request(app)
           .put(
-            "/api/resetPassword/:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6Im5rbGJpZ29uZUBnbWFpbC5jb20iLCJpYXQiOjE2MDM3OTk2OTcsImV4cCI6MTYwMzg4NjA5N30.olo518Ek846j-XJsk_YH801HWY_UCKfEWwWWm8klsYc/:nklbigone@gmail.com"
+            "/api/user/resetPassword/:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6Im5rbGJpZ29uZUBnbWFpbC5jb20iLCJpYXQiOjE2MDM3OTk2OTcsImV4cCI6MTYwMzg4NjA5N30.olo518Ek846j-XJsk_YH801HWY_UCKfEWwWWm8klsYc/:nklbigone@gmail.com"
           )
           .send({ password })
           .end((err, response) => {
@@ -56,32 +60,31 @@ describe(" POST /api/users/resetPassword/", () => {
           });
       })
       .catch((err) => {
-        console.log("Error", err);
-        done();
+        done(err);
       });
   });
 });
-describe(" POST /api/users/forgetPassword", () => {
+describe(' POST /api/user/forgetPassword', () => {
   before(async () => {
-    await models.User.destroy({ where: { email: "nklbigone@gmail.com" } });
+    await models.User.destroy({ where: { email: 'nklbigone@gmail.com' } });
   });
   after(async () => {
-    await models.User.destroy({ where: { email: "nklbigone@gmail.com" } });
+    await models.User.destroy({ where: { email: 'nklbigone@gmail.com' } });
   });
-  it("It should return send email", (done) => {
-    let userData = {
-      first_name: "alexis",
-      last_name: "work",
-      email: "nklbigone@gmail.com",
-      password: "alexis123",
+  it('It should return send email', (done) => {
+    const userData = {
+      first_name: 'alexis',
+      last_name: 'work',
+      email: 'nklbigone@gmail.com',
+      password: 'alexis123',
     };
 
     models.User.create(userData)
       .then(() => {
-        let email = "nklbigone@gmail.com";
+        const email = 'nklbigone@gmail.com';
         chai
           .request(app)
-          .post("/api/forgetPassword")
+          .post('/api/user/forgetPassword')
           .send({ email })
           .end((err, response) => {
             expect(response).to.have.status(201);
@@ -89,15 +92,15 @@ describe(" POST /api/users/forgetPassword", () => {
           });
       })
       .catch((err) => {
-        console.log("Error", err);
+        done(err);
       });
   });
 
-  it("It should not find user", (done) => {
-    let email = "gone@gmail.com";
+  it('It should not find user', (done) => {
+    const email = 'gone@gmail.com';
     chai
       .request(app)
-      .post("/api/forgetPassword")
+      .post('/api/user/forgetPassword')
       .send({ email })
       .end((err, response) => {
         expect(response).to.have.status(403);
@@ -106,15 +109,15 @@ describe(" POST /api/users/forgetPassword", () => {
   });
 });
 
-describe("USER SIGNUP TESTS", () => {
+describe('USER SIGNUP TESTS', () => {
   beforeEach((done) => {
-    _user
+    models.User
       .destroy({
         where: {},
         truncate: true,
       })
       .then(() => {
-        _user
+        models.User
           .create({
             first_name: "Solange",
             last_name: "Iyubu",
@@ -191,16 +194,15 @@ describe("USER SIGNUP TESTS", () => {
   //         })
   //     })
 
-  describe("POST/signup", () => {
-    it("it should signUp a user", (done) => {
-      request(app)
-        .post("/api/signup")
+  describe('POST/signup', () => {
+    it('it should signUp a user', (done) => {
+      request(app).post('/api/user/signup')
         .send({
-          first_name: "Gahozo",
-          last_name: "Ntwari",
-          email: "sinang@gmail.com",
-          password: "123456789",
-          confirmPassword: "123456789",
+          first_name: 'Gahozo',
+          last_name: 'Ntwari',
+          email: 'sinang@gmail.com',
+          password: '123456789',
+          confirmPassword: '123456789'
         })
         .end((err, res) => {
           expect(res.status).to.equal(200);
@@ -210,22 +212,20 @@ describe("USER SIGNUP TESTS", () => {
     });
   });
 
-  describe("POST/signup", () => {
-    it("it should raise email existance error", (done) => {
-      request(app)
-        .post("/api/signup")
+  describe('POST/signup', () => {
+    it('it should raise email existance error', (done) => {
+      request(app).post('/api/user/signup')
         .send({
-          first_name: "Gahozo",
-          last_name: "Ntwari",
-          email: "s@ymail.com",
-          password: "123456789",
-          confirmPassword: "123456789",
+          first_name: 'Gahozo',
+          last_name: 'Ntwari',
+          email: 's@ymail.com',
+          password: '123456789',
+          confirmPassword: '123456789'
         })
         .end((err, res) => {
-          console.log(res.body);
           expect(res.status).to.equal(403);
           expect(res).to.be.json;
-          expect(res.body).to.be.a("object");
+          expect(res.body).to.be.a('object');
           done();
         });
     });
@@ -245,7 +245,6 @@ describe("USER SIGNUP TESTS", () => {
   //                 expect(res.status).to.equal(200)
   //                 expect(res).to.be.json;
   //                 expect(res.body).to.be.a('object');
-  //                 expect(res.body).to.have.property("error",'"first_name" is not allowed to be empty')
   //                 done();
   //             })
   //        })
@@ -265,29 +264,49 @@ describe("USER SIGNUP TESTS", () => {
   //                 expect(res.status).to.equal(200)
   //                 expect(res).to.be.json;
   //                 expect(res.body).to.be.a('object');
-  //                 expect(res.body).to.have.property("error",'"last_name" is not allowed to be empty')
   //                 done();
   //             })
   //        })
   //     })
-
-  describe("POST/signup", () => {
-    it("it should first_name validation error", (done) => {
-      request(app)
-        .post("/api/signup")
+  describe('POST/signup', () => {
+    it('it should raise email format error', (done) => {
+      request(app).post('/api/user/signup')
         .send({
-          first_name: "",
-          last_name: "Ntwari",
-          email: "g@ymail",
-          password: "123456789",
-          confirmPassword: "123456789",
+          first_name: 'Gahozo',
+          last_name: 'Ntwari',
+          email: 'sos@ymail',
+          password: '123456789',
+          confirmPassword: '123456789'
         })
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res).to.be.json;
-          expect(res.body).to.be.a("object");
+          expect(res.body).to.be.a('object');
           expect(res.body).to.have.property(
-            "error",
+            'error',
+            '"email" must be a valid email'
+          );
+          done();
+        });
+    });
+  });
+
+  describe('POST/signup', () => {
+    it('it should first_name validation error', (done) => {
+      request(app).post('/api/user/signup')
+        .send({
+          first_name: '',
+          last_name: 'Ntwari',
+          email: 'g@ymail',
+          password: '123456789',
+          confirmPassword: '123456789'
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('object');
+          expect(res.body).to.have.property(
+            'error',
             '"first_name" is not allowed to be empty'
           );
           done();
@@ -295,23 +314,22 @@ describe("USER SIGNUP TESTS", () => {
     });
   });
 
-  describe("POST/signup", () => {
-    it("it should first_name validation error", (done) => {
-      request(app)
-        .post("/api/signup")
+  describe('POST/signup', () => {
+    it('it should first_name validation error', (done) => {
+      request(app).post('/api/user/signup')
         .send({
-          first_name: "Gahozo",
-          last_name: "",
-          email: "g@ymail",
-          password: "123456789",
-          confirmPassword: "123456789",
+          first_name: 'Gahozo',
+          last_name: '',
+          email: 'g@ymail',
+          password: '123456789',
+          confirmPassword: '123456789'
         })
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res).to.be.json;
-          expect(res.body).to.be.a("object");
+          expect(res.body).to.be.a('object');
           expect(res.body).to.have.property(
-            "error",
+            'error',
             '"last_name" is not allowed to be empty'
           );
           done();

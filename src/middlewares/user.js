@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import jwt from "jsonwebtoken";
 import passport from "passport";
 import userValidation from "../validators/user";
@@ -20,7 +21,6 @@ export default class User {
         process.env.JWT_ACCOUNT_VEIRIFICATION
       );
       req.decoded = decodedToken;
-      console.log(req.decoded);
       return next();
     } catch (err) {
       if (err.message === "jwt malformed" || err.message === "jwt expired") {
@@ -28,7 +28,6 @@ export default class User {
           .status(400)
           .json({ error: "You are using Incorrect or Expired Link!" });
       }
-      console.log(err);
       return res.status(500).json({ Error: "Internal Error!" });
     }
   }

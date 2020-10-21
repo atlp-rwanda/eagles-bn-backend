@@ -1,12 +1,10 @@
 /* eslint-disable linebreak-style */
-import chai, { expect, request } from "chai";
+import chai, { expect} from "chai";
 import chaiHttp from "chai-http";
 // import request from "supertest";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { where } from "sequelize";
 import app from "../index";
-import { User as _user } from "../database/models/index";
 import { signToken } from "../helpers/auth";
 
 dotenv.config();
@@ -23,7 +21,7 @@ describe("/api/", () => {
     confirmPassword: "12345678",
     isConfirmed: false,
   };
-  const fakeToken = jwt.sign(
+  jwt.sign(
     {
       first_name: user.first_name,
       last_name: user.last_name,
@@ -31,11 +29,11 @@ describe("/api/", () => {
     },
     process.env.JWT_ACCOUNT_VEIRIFICATION
   );
-  describe("/api/signup", () => {
+  describe("/api/user/signup", () => {
     it("should create a user first and should receive a message", (done) => {
       chai
         .request(app)
-        .post("/api/signup")
+        .post("/api/user/signup")
         .send({
           first_name: "David",
           last_name: "Uwayezu",

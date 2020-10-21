@@ -1,6 +1,7 @@
-import { config } from "dotenv";
-import { sign, verify } from "jsonwebtoken";
-import { genSalt, hash } from "bcryptjs";
+/* eslint-disable linebreak-style */
+import { config } from 'dotenv';
+import { sign, verify } from 'jsonwebtoken';
+import { genSalt, hash } from 'bcryptjs';
 
 config();
 const { JWT_SECRET } = process.env;

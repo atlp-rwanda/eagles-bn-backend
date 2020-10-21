@@ -24,7 +24,7 @@
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {
-    "/api/auth/google": {
+    "/user/auth/google": {
       "get": {
         "tags": ["Social Auth"],
         "summary": "Login with google",
@@ -38,7 +38,7 @@
         }
       }
     },
-    "/api/forgetPassword": {
+    "/user/forgetPassword": {
       "post": {
         "tags": ["users"],
         "summary": "Forgot Password",
@@ -63,7 +63,7 @@
         }
       }
     },
-    "/api/auth/facebook": {
+    "/user/auth/facebook": {
       "get": {
         "tags": ["Social Auth"],
         "summary": "Login with facebook",
@@ -74,7 +74,7 @@
         }
       }
     },
-    "/signup": {
+    "/user/signup": {
       "post": {
         "tags": ["Users"],
         "summary": "user signup",
@@ -126,7 +126,8 @@
         }
       }
     },
-    "/api/resetPassword/{token}/{email}": {
+
+    "/user/resetPassword/{token}/{email}":{
       "put": {
         "tags": ["users"],
         "summary": "reset Password",
@@ -136,33 +137,44 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/user"
-            }
-          }
+      }],
+      "400":{
+          "description":"Bad Request"
+      }
+    }
+  },
+  "/user/logout":{
+    "post":{
+      "tags": ["Users"],
+      "summary": "logging out existing user",
+      "description":"logging out user if exist in our database and is currently logged in",
+      "consumes": ["multipart/form-data"],
+      "produces": ["application/json"],
+      "parameters": [
+        {
+          "name": "auth-token",
+          "in": "header",
+          "required": true,
+          "type": "string"
+        }
         ],
-        "produces": ["application/json"],
-        "responses": {
+      "responses": {
           "200": {
-            "description": "ok"
+            "description": "User logged out successfully"
           },
           "400": {
-            "description": "failed to change password."
+            "description": "Not refresh token provided"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+    
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
-    },
+    },    
     "/user/email-verification/{emailVerificationToken}": {
       "put": {
         "tags": ["Users"],
@@ -192,7 +204,6 @@
       }
     }
   },
-
   "definitions": {
     "id": {
       "properties": {

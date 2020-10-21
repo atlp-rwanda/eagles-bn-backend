@@ -1,11 +1,14 @@
+/* eslint-disable linebreak-style */
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mailgun from "mailgun-js";
 import dotenv from "dotenv";
-import _ from "lodash";
 import { encryptPassword, verifyLink } from "../helpers";
-import { signToken } from "../helpers/auth";
 import { User as _user } from "../database/models/index";
+import { onError, onSuccess } from '../utils/response';
+import { signToken } from "../helpers/auth";
+import signAccessToken from '../helpers/jwt_helper';
+import client from '../config/redis_config';
 
 dotenv.config();
 
@@ -19,7 +22,9 @@ const mg = mailgun({
 
 export default class UserController {
   static async userSignUp(req, res) {
-    const { first_name, last_name, email, password } = req.body;
+    const {
+      first_name, last_name, email, password
+    } = req.body;
     const foundUser = await _user.findOne({ where: { email } });
     if (foundUser) {
       return res.status(403).json({ error: "Email is already in use" });
@@ -66,7 +71,7 @@ export default class UserController {
           email: user.email,
         };
 
-        // const token = signToken(tokObj);
+        signToken(tokObj);
         return res.status(200).json({
           emailVerificationToken,
           message:
@@ -86,16 +91,16 @@ export default class UserController {
         { email: foundUser.email, _id: foundUser._id },
         foundUser.password,
         {
-          expiresIn: "24h",
+          expiresIn: '24h',
         }
       );
       const data = {
-        from: "alexis2020@gmail.com",
+        from: 'alexis2020@gmail.com',
         to: email,
-        subject: "please reset your Password",
+        subject: 'please reset your Password',
         html: `click this link to reset password http://localhost:4000/api/resetPassword/${token}/${email}`,
       };
-      mg.messages().send(data, (error) => {
+      mg.messages().send(data, () => {
         res.status(201).json({
           token,
           message: "email has been sent please change your password",
@@ -109,18 +114,17 @@ export default class UserController {
   static async resetPassword(req, res) {
     const { email } = req.params;
     const foundUser = await _user.findOne({ where: { email } });
+    // console.log("USER FOUND: ", foundUser);
     const password = await encryptPassword(req.body.password);
     try {
-      const { email } = verifyLink(req.params.token, foundUser.password);
-      if (!email)
-        return res.status(404).json({ message: "user not email not found" });
-      const [user] = await _user.update({ password }, { where: { email } });
+      const { email: useremail } = verifyLink(req.params.token, foundUser.password);
+      if (!useremail) return res.status(404).json({ message: 'user not email not found' });
+      await _user.update({ password }, { where: { email: useremail } });
       res.status(200).json({
         success: true,
-        message: `Thank you! You can now use your new password to login!`,
+        message: 'Thank you! You can now use your new password to login!',
       });
     } catch (error) {
-      console.log(error);
       res.status(400).json({ message: "you token are invalid" });
       // const token = signToken(tokObj);
     }
@@ -149,7 +153,6 @@ export default class UserController {
         Message: "User confirmed Successfully!",
       });
     } catch (err) {
-      console.log(err);
       return res.status(500).send({ error: err });
     }
   }
@@ -174,11 +177,24 @@ export default class UserController {
         error: "Incorrect email or password",
       });
     }
+    const token = await signAccessToken(user);
 
     res.status(200).json({
       status: 200,
-      token: signToken(user),
+      accessToken: token,
       message: "User Logged in successfully",
     });
+  }
+
+  static async logout(req, res) {
+    try {
+      const token = req.header('auth-token');
+      const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      const userId = verified.payload.id;
+      client.del(userId);
+      return onSuccess(res, 200, 'You logged out successfully.');
+    } catch (error) {
+      return onError(res, 500, 'Internal server error');
+    }
   }
 }
