@@ -10,7 +10,8 @@
     "lint": "eslint --fix src",
     "dev": "nodemon --exec babel-node  src",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "test": "NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --require dotenv/config  src/tests/*.test.js --timeout 15000 --exit || true"
+    "init:dbTest": "sequelize db:migrate --env=test",
+    "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --require dotenv/config  src/tests/*.test.js --timeout 15000 --exit || true"
   },
   "repository": {
     "type": "git",
