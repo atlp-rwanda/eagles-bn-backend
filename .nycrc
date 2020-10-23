@@ -8,7 +8,16 @@
   "require": [
     "@babel/register"
   ],
+  "exclude": ["src/database","coverage","nyc_output","src/tests"],
   "sourceMap": false,
   "instrument": false,
-  "all":true
+  "all":true,
+  "cache": false,
+  "check-coverage":true,
+ "watermarks": {
+    "lines": [80, 95],
+    "functions": [80, 95],
+    "branches": [70, 95],
+    "statements": [80, 95]
+  }
 }

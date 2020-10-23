@@ -4,7 +4,12 @@ node_js:
 install: npm install
 services:
   - postgresql
+cache:
+  npm: false
+
 before_script:
   - psql -c 'create database testing_db;' -U postgres
-script: npm test
+script:
+  - npm run migrate:test
+  - npm test
 after_success: npm run coveralls
