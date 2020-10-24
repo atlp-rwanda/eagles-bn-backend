@@ -9,17 +9,26 @@
       "url": "https://opensource.org/license/NIT"
     }
   },
-  "basePath": "/",
+  "basePath": "/api",
   "tags": [
     {
-      "name": "bearefoot nomand",
-      "description": "Documentation of of BeareFoot nomand API"
-    }
+      "name":"Users",
+      "description":"Documentation of of BeareFoot User's operations"
+  },
+  {
+    "name": "Social Auth",
+    "description": ""
+  }
   ],
   "schemes": ["http", "https"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
-  "paths": {
+  
+  
+  
+  
+  "paths": 
+  {
     "/api/auth/google": {
       "get": {
         "tags": [
@@ -48,6 +57,86 @@
           }
         }
       }
-    }
+    },
+    "/signup":{
+      "post":{
+          "tags":["Users"],
+          "summary":"user signup",
+          "description":"",
+          "consumes":["application/x-www-form-urlencoded"],
+          "produces":["application/json"],
+          "parameters":[
+
+            {
+              "in": "formData",
+              "name": "first_name",
+              "type": "string",
+              "required": true
+            },
+            {
+              "in": "formData",
+              "name": "last_name",
+              "type": "string",
+              "required": true
+            },
+            {
+              "in": "formData",
+              "name": "email",
+              "type": "string",
+              "required": true
+            },
+            {
+              "in": "formData",
+              "name": "password",
+              "type": "string",
+              "required": true
+            },
+            {
+              "in": "formData",
+              "name": "confirmPassword",
+              "type": "string",
+              "required": true
+            }
+  
+  ],
+  "responses":{
+      "201":{
+          "description":"User created successfully",
+          "shema":{
+              "$ref":"#/definitions/Users"
+          }
+  
+      },
+      "400":{
+          "description":"Bad Request"
+      }
   }
 }
+}
+},
+
+"definitions":{
+"Users":{
+  "type":"object",
+      "required": ["first_name","last_name","email", "password","confirmPassword"],
+      "properties": {
+            "first_name":{
+              "type": "string"
+            },
+            "last_name":{
+                "type":"string"
+            },
+            "email":{
+              "type":"string"
+          },
+          "password":{
+            "type":"string"
+        },
+        "confirmPassword":{
+          "type":"string"
+      }
+          }
+        }
+      }
+    }
+  
