@@ -5,7 +5,7 @@ import models from '../database/models';
 const googleOptions = {
   clientID: process.env.GOOGLE_CONSUMER_KEY,
   clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
-  callbackURL: `${process.env.BASE_URL}/api/auth/google/callback`,
+  callbackURL: `${process.env.BASE_URL}:${process.env.PORT || 4000}/api/auth/google/callback`,
 };
 const cbFunction = async (accessToken, refreshToken, profile, done) => {
   let user;
@@ -32,7 +32,7 @@ const FBoptions = {
   clientID: process.env.FACEBOOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
   profileFields: ['id', 'emails', 'name', 'displayName'],
-  callbackURL: `${process.env.BASE_URL}/api/auth/facebook/callback`,
+  callbackURL: `${process.env.BASE_URL}:${process.env.PORT}/api/auth/facebook/callback`,
 };
 
 export default cbFunction;
