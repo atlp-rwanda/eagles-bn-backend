@@ -6,3 +6,5 @@ build/
 coverage/
 .idea
 .nyc_output/
+pgdata
+.DS_Store

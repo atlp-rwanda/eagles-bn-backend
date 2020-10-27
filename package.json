@@ -4,12 +4,13 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
+    "migrate:undo": "sequelize db:migrate:undo",
     "migrate": "sequelize db:migrate",
     "migrate:test": "NODE_ENV=test sequelize db:migrate",
-    "start": "npm run build && node build",
+    "start": "npm run migrate:undo && npm run migrate && npm run build && node build",
     "build": "babel ./src --out-dir build",
     "lint": "eslint --fix src",
-    "dev": "nodemon --exec babel-node -r dotenv/config  src",
+    "dev": "npm run migrate && nodemon --exec babel-node -r dotenv/config  src",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "init:dbTest": "sequelize db:migrate --env=test",
     "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --require dotenv/config  src/tests/*.test.js --timeout 15000 --exit || true"
