@@ -39,7 +39,7 @@ describe(" POST /api/users/resetPassword/", () => {
     let userData = {
       first_name: "alexis",
       last_name: "work",
-      email: "nklbigone@gmail.com",
+      email: "nklbigon@gmail.com",
       password: "alexis123",
     };
     models.User.create(userData)

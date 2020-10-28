@@ -20,5 +20,5 @@ passport.use(facebookStrategy);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(urlencoded({ extended: false }));
 app.use("/api", routes);
-app.listen(serverPort, console.log(`Server has started on port ${serverPort}`));
+app.listen(serverPort, console.log(`system has started on port ${serverPort}`));
 export default app;
