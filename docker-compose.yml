@@ -1,0 +1,33 @@
+version: "3.0"
+services:
+  db:
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    image: postgres
+    # volumes:
+    #   - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+
+  web:
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=${DB_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - BASE_URL=${BASE_URL}
+    build:
+      context: .
+      args:
+        - PORT:${PORT}
+    volumes:
+      - ./:/usr/app
+    container_name: backend
+    working_dir: /usr/app
+    depends_on:
+      - db
+    ports: [4000:4000]
+    restart: always

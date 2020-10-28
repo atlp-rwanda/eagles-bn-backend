@@ -1,3 +1,3 @@
-import  auth  from './auth';
+import { auth, encryptPassword, verifyLink } from "./auth";
 
-export default  auth ;
+export { auth, encryptPassword, verifyLink };
