@@ -2,38 +2,32 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0.",
-    "title": "BeareFoot Nomand",
-    "description": "BeareFoot nomand is web Application will it solve the problems bearefoot nomand they are facing",
+    "title": "BeareFoot Nomad",
+    "description": "BeareFoot nomad is web Application will it solve the problems bearefoot nomad they are facing",
     "license": {
-      "name": "Bearefoot Nomand",
+      "name": "Bearefoot Nomad",
       "url": "https://opensource.org/license/NIT"
     }
   },
   "basePath": "/api",
   "tags": [
     {
-      "name":"Users",
-      "description":"Documentation of of BeareFoot User's operations"
-  },
-  {
-    "name": "Social Auth",
-    "description": ""
-  }
+      "name": "Users",
+      "description": "Documentation of of BeareFoot User's operations"
+    },
+    {
+      "name": "Social Auth",
+      "description": ""
+    }
   ],
   "schemes": ["http", "https"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
-  
-  
-  
-  
-  "paths": 
-  {
+
+  "paths": {
     "/api/auth/google": {
       "get": {
-        "tags": [
-          "Social Auth"
-        ],
+        "tags": ["Social Auth"],
         "summary": "Login with google",
         "responses": {
           "200": {
@@ -45,11 +39,34 @@
         }
       }
     },
+    "/api/forgetPassword": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Forgot Password",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/users"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "400": {
+            "description": "failed to send email."
+          }
+        }
+      }
+    },
     "/api/auth/facebook": {
       "get": {
-        "tags": [
-          "Social Auth"
-        ],
+        "tags": ["Social Auth"],
         "summary": "Login with facebook",
         "responses": {
           "500": {
@@ -58,85 +75,147 @@
         }
       }
     },
-    "/signup":{
-      "post":{
-          "tags":["Users"],
-          "summary":"user signup",
-          "description":"",
-          "consumes":["application/x-www-form-urlencoded"],
-          "produces":["application/json"],
-          "parameters":[
-
-            {
-              "in": "formData",
-              "name": "first_name",
-              "type": "string",
-              "required": true
-            },
-            {
-              "in": "formData",
-              "name": "last_name",
-              "type": "string",
-              "required": true
-            },
-            {
-              "in": "formData",
-              "name": "email",
-              "type": "string",
-              "required": true
-            },
-            {
-              "in": "formData",
-              "name": "password",
-              "type": "string",
-              "required": true
-            },
-            {
-              "in": "formData",
-              "name": "confirmPassword",
-              "type": "string",
-              "required": true
-            }
-  
-  ],
-  "responses":{
-      "201":{
-          "description":"User created successfully",
-          "shema":{
-              "$ref":"#/definitions/Users"
-          }
-  
-      },
-      "400":{
-          "description":"Bad Request"
-      }
-  }
-}
-}
-},
-
-"definitions":{
-"Users":{
-  "type":"object",
-      "required": ["first_name","last_name","email", "password","confirmPassword"],
-      "properties": {
-            "first_name":{
-              "type": "string"
-            },
-            "last_name":{
-                "type":"string"
-            },
-            "email":{
-              "type":"string"
+    "/signup": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "user signup",
+        "description": "",
+        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "first_name",
+            "type": "string",
+            "required": true
           },
-          "password":{
-            "type":"string"
-        },
-        "confirmPassword":{
-          "type":"string"
+          {
+            "in": "formData",
+            "name": "last_name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "email",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "password",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "confirmPassword",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
       }
+    },
+
+    "/api/resetPassword/{token}/{email}": {
+      "put": {
+        "tags": ["users"],
+        "summary": "reset Password",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "ok"
+          },
+          "400": {
+            "description": "failed to change password."
           }
         }
       }
     }
-  
+  },
+  "definitions": {
+    "id": {
+      "properties": {
+        "uuid": {
+          "type": "string"
+        }
+      }
+    },
+    "users": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Users": {
+      "type": "object",
+      "required": [
+        "first_name",
+        "last_name",
+        "email",
+        "password",
+        "confirmPassword"
+      ],
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "confirmPassword": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
