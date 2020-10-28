@@ -27,8 +27,10 @@ module.exports = {
       },
       isConfirmed: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false,
         allowNull: false,
+      },
+      resetLink: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

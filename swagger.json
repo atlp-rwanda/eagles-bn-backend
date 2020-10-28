@@ -164,8 +164,38 @@
           }
         }
       }
+    },     
+    "/user/email-verification/{emailVerificationToken}": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Verify user ",
+        "description": "",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "emailVerificationToken",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User confirmed Successfully!"
+          },
+          "401": {
+            "description": "Invalid token"
+          },
+          "404": {
+            "description": "user  account doesn't exist"
+          }
+        }
+      }
     }
   },
+
+
   "definitions": {
     "id": {
       "properties": {
@@ -174,18 +204,18 @@
         }
       }
     },
-    "users": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        }
-      }
-    },
     "user": {
       "type": "object",
       "properties": {
         "password": {
+          "type": "string"
+        }
+      }
+    },
+    "users": {
+      "type": "object",
+      "properties": {
+        "email": {
           "type": "string"
         }
       }
@@ -216,6 +246,13 @@
           "type": "string"
         }
       }
+    },
+    "emailVerification":{
+      "properties":{
+          "isConfirmed":{"type":"Boolean"}
+      }
     }
   }
+  
+ 
 }
