@@ -1,11 +1,14 @@
+import Router from "express";
+import User from "../controllers/user";
+import user from "../middlewares/user";
 
-import Router from "express"
-const router=Router();
-import User  from "../controllers/user"
-import validation from "../middlewares/user"
+const router = Router();
 
-
-router.post('/signup', validation.userAuth, User.userSignUp);
-router.put('/user/email-verification/:token', validation.verifyToken, User.emailVerification);
+router.post("/signup", user.validate, User.userSignUp);
+router.put(
+  "/user/email-verification/:token",
+  user.verifyToken,
+  User.emailVerification
+);
 
 export default router;

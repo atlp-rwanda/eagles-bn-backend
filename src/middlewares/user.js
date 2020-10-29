@@ -1,21 +1,20 @@
 import jwt from "jsonwebtoken";
-import userAuthentication from "../validators/user";
+import passport from "passport";
+import userValidation from "../validators/user";
 
-export default class UserValidation {
-  static userAuth(req, res, next) {
-    const auth = userAuthentication(req.body);
+export default class User {
+  static validate(req, res, next) {
+    const auth = userValidation(req.body);
     if (auth.error) {
-      res.send({ error: auth.error.details[0].message });
+      return res.send({ error: auth.error.details[0].message });
     }
     next();
   }
+
   static verifyToken(req, res, next) {
     try {
       const { token } = req.params;
 
-      if (!token) {
-        return res.json({ error: "It seems like something went wrong!!" });
-      }
       const decodedToken = jwt.verify(
         token,
         process.env.JWT_ACCOUNT_VEIRIFICATION
@@ -29,7 +28,12 @@ export default class UserValidation {
           .status(400)
           .json({ error: "You are using Incorrect or Expired Link!" });
       }
-      return res.status(500).json({Error: 'Internal Error!'});
+      console.log(err);
+      return res.status(500).json({ Error: "Internal Error!" });
     }
+  }
+
+  static auth(req, res, next) {
+    return passport.authenticate("jwt", { session: false })(req, res, next);
   }
 }

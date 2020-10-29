@@ -4,28 +4,26 @@ import app from "../index.js";
 import { User as _user } from "../database/models/index";
 import models from "../database/models";
 import { describe, it, beforeEach } from "mocha";
+import { signToken } from "../helpers/auth.js";
 chai.use(chaiHttp);
 var expect = chai.expect;
 var request = chai.request;
 
 describe(" POST /api/users/resetPassword/", () => {
   it("It should change password", (done) => {
-    let userData = {
+    const userData = {
       first_name: "alexis",
       last_name: "work",
       email: "nklbigone@gmail.com",
       password: "alexis123",
     };
     models.User.create(userData)
-      .then(() => {
-        let password = "alexis4321";
-        let email = "nklbigone@gmail.com";
+      .then((createdUser) => {
+        const token = signToken(userData, createdUser.password);
         chai
           .request(app)
-          .put(
-            "/api/resetPassword/:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5rbGJpZ29uZUBnbWFpbC5jb20iLCJpYXQiOjE2MDM3OTk2OTcsImV4cCI6MTYwMzg4NjA5N30.olo518Ek846j-XJsk_YH801HWY_UCKfEWwWWm8klsYc/:nklbigone@gmail.com"
-          )
-          .send({ email, password })
+          .put(`/api/resetPassword/${token}/${userData.email}`)
+          .send(userData)
           .end((err, response) => {
             expect(response).to.have.status(200);
             expect(response).to.be.json;
@@ -59,6 +57,7 @@ describe(" POST /api/users/resetPassword/", () => {
       })
       .catch((err) => {
         console.log("Error", err);
+        done();
       });
   });
 });
@@ -109,18 +108,23 @@ describe(" POST /api/users/forgetPassword", () => {
 
 describe("USER SIGNUP TESTS", () => {
   beforeEach((done) => {
-    _user.destroy({
-      where: {},
-      truncate: true,
-    });
-
-    _user.create({
-      first_name: "Solange",
-      last_name: "Iyubu",
-      email: "s@ymail.com",
-      password: "solasola",
-    });
-    done();
+    _user
+      .destroy({
+        where: {},
+        truncate: true,
+      })
+      .then(() => {
+        _user
+          .create({
+            first_name: "Solange",
+            last_name: "Iyubu",
+            email: "s@ymail.com",
+            password: "solasola",
+          })
+          .then(() => {
+            done();
+          });
+      });
   });
   // import chai from 'chai';
   // import chaiHttp from 'chai-http';

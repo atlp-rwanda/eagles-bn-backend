@@ -23,7 +23,6 @@
   "schemes": ["http", "https"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
-
   "paths": {
     "/api/auth/google": {
       "get": {
@@ -127,7 +126,6 @@
         }
       }
     },
-
     "/api/resetPassword/{token}/{email}": {
       "put": {
         "tags": ["users"],
@@ -164,7 +162,7 @@
           }
         }
       }
-    },     
+    },
     "/user/email-verification/{emailVerificationToken}": {
       "put": {
         "tags": ["Users"],
@@ -194,7 +192,6 @@
       }
     }
   },
-
 
   "definitions": {
     "id": {
@@ -247,12 +244,21 @@
         }
       }
     },
-    "emailVerification":{
-      "properties":{
-          "isConfirmed":{"type":"Boolean"}
+    "emailVerification": {
+      "properties": {
+        "isConfirmed": { "type": "Boolean" }
+      }
+    },
+    "login": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
       }
     }
   }
-  
- 
 }
