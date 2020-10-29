@@ -1,27 +1,64 @@
-import { User as _user } from "../database/models/index";
-import { signToken } from "../helpers/auth";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { encryptPassword, verifyLink } from "../helpers";
+import mailgun from "mailgun-js";
+import dotenv from "dotenv";
 import _, { result } from "lodash";
+import { encryptPassword, verifyLink } from "../helpers";
+import { signToken } from "../helpers/auth";
+import { User as _user } from "../database/models/index";
 
-const mailgun = require("mailgun-js");
-const DOMAIN = "sandbox2a5a88ce88af4fc8a90005f49041a655.mailgun.org";
-const mg = mailgun({ apiKey: process.env.MAILGUN_APIKEY, domain: DOMAIN });
+// const DOMAIN = "sandbox2a5a88ce88af4fc8a90005f49041a655.mailgun.org";
+
+dotenv.config();
+
+const { DOMAIN_NAME } = process.env;
+const mg = mailgun({
+  apiKey: process.env.MAILGUN_API_KEY,
+  domain: DOMAIN_NAME,
+});
 
 export default class UserController {
   static async userSignUp(req, res, next) {
-    let { first_name, last_name, email, password } = req.body;
-    let foundUser = await _user.findOne({ where: { email: email } });
+    const { first_name, last_name, email, password } = req.body;
+    const foundUser = await _user.findOne({ where: { email } });
     if (foundUser) {
       return res.status(403).json({ error: "Email is already in use" });
-    } else {
-      try {
-        const user = await _user.create({
-          first_name: first_name,
-          last_name: last_name,
-          email: email,
+    }
+    try {
+      const emailVerificationToken = jwt.sign(
+        {
+          first_name,
+          last_name,
+          email,
+        },
+        process.env.JWT_ACCOUNT_VEIRIFICATION,
+        { expiresIn: "72h" }
+      );
+      const data = {
+        from: process.env.SENDER_EMAIL,
+        to: email,
+        subject: "Account Verification Email_BareFootNormad",
+        text: `
+          Please copy and paste the text below on your browser for verify your account!
+    
+        `,
+        html: `
+            <p>Thanks for registering on our site. Please click the link below to verify your account.</p>
+            <p>${process.env.USER_URL}/accountverification/${emailVerificationToken}</p>
+            <p>Please note that if you do not verify your email address within 3 days, the verification code above will expire and you will need to re-register again.</p>
+    
+        `
+      };
+      mg.messages().send(data, (error) => {
+        if (error) {
+          return res.json({ error: error.message });
+        }
+        const user = _user.create({
+          first_name,
+          last_name,
+          email,
           password: bcrypt.hashSync(password, 8),
+          isConfirmed: false,
         });
         const tokObj = {
           id: user.id,
@@ -29,11 +66,15 @@ export default class UserController {
           email: user.email,
         };
 
-        const token = signToken(tokObj);
-        res.status(201).json(signToken(tokObj));
-      } catch (err) {
-        res.status(500).send({ error: err });
-      }
+        // const token = signToken(tokObj);
+        return res.status(200).json({
+          emailVerificationToken,
+          message:
+            "Thanks for registering on our site. Verification Email has been sent to you. Please visit your email to verify your account",
+        });
+      });
+    } catch (err) {
+      res.status(500).send({ error: err });
     }
   }
 
@@ -56,6 +97,7 @@ export default class UserController {
       };
       mg.messages().send(data, function (error) {
         res.status(201).json({
+          token,
           message: "email has been sent please change your password",
         });
       });
@@ -80,6 +122,34 @@ export default class UserController {
     } catch (error) {
       console.log(error);
       res.status(400).json({ message: "you token are invalid" });
+      // const token = signToken(tokObj);
+    }
+  }
+
+  static async emailVerification(req, res) {
+    try {
+      const user = await _user.findOne({
+        where: { email: req.decoded.email },
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          status: 404,
+          Error: "user Not Found",
+        });
+      }
+
+      await _user.update(
+        { isConfirmed: true },
+        { where: { email: req.decoded.email } }
+      );
+
+      return res.status(200).json({
+        status: 200,
+        Message: "User confirmed Successfully!",
+      });
+    } catch (err) {
+      return res.status(500).send({ error: err });
     }
   }
 }

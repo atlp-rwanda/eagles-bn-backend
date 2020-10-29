@@ -23,11 +23,12 @@ describe(" POST /api/users/resetPassword/", () => {
         chai
           .request(app)
           .put(
-            "/api/resetPassword/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5rbGJpZ29uZUBnbWFpbC5jb20iLCJpYXQiOjE2MDM3OTk2OTcsImV4cCI6MTYwMzg4NjA5N30.olo518Ek846j-XJsk_YH801HWY_UCKfEWwWWm8klsYc/nklbigone@gmail.com"
+            "/api/resetPassword/:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5rbGJpZ29uZUBnbWFpbC5jb20iLCJpYXQiOjE2MDM3OTk2OTcsImV4cCI6MTYwMzg4NjA5N30.olo518Ek846j-XJsk_YH801HWY_UCKfEWwWWm8klsYc/:nklbigone@gmail.com"
           )
           .send({ email, password })
           .end((err, response) => {
-            expect(response).to.have.status(404);
+            expect(response).to.have.status(200);
+            expect(response).to.be.json;
             done();
           });
       })
@@ -39,20 +40,20 @@ describe(" POST /api/users/resetPassword/", () => {
     let userData = {
       first_name: "alexis",
       last_name: "work",
-      email: "nklbigone@gmail.com",
+      email: "nklbigon@gmail.com",
       password: "alexis123",
     };
     models.User.create(userData)
       .then(() => {
-        let password = "alexis4321";
+        const password = "alexis4321";
         chai
           .request(app)
           .put(
-            "/api/resetPassword/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5rbGJpZ29uZUBnbWFpbC5jb20iLCJpYXQiOjE2MDM3OTk2OTcsImV4cCI6MTYwMzg4NjA5N30.olo518Ek846j-XJsk_YH801HWY_UCKfEWwWWm8klsYc/nklbigone@gmail.com"
+            "/api/resetPassword/:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6Im5rbGJpZ29uZUBnbWFpbC5jb20iLCJpYXQiOjE2MDM3OTk2OTcsImV4cCI6MTYwMzg4NjA5N30.olo518Ek846j-XJsk_YH801HWY_UCKfEWwWWm8klsYc/:nklbigone@gmail.com"
           )
           .send({ password })
           .end((err, response) => {
-            expect(response).to.have.status(404);
+            expect(response).to.have.status(400);
             done();
           });
       })
@@ -75,6 +76,7 @@ describe(" POST /api/users/forgetPassword", () => {
       email: "nklbigone@gmail.com",
       password: "alexis123",
     };
+
     models.User.create(userData)
       .then(() => {
         let email = "nklbigone@gmail.com";
@@ -120,6 +122,70 @@ describe("USER SIGNUP TESTS", () => {
     });
     done();
   });
+  // import chai from 'chai';
+  // import chaiHttp from 'chai-http';
+  // import app from '../index.js';
+  // import bcrypt from 'bcrypt'
+  // import { User as _user } from "../database/models/index"
+
+  // chai.use(chaiHttp);
+  // var expect=chai.expect;
+  // var request=chai.request;
+
+  // describe("USER SIGNUP TESTS",()=>{
+  //       beforeEach((done)=>{
+  //         _user.destroy({
+  //             where: {},
+  //             truncate: true
+  //           });
+
+  //             _user.create({
+  //             first_name:"Solange",
+  //             last_name:"Iyubu",
+  //             email: "s@ymail.com",
+  //             password: "solasola"
+  //           })
+  //           done()
+
+  //     });
+
+  //     describe("POST/signup",()=>{
+  //         it("it should signUp a user", done=>{
+  //              request(app).post('/api/signup')
+  //              .send({
+  //                 first_name: "Gahozo",
+  //                 last_name : "Ntwari",
+  //                 email: "sinang@gmail.com",
+  //                 password: "123456789",
+  //                 confirmPassword: "123456789"
+  //              })
+  //              .end((err,res)=>{
+  //                  expect(res.status).to.equal(201)
+  //                  expect(res).to.be.json;
+  //                  done();
+  //              })
+  //         })
+  //     })
+
+  //     describe("POST/signup",()=>{
+  //         it("it should raise email existance error", done=>{
+  //              request(app).post('/api/signup')
+  //              .send({
+  //                 first_name: "Gahozo",
+  //                 last_name : "Ntwari",
+  //                 email: "s@ymail.com",
+  //                 password: "123456789",
+  //                 confirmPassword: "123456789"
+  //              })
+  //              .end((err,res)=>{
+  //                  console.log(res.body)
+  //                  expect(res.status).to.equal(403)
+  //                  expect(res).to.be.json;
+  //                  expect(res.body).to.be.a('object');
+  //                  done();
+  //              })
+  //         })
+  //     })
 
   describe("POST/signup", () => {
     it("it should signUp a user", (done) => {
@@ -133,7 +199,7 @@ describe("USER SIGNUP TESTS", () => {
           confirmPassword: "123456789",
         })
         .end((err, res) => {
-          expect(res.status).to.equal(201);
+          expect(res.status).to.equal(200);
           expect(res).to.be.json;
           done();
         });
@@ -161,30 +227,45 @@ describe("USER SIGNUP TESTS", () => {
     });
   });
 
-  describe("POST/signup", () => {
-    it("it should raise email format error", (done) => {
-      request(app)
-        .post("/api/signup")
-        .send({
-          first_name: "Gahozo",
-          last_name: "Ntwari",
-          email: "sos@ymail",
-          password: "123456789",
-          confirmPassword: "123456789",
-        })
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res).to.be.json;
-          expect(res.body).to.be.a("object");
-          expect(res.body).to.have.property(
-            "error",
-            '"email" must be a valid email'
-          );
+  //     describe("POST/signup",()=>{
+  //         it("it should first_name validation error", done=>{
+  //             request(app).post('/api/signup')
+  //             .send({
+  //                first_name: "",
+  //                last_name : "Ntwari",
+  //                email: "g@ymail",
+  //                password: "123456789",
+  //                confirmPassword: "123456789"
+  //             })
+  //             .end((err,res)=>{
+  //                 expect(res.status).to.equal(200)
+  //                 expect(res).to.be.json;
+  //                 expect(res.body).to.be.a('object');
+  //                 expect(res.body).to.have.property("error",'"first_name" is not allowed to be empty')
+  //                 done();
+  //             })
+  //        })
+  //     })
 
-          done();
-        });
-    });
-  });
+  //     describe("POST/signup",()=>{
+  //         it("it should first_name validation error", done=>{
+  //             request(app).post('/api/signup')
+  //             .send({
+  //                first_name: "Gahozo",
+  //                last_name : "",
+  //                email: "g@ymail",
+  //                password: "123456789",
+  //                confirmPassword: "123456789"
+  //             })
+  //             .end((err,res)=>{
+  //                 expect(res.status).to.equal(200)
+  //                 expect(res).to.be.json;
+  //                 expect(res.body).to.be.a('object');
+  //                 expect(res.body).to.have.property("error",'"last_name" is not allowed to be empty')
+  //                 done();
+  //             })
+  //        })
+  //     })
 
   describe("POST/signup", () => {
     it("it should first_name validation error", (done) => {
