@@ -1,3 +1,4 @@
-import { auth, encryptPassword, verifyLink } from "./auth";
+/* eslint-disable linebreak-style */
+import { encryptPassword, verifyLink } from './auth';
 
-export { auth, encryptPassword, verifyLink };
+export { encryptPassword, verifyLink };

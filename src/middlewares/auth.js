@@ -1,6 +1,6 @@
 import passport from 'passport';
 
-export const oAuth = {
+const oAuth = {
   main: (req, res, next) => {
     const { provider } = req.params;
     const config = { scope: 'email' };
@@ -16,3 +16,4 @@ export const oAuth = {
     })(req, res, next);
   },
 };
+export default oAuth;

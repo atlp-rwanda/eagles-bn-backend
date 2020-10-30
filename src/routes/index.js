@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import express from "express";
 import authRoutes from "./auth";
 import userRoutes from "./user";

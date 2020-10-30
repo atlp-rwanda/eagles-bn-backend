@@ -1,6 +1,7 @@
+/* eslint-disable linebreak-style */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,30 +19,32 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
         unique: true,
-        allowNull: false,
+        allowNull: false
       },
       password: {
         type: Sequelize.STRING,
-        allowNull: false,
-      },
-      isConfirmed: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
+        allowNull: false
       },
       resetLink: {
         type: Sequelize.STRING,
       },
+      isConfirmed: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+
+      },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-      },
+        type: Sequelize.DATE
+      }
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Users");
-  },
+    await queryInterface.dropTable('Users');
+  }
 };

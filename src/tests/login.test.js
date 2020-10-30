@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* eslint-disable object-curly-newline */
 import { describe, it, beforeEach, afterEach } from "mocha";
 import chaiHTTP from "chai-http";
@@ -8,7 +9,7 @@ import { User } from "../database/models";
 chai.use(chaiHTTP);
 
 export default () => {
-  describe("POST /api/login: ", () => {
+  describe("POST /api/user/login: ", () => {
     beforeEach(async () => {
       await User.destroy({ where: { email: "fake@gmail.com" } });
     });
@@ -33,7 +34,7 @@ export default () => {
 
       const res = await chai
         .request(app)
-        .post("/api/login")
+        .post("/api/user/login")
         .send({ ...fakeCredentials, email: "notfake@gmail.com" });
 
       expect(res).to.have.property("status", 404);
@@ -45,7 +46,7 @@ export default () => {
 
       const res = await chai
         .request(app)
-        .post("/api/login")
+        .post("/api/user/login")
         .send({ ...fakeCredentials, password: "not fake at all" });
 
       expect(res).to.have.property("status", 401);
@@ -57,7 +58,7 @@ export default () => {
 
       const res = await chai
         .request(app)
-        .post("/api/login")
+        .post("/api/user/login")
         .send(fakeCredentials);
 
       expect(res).to.have.property("status", 200);
@@ -72,7 +73,7 @@ export default () => {
     it("should return 401 status on no token", async () => {
       const res = await chai
         .request(app)
-        .get("/api/test-auth")
+        .get("/api/user/test-auth")
         .set("authorization", "no token");
 
       expect(res).to.have.property("status", 401);

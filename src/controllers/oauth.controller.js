@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import { signToken } from "../helpers/auth";
 
 class OauthController {
