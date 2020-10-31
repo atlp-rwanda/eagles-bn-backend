@@ -38,7 +38,7 @@ const logout = () => {
     chai
       .request(server)
       .post('/api/user/logout')
-      .set('auth-token', token)
+      .set("auth-token", token)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.have.property('message', 'You logged out successfully.');
@@ -49,7 +49,7 @@ const logout = () => {
     chai
       .request(server)
       .post('/api/user/logout')
-      .set('auth-token', token)
+      .set("auth-token", token)
       .end((err, res) => {
         expect(res).to.have.status(401);
         expect(res.body).to.have.property('error', 'User already logged out, Please Login and try again!');
@@ -66,7 +66,7 @@ const logout = () => {
         done(err);
       });
   });
-  it('should return 500 if it is internal server error', (done) => {
+  it('should return 500', (done) => {
     chai.request(server)
       .post('/api/user/logout')
       .set(user.invalidToken)

@@ -9,9 +9,11 @@ import swaggerDocument from "../swagger.json";
 import {
   facebookStrategy,
   googleStrategy,
-  jwtStrategy,
+  // jwtStrategy,
 } from "./config/passport";
 import routes from "./routes/index";
+import accomodationRoutes from './routes/accomodation';
+import roomRoutes from './routes/room';
 
 dotenv.config();
 const serverPort = process.env.PORT || 4000;
@@ -19,9 +21,10 @@ const serverPort = process.env.PORT || 4000;
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static('public'));
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(jwtStrategy);
+// passport.use(jwtStrategy);
 passport.use(googleStrategy);
 passport.use(facebookStrategy);
 

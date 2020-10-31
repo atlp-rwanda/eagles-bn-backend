@@ -31,7 +31,7 @@
     "/user/auth/google": {
       "get": {
         "tags": ["Social Auth"],
-        "summary": "Login with google",
+        "summary": "Login with google. Please you need to run this in it's own tab",
         "responses": {
           "200": {
             "description": "Ok"
@@ -70,7 +70,7 @@
     "/user/auth/facebook": {
       "get": {
         "tags": ["Social Auth"],
-        "summary": "Login with facebook",
+        "summary": "Login with facebook. Please you need to run this in it's own tab",
         "responses": {
           "500": {
             "description": "Server error"
@@ -347,6 +347,428 @@
           }
         }
       }
+    },
+    "/accommodations": {
+      "post": {
+        "security": [
+          {
+            "AuthToken": []
+          }
+        ],
+        "tags": [
+          "Accommodations"
+        ],
+        "summary": "Create a new accommodation",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "name",
+            "description": "Accommodation request title",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "description": "Accommodation request description",
+            "type": "string"
+          },
+          {
+            "name": "images",
+            "in": "formData",
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "lat",
+            "description": "latitude",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "long",
+            "description": "Longitude",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "services",
+            "description": "Ex: [\" Cooking \"]",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "amenities",
+            "description": "Ex: [\" Sleep \"]",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "location_id",
+            "description": "Location ID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Accommodation created successfully!"
+          },
+          "400": {
+            "description": "Validation fails"
+          }
+        }
+      },
+      "get": {
+        "summary": "Returns a list of accommodations.",
+        "description": "This will list all created accommodations.",
+        "tags": [
+          "Accommodations"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/accommodations/{id}": {
+      "get": {
+        "tags": [
+          "Accommodations"
+        ],
+        "summary": "Find accommodation by ID",
+        "description": "Returns a single accommodation",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of accommodation to return",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/accommodation"
+            }
+          },
+          "404": {
+            "description": "Accommodation not found"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "AuthToken": []
+          }
+        ],
+        "tags": [
+          "Accommodations"
+        ],
+        "summary": "Updates an accommodation",
+        "description": "Update the accommodation",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of accommodation that needs to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "name",
+            "description": "Accommodation request title",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "description": "Accommodation request description",
+            "type": "string"
+          },
+          {
+            "name": "images",
+            "in": "formData",
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "lat",
+            "description": "latitude",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "long",
+            "description": "Longitude",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "services",
+            "description": "Ex: [\" Cooking \"]",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "amenities",
+            "description": "Ex: [\" Sleep \"]",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "location_id",
+            "description": "Location ID",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "AuthToken": []
+          }
+        ],
+        "tags": [
+          "Accommodations"
+        ],
+        "summary": "Deletes an accommodation",
+        "description": "Delete a single accommodation",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Accommodation id to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Accommodation not found"
+          }
+        }
+      }
+    },
+    "/accommodation/{accommodationID}/rooms": {
+      "parameters": [
+        {
+          "name": "accommodationID",
+          "in": "path",
+          "description": "ID of accommodation",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "post": {
+        "security": [
+          {
+            "AuthToken": []
+          }
+        ],
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Create a new room",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "price",
+            "description": "Room price",
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "details",
+            "description": "Room request details",
+            "type": "string"
+          },
+          {
+            "name": "images",
+            "in": "formData",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Room created successfully!"
+          },
+          "400": {
+            "description": "Validation fails"
+          }
+        }
+      },
+      "get": {
+        "summary": "Returns a list of rooms.",
+        "description": "This will list all created rooms.",
+        "tags": [
+          "Rooms"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/accommodation/{accommodationID}/rooms/{roomID}": {
+      "parameters": [
+        {
+          "name": "accommodationID",
+          "in": "path",
+          "description": "ID of accommodation",
+          "required": true,
+          "type": "integer"
+        },
+        {
+          "name": "roomID",
+          "in": "path",
+          "description": "ID of room",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Find room by ID",
+        "description": "Returns a single room",
+        "produces": [
+          "application/json"
+        ],
+
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/room"
+            }
+          },
+          "404": {
+            "description": "Room not found"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "AuthToken": []
+          }
+        ],
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Updates an room",
+        "description": "Update the room",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "price",
+            "description": "Room price",
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "details",
+            "description": "Room request details",
+            "type": "string"
+          },
+          {
+            "name": "images",
+            "in": "formData",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "AuthToken": []
+          }
+        ],
+        "tags": [
+          "Rooms"
+        ],
+        "summary": "Deletes room",
+        "description": "Delete a single room",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "404": {
+            "description": "Room not found"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "AuthToken": {
+      "type": "apiKey",
+      "name": "auth-token",
+      "in": "header"
     }
   },
   "definitions": {
@@ -449,6 +871,72 @@
         },
         "password": {
           "type": "string"
+        }
+      }
+    },
+    "accommodation": {
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "images",
+        "location_id",
+        "host_id",
+        "services",
+        "amenities",
+        "lat",
+        "long"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "This is an accommodation"
+        },
+        "description": {
+          "type": "string",
+          "example": "These are some description"
+        },
+        "images": {
+          "type": "array"
+        },
+        "location_id": {
+          "type": "integer"
+        },
+        "host_id": {
+          "type": "integer"
+        },
+        "services": {
+          "type": "array"
+        },
+        "amenities": {
+          "type": "array"
+        }
+      }
+    },
+    "room": {
+      "type": "object",
+      "required": [
+        "price",
+        "accommodation_id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "price": {
+          "type": "integer",
+          "example": 5000
+        },
+        "details": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array"
         }
       }
     }
