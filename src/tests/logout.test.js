@@ -2,9 +2,9 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import { after } from "mocha";
-import user from '../assets/user';
-import { User } from "../../database/models";
-import server from '../../index';
+import user from './assets/user';
+import { User } from "../database/models";
+import server from '../index';
 
 const { expect } = chai;
 chai.use(chaiHttp);
@@ -63,6 +63,15 @@ const logout = () => {
       .end((err, res) => {
         expect(res).to.have.status(401);
         expect(res.body).to.have.property('error', 'Unauthorized');
+        done(err);
+      });
+  });
+  it('should return 500 if it is internal server error', (done) => {
+    chai.request(server)
+      .post('/api/user/logout')
+      .set(user.invalidToken)
+      .end((err, res) => {
+        expect(res).to.have.status(500);
         done(err);
       });
   });

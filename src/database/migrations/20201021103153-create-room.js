@@ -14,7 +14,7 @@ module.exports = {
       images: {
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
-      accomodation_id: {
+      accommodation_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
