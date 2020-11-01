@@ -8,34 +8,91 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
 
-  User.init({
-    first_name: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    last_name: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false
-    },
-    role: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: "requester"
-    },
-    manager: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: "Patience"
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
+  User.init(
+    {
+      first_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      last_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+      },
+      role: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: "requester"
+      },
+      manager: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: "Patience"
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      resetLink: {
+        type: DataTypes.STRING,
+      },
+      isConfirmed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      birth_date:{
+        type: DataTypes.DATE
+      },
+      preferred_language: {
+        type: DataTypes.STRING
+      },
+      preferred_currency:{
+        type: DataTypes.STRING
+      },
+      where_you_live:{
+          type: DataTypes.STRING
+        },
+      profile_image:{
+          type: DataTypes.TEXT
+        },
+        father_name:{
+          type: DataTypes.STRING
+        },
+
+        mother_name:{
+          type: DataTypes.STRING
+        },
+
+        phone_number:{
+          type: DataTypes.STRING
+        },
+
+        nationality:{
+          type: DataTypes.STRING
+        },
+      marital_status:{
+          type: DataTypes.ENUM,
+          values: [
+            'Not specified',
+            'Single',
+            'Married',
+           ],
+           defaultValue: 'Single'
+        },
+        gender:{
+          type: DataTypes.ENUM,
+          values: [
+          'Male',
+          'Female',
+        ],
+        defaultValue: 'Female'
+        },
+   
     resetLink: {
       type: DataTypes.STRING,
     },

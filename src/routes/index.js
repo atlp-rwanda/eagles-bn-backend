@@ -5,8 +5,6 @@ import tripRoutes from "./trip";
 import auth from "../middlewares/verifyToken";
 import accomodationRoutes from './accomodation';
 import roomRoutes from './room';
-import User from "../controllers/user";
-import user from "../middlewares/user";
 import comment from "../controllers/comment";
 import commentValidation from "../validators/comment";
 

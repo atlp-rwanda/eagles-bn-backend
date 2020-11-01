@@ -14,24 +14,24 @@ import {
 import routes from "./routes/index";
 import accomodationRoutes from './routes/accomodation';
 import roomRoutes from './routes/room';
+import multipart from 'connect-multiparty';
+var multipartMiddleware = multipart();
 
 dotenv.config();
 const serverPort = process.env.PORT || 4000;
-
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 app.use(express.static('public'));
 app.use(passport.initialize());
 app.use(passport.session());
-// passport.use(jwtStrategy);
 passport.use(googleStrategy);
 passport.use(facebookStrategy);
-
-app.use(urlencoded({ extended: false }));
+app.use(multipartMiddleware);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use("/api/user", routes)
 app.use("/api", routes);
-
 app.listen(serverPort, console.log(`Server has started on port ${serverPort}`));
 
 export default app;
