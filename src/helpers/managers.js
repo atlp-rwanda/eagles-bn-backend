@@ -1,3 +1,3 @@
 export const managers = {
-    DEFAULT_MANAGER: "Patience"
-}
+  DEFAULT_MANAGER: "Patience"
+};

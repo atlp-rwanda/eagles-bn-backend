@@ -4,15 +4,16 @@ import authRoutes from "./oauth";
 import User from "../controllers/user";
 import user from "../middlewares/user";
 import verifyAccessToken from "../middlewares/verifyToken";
-import { roles } from '../helpers/roles'
+import { roles } from '../helpers/roles';
+
 const router = Router();
 
 router.use("/", authRoutes);
 router.post("/signup", user.validate, User.userSignUp);
 router.put(
-    "/email-verification/:token",
-    user.verifyToken,
-    User.emailVerification
+  "/email-verification/:token",
+  user.verifyToken,
+  User.emailVerification
 );
 router.post("/login", User.login);
 router.post("/forgetPassword", User.forgetPassword);

@@ -2,9 +2,7 @@
 
 const Sequelize = require("sequelize");
 
-module.exports = (sequelize, DataTypes) => {
-  return Trips.init(sequelize, DataTypes);
-};
+module.exports = (sequelize, DataTypes) => Trips.init(sequelize, DataTypes);
 
 class Trips extends Sequelize.Model {
   static associate(models) {
@@ -23,6 +21,9 @@ class Trips extends Sequelize.Model {
     models.Trips.belongsToMany(models.Locations, {
       as: "destinations",
       through: "to",
+    });
+    models.Trips.hasMany(models.Comment, {
+      foreignKey: "tripId",
     });
   }
 

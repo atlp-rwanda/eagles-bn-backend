@@ -13,7 +13,7 @@ export default () => {
     to: [2],
     departure_date: "2020-11-02T12:32:53.258Z",
     return_date: "2020-11-12T12:32:53.258Z",
-    reasons: "trabajo en el mundo",
+    reasons: "trabajo en el mundogjyjb6t",
     accommodation_id: 1,
     trip_type: "return trip",
   };
