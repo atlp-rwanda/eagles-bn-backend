@@ -6,6 +6,7 @@
   "scripts": {
     "migrate": "sequelize db:migrate",
     "migrate:undo": "sequelize db:migrate:undo",
+    "droptables:dev": "npx sequelize db:migrate:undo:all",
     "migrate:test": "NODE_ENV=test sequelize db:migrate",
     "start": "npm run migrate:undo && npm run migrate && npm run build && node build",
     "build": "babel ./src --out-dir build",
@@ -16,7 +17,7 @@
     "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --require dotenv/config  src/tests/*.test.js --timeout 15000 --exit || true",
     "testing": "NODE_ENV=test mocha --require @babel/register --require dotenv/config  src/tests/*.test.js --timeout 15000 --exit || true",
     "cover": "nyc --reporter=html --reporter=text npm test",
-    "seed:test": "cross-env NODE_ENV=test npx sequelize db:seed:all"
+    "seed:test": "npm run droptables:dev && npm run migrate && cross-env NODE_ENV=development npx sequelize db:seed:all"
   },
   "repository": {
     "type": "git",

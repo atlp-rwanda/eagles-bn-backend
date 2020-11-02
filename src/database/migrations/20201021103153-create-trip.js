@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
+      requester_id: {
         type: Sequelize.INTEGER,
         allowNull: true
       },
@@ -36,7 +36,7 @@ module.exports = {
         type: Sequelize.ARRAY(Sequelize.INTEGER),
         allowNull: true
       },
-      date: {
+      departure_date: {
         type: Sequelize.DATE,
         allowNull: true
       },
