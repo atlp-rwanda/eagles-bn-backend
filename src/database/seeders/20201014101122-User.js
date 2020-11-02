@@ -14,6 +14,17 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
+        first_name: "Jane",
+        last_name: "Doe",
+        email: "test@example.com",
+        password: "12345678",
+        role: "super-admin",
+        manager: "1",
+        isConfirmed: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
         first_name: "John",
         last_name: "Smith",
         email: "johnsmith@example.com",

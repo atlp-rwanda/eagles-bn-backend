@@ -35,9 +35,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      resetLink: {
-        type: Sequelize.STRING,
-      },
       isConfirmed: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,

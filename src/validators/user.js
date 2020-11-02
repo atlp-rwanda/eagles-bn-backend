@@ -11,8 +11,9 @@ export default class userValidations{
                 first_name:Joi.string().min(3).max(20).required(),
                 last_name:Joi.string().min(3).max(20).required(),
                 email: Joi.string().email().required(),
-                password: Joi.string().alphanum().min(8).required().strict(),
-                confirmPassword: Joi.string().valid(Joi.ref('password')).required().strict()
+                role: Joi.string().optional(),
+                password: Joi.string().min(8).required(),
+                confirmPassword: Joi.string().valid(Joi.ref('password')).required()
             });
             const authError=userValidationSchema.validate(req.body);
             if(authError.error){

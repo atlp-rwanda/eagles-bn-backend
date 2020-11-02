@@ -29,18 +29,6 @@ export default () => {
       password: "test1234",
     };
 
-    it("should fail to login on false/no email", async () => {
-      await User.create(fakeUser);
-
-      const res = await chai
-        .request(app)
-        .post("/api/user/login")
-        .send({ ...fakeCredentials, email: "notfake@gmail.com" });
-
-      expect(res).to.have.property("status", 404);
-      expect(res).to.have.property("body");
-      expect(res.body).to.have.property("error", "Invalid Email or Password");
-    });
     it("should fail to login on false password", async () => {
       await User.create(fakeUser);
 

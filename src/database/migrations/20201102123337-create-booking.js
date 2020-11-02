@@ -8,6 +8,22 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      user_id: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: "id"
+        }
+      },
+      room_id: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Rooms',
+          key: "id"
+        }
+      },
       check_in_date: {
         type: Sequelize.DATE
       },
@@ -24,7 +40,7 @@ module.exports = {
       }
     });
   },
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('Bookings');
   }
 };
