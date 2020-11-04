@@ -1,60 +1,63 @@
 /* eslint-disable linebreak-style */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Trips', {
+    await queryInterface.createTable("Trips", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        unique: true,
       },
       requester_id: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       manager_id: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       location_id: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
+        // unique: true,
       },
       trip_type: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       from: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       to: {
         type: Sequelize.ARRAY(Sequelize.INTEGER),
-        allowNull: true
+        allowNull: true,
       },
       departure_date: {
         type: Sequelize.DATE,
-        allowNull: true
+        allowNull: true,
       },
       return_date: {
         type: Sequelize.DATE,
         allowNull: true,
-        defaultValue: null
+        defaultValue: null,
       },
       reasons: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
+        unique: true,
       },
       accommodation_id: {
         type: Sequelize.INTEGER,
       },
       status: {
         type: Sequelize.STRING,
-        defaultValue: 'Pending'
+        defaultValue: "Pending",
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -67,6 +70,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Trips');
+    await queryInterface.dropTable("Trips");
   },
 };

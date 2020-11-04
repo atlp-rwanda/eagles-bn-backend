@@ -1,10 +1,9 @@
 /* eslint-disable linebreak-style */
-import chai, { expect} from "chai";
+import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-// import request from "supertest";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import app from "../index";
+import { User } from "../database/models";
 import { signToken } from "../helpers/auth";
 
 dotenv.config();
@@ -21,14 +20,6 @@ describe("/api/", () => {
     confirmPassword: "12345678",
     isConfirmed: false,
   };
-  jwt.sign(
-    {
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-    },
-    process.env.JWT_ACCOUNT_VEIRIFICATION
-  );
   describe("/api/user/signup", () => {
     it("should create a user first and should receive a message", (done) => {
       chai
@@ -52,6 +43,12 @@ describe("/api/", () => {
   });
 
   describe("PUT /api/user/email-verification/:token", () => {
+    before(async () => {
+      await User.destroy({ where: { email: "uwayezudavid96@gmail.com" } });
+    });
+    after(async () => {
+      await User.destroy({ where: { email: "uwayezudavid96@gmail.com" } });
+    });
     it("should return 404 not found error when account is not found", (done) => {
       const user = {
         first_name: "David",
@@ -89,7 +86,31 @@ describe("/api/", () => {
           done();
         });
     });
+    it("should verify email", async () => {
+      await User.create({
+        first_name: "David",
+        last_name: "Uwayezu",
+        email: "uwayezudavid96@gmail.com",
+        password: "12345678",
+        confirmPassword: "12345678",
+        isConfirmed: false,
+      });
+      const verificationToken = signToken(
+        {
+          id: 2,
+          first_name: "David",
+          last_name: "Uwayezu",
+          email: "uwayezudavid96@gmail.com",
+        },
+        process.env.JWT_ACCOUNT_VEIRIFICATION,
+        "1d"
+      );
+      const res = await chai
+        .request(app)
+        .put(`/api/user/email-verification/${verificationToken}`);
 
+      expect(res.status).to.be.equal(200);
+    });
     it("should not confirm due  to , invalid PATH", (done) => {
       chai
         .request(app)

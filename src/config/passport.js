@@ -41,7 +41,7 @@ const FBoptions = {
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET,
+  secretOrKey: process.env.ACCESS_TOKEN_SECRET,
 };
 
 export default cbFunction;
