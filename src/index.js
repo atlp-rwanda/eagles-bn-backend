@@ -2,7 +2,7 @@
 import "@babel/polyfill";
 import express from "express";
 import dotenv from "dotenv";
-import { urlencoded } from 'body-parser';
+import { urlencoded } from "body-parser";
 import swaggerUi from "swagger-ui-express";
 import passport from "passport";
 import swaggerDocument from "../swagger.json";
@@ -27,7 +27,7 @@ passport.use(facebookStrategy);
 
 app.use(urlencoded({ extended: false }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use("/api/user", routes);
+app.use("/api", routes);
 
 app.listen(serverPort, console.log(`Server has started on port ${serverPort}`));
 
