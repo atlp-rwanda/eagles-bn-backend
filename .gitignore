@@ -8,3 +8,7 @@ coverage/
 .nyc_output/
 pgdata
 .DS_Store
+src/database/models/SequelizeMeta.js
+src/database/models/init-models.js
+src/database/models/trip.js
+src/database/models/Users.js
