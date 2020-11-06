@@ -7,9 +7,7 @@ import models from "../database/models";
 const googleOptions = {
   clientID: process.env.GOOGLE_CONSUMER_KEY,
   clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
-  callbackURL: `${process.env.BASE_URL}:${
-    process.env.PORT || 4000
-  }/api/auth/google/callback`,
+  callbackURL: `${process.env.BASE_URL}/api/user/auth/google/callback`,
 };
 const cbFunction = async (accessToken, refreshToken, profile, done) => {
   let user;
@@ -36,17 +34,19 @@ const FBoptions = {
   clientID: process.env.FACEBOOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
   profileFields: ["id", "emails", "name", "displayName"],
-  callbackURL: `${process.env.BASE_URL}:${process.env.PORT}/api/auth/facebook/callback`,
+  callbackURL: `${process.env.BASE_URL}:${process.env.PORT}/api/user/auth/facebook/callback`,
 };
 
+/*
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.ACCESS_TOKEN_SECRET,
 };
+*/
 
 export default cbFunction;
 export const googleStrategy = new GoogleStrategy(googleOptions, cbFunction);
 export const facebookStrategy = new FacebookStrategy(FBoptions, cbFunction);
-export const jwtStrategy = new JwtStrategey(jwtOptions, (payload, done) =>
+/* export const jwtStrategy = new JwtStrategey(jwtOptions, (payload, done) =>
   done(null, payload)
-);
+); */

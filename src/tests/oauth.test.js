@@ -4,9 +4,9 @@ import chai, { expect } from "chai";
 import { mock } from "sinon";
 import { after, before } from "mocha";
 import app from "../index";
-import OauthController from "../controllers/oauth.controller";
+import Oauth from "../controllers/oauth";
 import cbFunction from "../config/passport";
-import oAuth from "../middlewares/auth";
+import oAuth from "../helpers/oauth";
 import models from "../database/models";
 
 const chaiHttp = require("chai-http");
@@ -55,7 +55,7 @@ const oauthTest = () => {
     };
     const nextMock = mock();
 
-    await OauthController.loginSuccess(req, res, nextMock);
+    await Oauth.loginSuccess(req, res, nextMock);
   });
   describe("Passport", () => {
     before(async () => {

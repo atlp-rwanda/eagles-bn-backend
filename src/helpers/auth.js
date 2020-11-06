@@ -4,11 +4,11 @@ import { sign, verify } from 'jsonwebtoken';
 import { genSalt, hash } from 'bcryptjs';
 
 config();
-const { JWT_SECRET } = process.env;
+const { ACCESS_TOKEN_SECRET } = process.env;
 
 export const signToken = (
   { name, email, id: userId },
-  secret = JWT_SECRET,
+  secret = ACCESS_TOKEN_SECRET,
   duration = null
 ) => {
   const tokenOptions = duration ? { expiresIn: duration } : undefined;
