@@ -3,17 +3,18 @@ import jwt from 'jsonwebtoken';
 import client from '../config/redis_config';
 
 const signAccessToken = (userInfo) => {
-  try {
-    const payload = {
-      id: userInfo.id,
-      email: userInfo.email,
-    };
-    const token = jwt.sign({ payload }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-    client.set(payload.id, token);
-    return token;
-  } catch (error) {
-    return error;
-  }
+    try {
+        const payload = {
+            id: userInfo.id,
+            email: userInfo.email,
+            role: userInfo.role
+        };
+        const token = jwt.sign({ payload }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+        client.set(payload.id, token);
+        return token;
+    } catch (error) {
+        return error;
+    }
 };
 
 export default signAccessToken;
