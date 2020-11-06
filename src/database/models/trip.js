@@ -40,11 +40,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "manager_id",
       });
       // models.Trip.belongsTo(models.Location, {
-      //   as: "from",
+      //   as: "departure",
       //   foreignKey: "from",
       // });
       // models.Trip.belongsToMany(models.Location, {
-      //   as: "to",
+      //   as: "destination",
       //   through: "to",
       // });
     }

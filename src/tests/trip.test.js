@@ -3,7 +3,7 @@ import { it, after } from "mocha";
 import chaiHttp from "chai-http";
 import signAccessToken from "../helpers/jwt_helper";
 import app from "../index";
-import { Trip } from "../database/models";
+import { Trips } from "../database/models";
 
 chai.use(chaiHttp);
 
@@ -18,7 +18,7 @@ export default () => {
     trip_type: "return trip",
   };
   after(async () => {
-    await Trip.destroy({ where: mockTrip });
+    await Trips.destroy({ where: mockTrip });
   });
   it("creates a trip", async () => {
     const token = await signAccessToken({ id: 3, email: "fake@gmail.com" });

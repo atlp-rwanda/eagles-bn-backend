@@ -1,4 +1,4 @@
-import { Trip as _trip, User } from "../database/models";
+import { Trips, User } from "../database/models";
 
 const toInclude = {
   model: User,
@@ -7,7 +7,7 @@ const toInclude = {
 
 export default class Trip {
   static async getOne(req, res) {
-    const trip = await _trip.findByPk(req.params.tripId, {
+    const trip = await Trips.findByPk(req.params.tripId, {
       include: [
         { ...toInclude, as: "requester" },
         { ...toInclude, as: "manager" },
@@ -32,7 +32,7 @@ export default class Trip {
     //     .json({ status: 403, error: "unauthorized to check all trips" });
     // }
 
-    const trips = await _trip.findAll({
+    const trips = await Trips.findAll({
       where: { manager_id: req.user.id },
     });
 
@@ -40,7 +40,7 @@ export default class Trip {
   }
 
   static async update(req, res) {
-    const trip = await _trip.findOne({
+    const trip = await Trips.findOne({
       where: { id: req.params.tripId, requester_id: req.user.id },
     });
     if (!trip) {
@@ -54,7 +54,7 @@ export default class Trip {
 
   static async create(req, res) {
     // console.log(req.user, "####");÷
-    const trip = await _trip.create({
+    const trip = await Trips.create({
       ...req.body,
       manager_id: 1,
       requester_id: req.user.id,
