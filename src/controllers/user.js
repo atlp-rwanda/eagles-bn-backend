@@ -17,9 +17,7 @@ const mg = mailgun({
   apiKey: process.env.MAILGUN_API_KEY,
   domain: DOMAIN_NAME,
 });
-
 // const DOMAIN = "sandbox2a5a88ce88af4fc8a90005f49041a655.mailgun.org";
-
 export default class UserController {
   static async userSignUp(req, res) {
     const { first_name, last_name, email, password } = req.body;
@@ -177,7 +175,7 @@ export default class UserController {
         error: "Incorrect email or password",
       });
     }
-    const token = await signAccessToken(user);
+    const token = await signAccessToken(user.dataValues);
 
     res.status(200).json({
       status: 200,

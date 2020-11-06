@@ -3,12 +3,16 @@ import { describe } from "mocha";
 import oauthTest from "./oauth.test";
 import loginTests from "./login.test";
 import tripTests from "./trip.test";
-import logout from "./logout.test";
+import logout from './logout.test';
+import accommodationTest from './accommodation/accommodation.test';
+import roomTest from './room/room.test';
 
 describe("Barefoot Nomad: ", () => {
   describe("Trip CRUD: ", tripTests);
   describe("Email login: ", loginTests);
   describe("Social login: ", oauthTest);
+  describe("Accommodation: ", accommodationTest);
+  describe("Room: ", roomTest);
 });
 
 // USER LOGOUT TEST SUIT

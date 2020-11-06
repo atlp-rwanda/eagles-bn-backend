@@ -74,7 +74,7 @@ export default () => {
       const res = await chai
         .request(app)
         .get("/api/user/test-auth")
-        .set("authorization", "no token");
+        .set("Authorization", "no token");
 
       expect(res).to.have.property("status", 401);
     });

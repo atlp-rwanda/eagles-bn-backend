@@ -32,7 +32,7 @@ export default class User {
     }
   }
 
-  static auth(req, res, next) {
+/*  static auth(req, res, next) {
     return passport.authenticate("jwt", { session: false })(req, res, next);
-  }
+  } */
 }

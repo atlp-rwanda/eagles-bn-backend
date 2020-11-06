@@ -17,6 +17,12 @@ module.exports = {
       accommodation_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'Accommodations',
+          key: 'id',
+          as: 'accommodation_id',
+        },
       },
       details: {
         type: Sequelize.TEXT,
