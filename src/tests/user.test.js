@@ -1,6 +1,7 @@
 /* eslint-disable linebreak-style */
 import chai from "chai";
 import { describe, it, beforeEach } from "mocha";
+import jwt from 'jsonwebtoken';
 import chaiHttp from "chai-http";
 import app from "../index";
 import models from "../database/models";
@@ -21,6 +22,19 @@ describe(" POST /api/user/resetPassword/", () => {
       email: "nklbigone@gmail.com",
       password: "alexis123",
     };
+    console.log(userData.password);
+    const token = jwt.sign(
+      {
+        email: userData.email,
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+      },
+      userData.password,
+      {
+        expiresIn: "24h",
+      }
+    );
+    console.log(token);
     models.User.create(userData)
       .then((createdUser) => {
         const token = signToken(userData, createdUser.password);

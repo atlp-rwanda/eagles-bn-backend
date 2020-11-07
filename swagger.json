@@ -156,22 +156,26 @@
                 "description": "updating user role if logged in as super admin",
                 "consumes": ["multipart/form-data"],
                 "produces": ["application/json"],
-                "parameters": [{
+                "parameters": [
+                    {
                     "name": "auth-token",
                     "in": "header",
                     "required": true,
                     "type": "string"
-                }, {
+                    }, 
+                    {
                     "name": "id",
                     "in": "path",
                     "required": true,
                     "type": "string"
-                }, {
+                    },
+                    {
                     "name": "role",
                     "in": "formData",
                     "required": false,
                     "type": "string"
-                }],
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "User role updated successfully"
@@ -763,6 +767,140 @@
                     }
                 }
             }
+        },
+        "/trips/{id}/comment": {
+            "post": {
+                "tags": ["Trips"],
+                "summary": "Create a comment on trip request ",
+                "description": "",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+        
+                "parameters": [
+                {
+                    "in": "header",
+                    "name": "auth-token",
+                    "type": "string",
+                    "required": true,
+                    "description": "from logIn endpoint"
+                },
+        
+                {
+                    "in": "path",
+                    "name": "id",
+                    "type": "integer",
+                    "required": true,
+                    "description": "get it from trip table"
+                },
+                {
+                    "in": "body",
+                    "name": "body",
+                    "schema": { "$ref": "#/definitions/comment" },
+                    "required": true
+                }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "You created a comment Successfully!"
+                    },
+                    "400": {
+                        "description": "TripId you provided doesn't exist!"
+                    },
+                    "500": {
+                        "description": "Internal  error!"
+                    }
+                }
+            }
+        },
+      
+        "/trips/{tripId}/comments/{id}": {
+          "delete": {
+                "tags": ["Trips"],
+                "summary": "Deleting a comment on trip request ",
+                "description": "",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                {
+                    "in": "header",
+                    "name": "auth-token",
+                    "type": "string",
+                    "required": true,
+                    "description": "from logIn endpoint"
+                },
+                {
+                    "in": "path",
+                    "name": "tripId",
+                    "required": true,
+                    "description": "Get it from trip table"
+                },
+        
+                {
+                    "in": "path",
+                    "name": "id",
+                    "type": "string",
+                    "required": true,
+                    "description": "Get it from Comment table"
+                }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "You Successfully Deleted comment!"
+                    },
+                    "404": {
+                        "description": "You can't delete such comment. Maybe Not Found in our Database!"
+                    },
+                    "500": {
+                        "description": "Internal  error!"
+                    }
+                }
+            }
+          
+        },
+      
+        "/trips/{id}/comments/{tripId}": {
+          "get": {
+            "tags": ["Trips"],
+            "summary": "Get a comment on trip request ",
+            "description": "",
+            "consumes": ["application/json"],
+            "produces": ["application/json"],
+            "parameters": [
+              {
+                "in": "header",
+                "name": "auth-token",
+                "type": "string",
+                "required": true,
+                "description": "from logIn endpoint"
+              },
+              {
+                "in": "path",
+                "name": "id",
+                "required": true,
+                "description": "get it from trip table"
+              },
+      
+              {
+                "in": "path",
+                "name": "tripId",
+                "type": "string",
+                "required": true,
+                "description": "get it from comment table"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Here's the comment you are looking for!"
+              },
+      
+              "404": {
+                "description": "You can't get such comment. Maybe Not Found in our Database!"
+              },
+              "500": {
+                "description": "Internal  error!"
+              }
+            }
+          }
         }
     },
     "securityDefinitions": {
@@ -776,6 +914,15 @@
         "id": {
             "properties": {
                 "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "comment":{
+            
+            "required": ["comment"],
+            "properties": {
+                "comment": {
                     "type": "string"
                 }
             }
@@ -950,4 +1097,5 @@
             }
         }
     }
+
 }
