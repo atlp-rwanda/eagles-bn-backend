@@ -18,7 +18,6 @@ describe("Barefoot Nomad: ", () => {
 });
 
 // USER LOGOUT TEST SUIT
-
 describe("Logout test suit", () => {
   describe("POST api/user/logout logging out user", logout);
 });

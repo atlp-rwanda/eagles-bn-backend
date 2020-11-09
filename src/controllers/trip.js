@@ -53,7 +53,6 @@ export default class Trip {
   }
 
   static async create(req, res) {
-    // console.log(req.user, "####");÷
     const trip = await Trips.create({
       ...req.body,
       manager_id: 1,

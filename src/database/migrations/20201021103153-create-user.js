@@ -1,20 +1,20 @@
 /* eslint-disable linebreak-style */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable("Users", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       first_name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       last_name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
@@ -41,20 +41,76 @@ module.exports = {
       isConfirmed: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
-        allowNull: false
-
+        allowNull: false,
       },
+      birth_date:{
+        type: Sequelize.DATE
+      },
+      preferred_language: {
+        type: Sequelize.STRING
+      },
+      preferred_currency:{
+        type: Sequelize.STRING
+      },
+      birth_date:{
+        type: Sequelize.DATE
+      },
+      preferred_language: {
+        type: Sequelize.STRING
+      },
+      preferred_currency:{
+        type: Sequelize.STRING
+      },
+      where_you_live:{
+          type: Sequelize.STRING
+        },
+      profile_image:{
+          type: Sequelize.TEXT
+        },
+        father_name:{
+          type: Sequelize.STRING
+        },
+
+        mother_name:{
+          type: Sequelize.STRING
+        },
+
+        phone_number:{
+          type: Sequelize.STRING
+        },
+
+        nationality:{
+          type: Sequelize.STRING
+        },
+
+      marital_status:{
+          type: Sequelize.ENUM,
+          values: [
+            'Not specified',
+            'Single',
+            'Married',
+           ],
+           defaultValue: 'Single'
+        },
+        gender:{
+          type: Sequelize.ENUM,
+          values: [
+          'Male',
+          'Female',
+        ],
+        defaultValue: 'Female'
+        },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
-  }
+    await queryInterface.dropTable("Users");
+  },
 };
