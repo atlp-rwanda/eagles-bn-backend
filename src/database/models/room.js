@@ -1,3 +1,4 @@
+ 
 const {
   Model
 } = require('sequelize');
@@ -12,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Room.belongsTo(models.Accommodation, {
         foreignKey: "accommodation_id",
+      });
+      Room.hasMany(models.Booking, {
+        as: "room",
+        onDelete: "cascade",
+        foreignKey: "room_id"
       });
     }
   }

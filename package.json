@@ -15,6 +15,7 @@
     "dev": "nodemon --exec babel-node -r dotenv/config  src",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --require dotenv/config  src/tests/*.test.js --timeout 15000 --exit || true",
+    "single": "cross-env NODE_ENV=test mocha --require @babel/register --require dotenv/config  src/tests/roles.test.js --timeout 20000 --exit || true",
     "cover": "nyc --reporter=html --reporter=text npm test",
     "seed": "npm run migrate:undo && npm run migrate && npx sequelize db:seed:all",
     "gen:models": "npx sequelize-auto -o \"./src/database/models\" -d eagles -h localhost -u postgres -p 5432 -x \"Jannyda1\" -e postgres -l es6",

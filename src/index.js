@@ -16,7 +16,7 @@ import accomodationRoutes from './routes/accomodation';
 import roomRoutes from './routes/room';
 import multipart from 'connect-multiparty';
 var multipartMiddleware = multipart();
-
+import bookings from "./routes/booking";
 dotenv.config();
 const serverPort = process.env.PORT || 4000;
 const app = express();
@@ -32,6 +32,8 @@ app.use(multipartMiddleware);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // app.use("/api/user", routes)
 app.use("/api", routes);
+app.use("/api/user", routes);
+app.use("/api/rooms", bookings);
 app.listen(serverPort, console.log(`Server has started on port ${serverPort}`));
 
 export default app;

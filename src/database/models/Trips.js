@@ -14,11 +14,11 @@ class Trips extends Sequelize.Model {
       as: "manager",
       foreignKey: "manager_id",
     });
-    models.Trips.belongsTo(models.Locations, {
+    models.Trips.belongsTo(models.Location, {
       as: "departure",
       foreignKey: "from",
     });
-    models.Trips.belongsToMany(models.Locations, {
+    models.Trips.belongsToMany(models.Location, {
       as: "destinations",
       through: "to",
     });
