@@ -13,7 +13,14 @@ const tripValidation = (body) => {
     return_date: Joi.date(),
     reasons: Joi.string().min(8).required(),
     accommodation_id: Joi.number().min(1).required(),
-    trip_type: Joi.string().valid('one way trip', 'return trip').required(),
+    trip_type: Joi.string().valid("one way trip", "return trip").required(),
+    name: Joi.string().required(),
+    email: Joi.string().required(),
+    passport: Joi.required(),
+    id_number: Joi.required(),
+    phone: Joi.required(),
+    gender: Joi.string().required().valid('Male', 'Female', 'Other'),
+    marital_status: Joi.string().required().valid('Divorced', 'Single', 'Married'),
   });
   return tripValidationSchema.validate(body);
 };
@@ -27,7 +34,14 @@ export const updateValidation = (body) => {
     return_date: Joi.date(),
     reasons: Joi.string().min(8),
     accommodation_id: Joi.number().min(1),
-    trip_type: Joi.string().valid('one way trip', 'return trip'),
+    trip_type: Joi.string().valid("one way trip", "return trip"),
+    name: Joi.string(),
+    email: Joi.string(),
+    passport: Joi.any(),
+    id_number: Joi.any(),
+    phone: Joi.any(),
+    gender: Joi.string().valid('Male', 'Female', 'Other'),
+    marital_status: Joi.string().valid('Divorced', 'Single', 'Married'),
   });
   return tripValidationSchema.validate(body);
 };

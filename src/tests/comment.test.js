@@ -4,9 +4,12 @@ import chaiHTTP from 'chai-http';
 import app from '../index';
 import models from '../database/models';
 import signAccessToken from '../helpers/jwt_helper';
+import { mockTrip } from "./accommodation/trip.data";
+import { fakeRequesterCredentials } from "./mock-user.data";
 
 let tripId;
 let userId;
+let newToken;
 let token;
 let commentId;
 let id;
@@ -21,6 +24,8 @@ const cleanAlltables = async () => {
 describe('Comments and delete', () => {
   before(async () => {
     await cleanAlltables();
+    const { dataValues: user } = await User.create(fakeRequesterCredentials);
+    newToken = await signAccessToken(user);
   });
   before((done) => {
     const user = {
@@ -40,24 +45,20 @@ describe('Comments and delete', () => {
   });
 
   it('Should post a trip with status code 201', async () => {
-    const fakeToken = await signAccessToken({ id: 3, email: 'fake@gmail.com' });
-
+    // const fakeToken = await signAccessToken({ id: 3, email: 'fake@gmail.com' });
     const res = await chai
       .request(app)
       .post('/api/trips')
-      .set('auth-token', fakeToken)
+      .set('auth-token', newToken)
       .send({
-        from: 4,
-        to: [2, 4],
-        departure_date: '2020-11-02T12:32:53.258Z',
-        return_date: '2020-11-12T12:32:53.258Z',
-        reasons: 'new office passegysyu8',
-        accommodation_id: 1,
-        trip_type: 'return trip',
+        ...mockTrip,
+        reasons: `hello againnn`
       });
 
-    expect(res).to.have.property('status', 201);
-    expect(res).to.be.a('object');
+    expect(res)
+      .to
+      .have
+      .property('status', 201);
   });
   it('It should return 400 when trip is not yours', async () => {
     const requestBody = { comment: 'hello world' };

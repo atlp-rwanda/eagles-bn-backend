@@ -44,11 +44,61 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
         allowNull: false,
       },
-    },
-    {
+      birth_date: {
+        type: DataTypes.DATE
+      },
+      preferred_language: {
+        type: DataTypes.STRING
+      },
+      preferred_currency: {
+        type: DataTypes.STRING
+      },
+      where_you_live: {
+        type: DataTypes.STRING
+      },
+      profile_image: {
+        type: DataTypes.TEXT
+      },
+      father_name: {
+        type: DataTypes.STRING
+      },
+
+      mother_name: {
+        type: DataTypes.STRING
+      },
+
+      phone_number: {
+        type: DataTypes.STRING
+      },
+
+      nationality: {
+        type: DataTypes.STRING
+      },
+      marital_status: {
+        type: DataTypes.ENUM,
+        values: [
+          'Not specified',
+          'Single',
+          'Married',
+        ],
+        defaultValue: 'Single'
+      },
+      gender: {
+        type: DataTypes.ENUM,
+        values: [
+          'Male',
+          'Female',
+        ],
+        defaultValue: 'Female'
+      },
+      remember_travel: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      }
+    }, {
       sequelize,
-      modelName: "User",
-    }
-  );
+      modelName: 'User',
+
+    });
   return User;
 };

@@ -86,6 +86,38 @@ class Trips extends Sequelize.Model {
           allowNull: true,
           defaultValue: "Pending",
         },
+        passport: {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
+        id_number: {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
+        marital_status: {
+          type: Sequelize.STRING,
+          values: [
+            'Divorced',
+            'Single',
+            'Married',
+          ],
+        },
+        gender: {
+          type: Sequelize.STRING,
+          values: [
+            'Male',
+            'Female',
+            'Other',
+          ],
+        },
+        email: {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
+        phone: {
+          type: Sequelize.STRING,
+          allowNull: true,
+        },
       },
       {
         sequelize,

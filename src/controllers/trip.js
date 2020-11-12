@@ -42,6 +42,27 @@ export default class Trip {
     return res.status(200).json({ status: 200, data: trips });
   }
 
+  static async LatestRemember(req, res) {
+    const { dataValues: user } = await User.findByPk(req.user.id);
+    if (!user.remember_travel) return res.status(400).json({ status: 400, message: "Remember travel is OFF" });
+    const latestTripValues = await Trips.findOne({
+      where: { requester_id: user.id },
+      order: [['createdAt', 'DESC']]
+    });
+    if (!latestTripValues) return res.status(404).json({ status: 404, message: "No last trip available" });
+    const { dataValues: latestTrip } = latestTripValues;
+    const body = {
+      name: latestTrip.name,
+      email: latestTrip.email,
+      passport: latestTrip.passport,
+      id_number: latestTrip.id_number,
+      gender: latestTrip.gender,
+      phone: latestTrip.phone,
+      marital_status: latestTrip.marital_status,
+    };
+    return res.status(200).json({ status: 200, data: body });
+  }
+
   static async update(req, res) {
     const trip = await Trips.findOne({
       where: { id: req.params.tripId, requester_id: req.user.id },

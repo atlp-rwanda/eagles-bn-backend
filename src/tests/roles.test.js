@@ -70,7 +70,7 @@ describe("User roles API", () => {
     email: "fake@gmail.com",
     password: "alexis1223",
   };
-  
+
   it("It should return 200 status code login valid credidential", (done) => {
     chai
       .request(app)
@@ -100,7 +100,7 @@ describe("User roles API", () => {
         done();
       });
   });
- 
+
   it("PUT /api/user/roles/:id It should return 200 on user role update to requester", (done) => {
     const role = {
       role: "requester",
