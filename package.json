@@ -14,8 +14,7 @@
     "lint": "eslint --fix src",
     "dev": "nodemon --exec babel-node -r dotenv/config  src",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --require dotenv/config  src/tests/*.test.js --timeout 15000 --exit || true",
-    "single": "cross-env NODE_ENV=test mocha --require @babel/register --require dotenv/config  src/tests/roles.test.js --timeout 20000 --exit || true",
+    "test": "npm run seed:test && cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --require dotenv/config  src/tests/*.test.js --timeout 15000 --exit || true",
     "cover": "nyc --reporter=html --reporter=text npm test",
     "seed": "npm run migrate:undo && npm run migrate && npx sequelize db:seed:all",
     "gen:models": "npx sequelize-auto -o \"./src/database/models\" -d eagles -h localhost -u postgres -p 5432 -x \"Jannyda1\" -e postgres -l es6",
@@ -81,8 +80,8 @@
     "nodemon": "^2.0.4",
     "nyc": "^15.1.0",
     "passport-mocked": "^1.4.0",
+    "prettier": "^2.1.2",
     "sequelize-auto": "^0.7.0",
-    "sequelize-auto-models": "^0.2.14",
     "sinon": "^9.2.0"
   }
 }

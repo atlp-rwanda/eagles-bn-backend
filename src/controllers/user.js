@@ -1,18 +1,18 @@
 /* eslint-disable linebreak-style */
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import mailgun from "mailgun-js";
-import dotenv from "dotenv";
-import { encryptPassword, verifyLink } from "../helpers";
-import { User as _user } from "../database/models/index";
-import { onError, onSuccess } from "../utils/response";
-import { signToken } from "../helpers/auth";
-import signAccessToken from "../helpers/jwt_helper";
-import client from "../config/redis_config";
-import { roleEntryValidation } from '../helpers/file-uploader'
-import { managers } from '../helpers/managers'
-import { roles } from '../helpers/roles'
-import _, { result } from "lodash";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import mailgun from 'mailgun-js';
+import dotenv from 'dotenv';
+import { encryptPassword, verifyLink } from '../helpers';
+import { User as _user } from '../database/models/index';
+import { onError, onSuccess } from '../utils/response';
+import { signToken } from '../helpers/auth';
+import signAccessToken from '../helpers/jwt_helper';
+import client from '../config/redis_config';
+import { roleEntryValidation } from '../helpers/file-uploader';
+import { managers } from '../helpers/managers';
+import { roles } from '../helpers/roles';
+import _, { result } from 'lodash';
 import cloudinary from 'cloudinary';
 
 dotenv.config();
@@ -27,18 +27,15 @@ const mg = mailgun({
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
 
 export default class UserController {
   static async userSignUp(req, res) {
-    const {
-      first_name, last_name, email, password
-    } = req.body;
+    const { first_name, last_name, email, password } = req.body;
     const foundUser = await _user.findOne({ where: { email } });
     if (foundUser) {
-      return res.status(403).json({ error: "Email is already in use" });
+      return res.status(403).json({ error: 'Email is already in use' });
     }
     try {
       const emailVerificationToken = jwt.sign(
@@ -48,12 +45,12 @@ export default class UserController {
           email,
         },
         process.env.JWT_ACCOUNT_VEIRIFICATION,
-        { expiresIn: "72h" }
+        { expiresIn: '72h' }
       );
       const data = {
         from: process.env.SENDER_EMAIL,
         to: email,
-        subject: "Account Verification Email_BareFootNormad",
+        subject: 'Account Verification Email_BareFootNormad',
         text: `
           Please copy and paste the text below on your browser for verify your account!
     
@@ -86,7 +83,7 @@ export default class UserController {
         return res.status(200).json({
           emailVerificationToken,
           message:
-            "Thanks for registering on our site. Verification Email has been sent to you. Please visit your email to verify your account",
+            'Thanks for registering on our site. Verification Email has been sent to you. Please visit your email to verify your account',
         });
       });
     } catch (err) {
@@ -102,19 +99,19 @@ export default class UserController {
         { email: foundUser.email, _id: foundUser._id },
         foundUser.password,
         {
-          expiresIn: "24h",
+          expiresIn: '24h',
         }
       );
       const data = {
-        from: "alexis2020@gmail.com",
+        from: 'alexis2020@gmail.com',
         to: email,
-        subject: "please reset your Password",
+        subject: 'please reset your Password',
         html: `click this link to reset password http://localhost:4000/api/resetPassword/${token}/${email}`,
       };
       mg.messages().send(data, () => {
         res.status(201).json({
           token,
-          message: "email has been sent please change your password",
+          message: 'email has been sent please change your password',
         });
       });
     } else {
@@ -131,43 +128,40 @@ export default class UserController {
         req.params.token,
         foundUser.password
       );
-      if (!useremail) return res.status(404).json({ message: "user not email not found" });
+      if (!useremail)
+        return res.status(404).json({ message: 'user not email not found' });
       await _user.update({ password }, { where: { email: useremail } });
       res.status(200).json({
         success: true,
-        message: "Thank you! You can now use your new password to login!",
+        message: 'Thank you! You can now use your new password to login!',
       });
     } catch (error) {
-      res.status(400).json({ message: "you token are invalid" });
+      res.status(400).json({ message: 'you token are invalid' });
       // const token = signToken(tokObj);
     }
   }
 
-  static async changeRoles(req, res, next) {
+  static async changeRoles(req, res) {
     try {
-      await roleEntryValidation.validateAsync(req.body).catch((err) => res.status(400).send({
-        error: err.details[0].message.replace(/^"|"$/g, ""),
-      }));
+      await roleEntryValidation.validateAsync(req.body).catch((err) =>
+        res.status(400).send({ error: err.details[0].message.replace(/^"|"$/g, '') })
+      );
       const { role } = req.body;
       const userId = req.params.id;
       const user = await _user.findOne({ where: { id: userId } });
-      if (!user) return res.status(404).send({ error: "User not found" });
+      if (!user) return res.status(404).send({ error: 'User not found' });
       if (user.role === role) {
-        return res.status(400).send({ error: `${user.first_name} is already ${role}` });  
+        return res.status(400).send({ error: `${user.first_name} is already ${role}` });
       }
       if (role === roles.REQUESTER) {
-        await _user.update(
-          { role, manager: managers.DEFAULT_MANAGER }, { where: { id: userId }, }); 
+        await _user.update({ role, manager: managers.DEFAULT_MANAGER }, { where: { id: userId } });
       } else {
-        await _user.update(
-          { role, manager: "" },
-          {
-            where: { id: userId },
-          }
-        );
+        await _user.update({ role, manager: '' }, { where: { id: userId } });
       }
-      return res.status(200).send({ message: `${user.first_name}'s role changed to ${role}` });  
-    } catch (error) { res.status(500).send({ error: error.message }); }
+      return res.status(200).send({ message: `${user.first_name}'s role changed to ${role}` });
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
   }
 
   static async emailVerification(req, res) {
@@ -178,7 +172,7 @@ export default class UserController {
       if (!user) {
         return res.status(404).json({
           status: 404,
-          Error: "user Not Found",
+          Error: 'user Not Found',
         });
       }
 
@@ -189,7 +183,7 @@ export default class UserController {
 
       return res.status(200).json({
         status: 200,
-        Message: "User confirmed Successfully!",
+        Message: 'User confirmed Successfully!',
       });
     } catch (err) {
       return res.status(500).send({ error: err });
@@ -203,7 +197,7 @@ export default class UserController {
     if (!user) {
       return res
         .status(404)
-        .json({ status: 404, error: "Invalid Email or Password" });
+        .json({ status: 404, error: 'Invalid Email or Password' });
     }
 
     const validPassword = await bcrypt.compare(
@@ -213,14 +207,14 @@ export default class UserController {
     if (!validPassword) {
       return res.status(401).json({
         status: 401,
-        error: "Incorrect email or password",
+        error: 'Incorrect email or password',
       });
     }
     const token = await signAccessToken(user.dataValues);
     res.status(200).json({
       status: 200,
       accessToken: token,
-      message: "User Logged in successfully",
+      message: 'User Logged in successfully',
     });
   }
 
@@ -228,58 +222,58 @@ export default class UserController {
     try {
       const { id: userId } = req.user;
       client.del(userId);
-      return onSuccess(res, 200, "You logged out successfully.");
+      return onSuccess(res, 200, 'You logged out successfully.');
     } catch (error) {
-      return onError(res, 500, "Internal server error");
+      return onError(res, 500, 'Internal server error');
     }
   }
 
-  static async userProfile (req, res) {
-    const {user}=req
-    const image=req.files.profile_image
-    if(image.type.split('/')[0]!="image")
-    {
+  static async userProfile(req, res) {
+    const { user } = req;
+    const image = req.files.profile_image;
+    if (image.type.split('/')[0] != 'image') {
       return onError(res, 400, 'Profile Image has to be an image type');
     }
-    await  cloudinary.uploader.upload(image.path, function(result,error){
-      if(error){
+    await cloudinary.uploader.upload(image.path, function (result, error) {
+      if (error) {
         return onError(res, 500, 'Internal server error');
       }
       const {
-          birth_date,
-          preferred_language,
-          preferred_currency,
-          where_you_live,
-          father_name,
-          mother_name,
-          phone_number,
-          nationality,
-          marital_status,
-          gender
-        }=req.body;
+        birth_date,
+        preferred_language,
+        preferred_currency,
+        where_you_live,
+        father_name,
+        mother_name,
+        phone_number,
+        nationality,
+        marital_status,
+        gender,
+      } = req.body;
 
-        const updatedUser= _user.update({ 
-          birth_date,
-          preferred_language,
-          preferred_currency,
-          where_you_live,
-          father_name,
-          mother_name,
-          gender,
-          phone_number,
-          nationality,
-          marital_status,
-          profile_image:result.url
-        },
-        { where: { id: user.id }  })
-        .then((data)=>{
+      const updatedUser = _user
+        .update(
+          {
+            birth_date,
+            preferred_language,
+            preferred_currency,
+            where_you_live,
+            father_name,
+            mother_name,
+            gender,
+            phone_number,
+            nationality,
+            marital_status,
+            profile_image: result.url,
+          },
+          { where: { id: user.id } }
+        )
+        .then((data) => {
           return onSuccess(res, 201, 'Profile updated sucessfully');
         })
-        .catch((err)=>{
+        .catch((err) => {
           return onError(res, 500, 'Internal server error');
-        })
-        
-      })
-        
-}
+        });
+    });
+  }
 }

@@ -1,5 +1,4 @@
-import models from "../database/models";
-import emitter from "../helpers/eventEmitter";
+import models from '../database/models';
 
 export default class Comment {
   static async getAllComments(req, res) {
@@ -19,39 +18,37 @@ export default class Comment {
   }
 
   static async createComment(req, res) {
-    try {
-      const { comment } = req.body;
-      const tripId = req.params.id;
-      const { id } = req.user;
-      const trip = await models.Trips.findOne({ where: { id: tripId } });
-      if (!trip) {
-        return res
-          .status(400)
-          .send({ message: ` Trip ID: "${tripId}" does not Exist !` });
-      }
-      if (trip.requester_id === id || trip.manager_id === id) {
-        const saveComment = await models.Comment.create({
-          userId: id,
-          tripId,
-          comment,
-        });
-        return res.status(201).send({
-          saveComment,
-          message: `You Successfully commented on ${tripId}`,
-        });
-      }
-      return res.status(400).send({
-        message: ` Please check well, the Trip Id : " ${tripId} "does not belong to you!!!`,
+    const { comment } = req.body;
+    const tripId = req.params.id;
+    const { id } = req.user;
+    const trip = await models.Trips.findOne({ where: { id: tripId } });
+    if (!trip) {
+      return res
+        .status(404)
+        .send({ message: ` Trip ID: "${tripId}" does not Exist !` });
+    }
+    if (trip.requester_id === id || trip.manager_id === id) {
+      const saveComment = await models.Comment.create({
+        userId: id,
+        tripId,
+        comment,
       });
-    } catch (err) { return res.status(500).send(err); }
+      return res.status(201).send({
+        saveComment,
+        message: `You Successfully commented on ${tripId}`,
+      });
+    }
+    return res.status(400).send({
+      message: ` Please check well, the Trip Id : " ${tripId} "does not belong to you!!!`,
+    });
   }
 
   static async deleteComment(req, res) {
     const { tripId, id } = req.params;
 
     const { id: userId } = req.user;
-    return models.Comment.destroy({ where: { tripId, id, userId } })
-      .then((num) => {
+    return models.Comment.destroy({ where: { tripId, id, userId } }).then(
+      (num) => {
         if (num === 1) {
           res.status(200).send({
             message: `You Successfully Deleted comment with id=${id}`,
@@ -61,10 +58,7 @@ export default class Comment {
             Error: `You can't delete this comment. Maybe Not Found in Database`,
           });
         }
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send({ Error: "internal server Error" });
-      });
+      }
+    );
   }
 }
