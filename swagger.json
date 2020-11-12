@@ -278,6 +278,45 @@
         }
       }
     },
+    "/user/remember-travel": {
+      "put": {
+        "tags": ["Users"],
+        "security": [{
+          "AuthToken": []
+        }],
+        "summary": "Toggle user remember",
+        "description": "",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/trips/remember/latest": {
+      "get": {
+        "tags": [
+          "Trips"
+        ],
+        "security": [{
+          "AuthToken": []
+        }],
+        "summary": "Show the latest trip when remember token is true",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/trips": {
       "get": {
         "tags": ["Trips"],
@@ -308,6 +347,9 @@
         "description": "",
         "consumes": ["application/json"],
         "produces": ["application/json"],
+        "security": [{
+          "AuthToken": []
+        }],
         "parameters": [
           {
             "in": "body",
@@ -335,6 +377,9 @@
         "description": "",
         "consumes": ["application/json"],
         "produces": ["application/json"],
+        "security": [{
+          "AuthToken": []
+        }],
         "parameters": [
           {
             "in": "path",
@@ -370,6 +415,9 @@
         "description": "",
         "consumes": ["application/json"],
         "produces": ["application/json"],
+        "security": [{
+          "AuthToken": []
+        }],
         "parameters": [
           {
             "in": "path",
@@ -1204,6 +1252,29 @@
         },
         "trip_type": {
           "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "passport": {
+          "type": "string"
+        },
+        "id_number": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string",
+          "default": "Male"
+        },
+        "marital_status": {
+          "type": "string",
+          "default": "Single"
         }
       }
     },

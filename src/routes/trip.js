@@ -8,6 +8,8 @@ import * as validation from '../validators/trip';
 import verifyAccessToken from '../middlewares/verifyToken';
 // eslint-disable-next-line import/no-named-as-default,import/no-named-as-default-member
 import tripRemember from '../middlewares/trip-remember';
+import user from '../validators/user';
+import { roles } from '../helpers/roles';
 
 const router = Router();
 
@@ -15,7 +17,7 @@ router.get('/', catcher(Trip.getAll));
 router.get('/search', catcher(validation.search), catcher(Trip.search));
 
 router.post("/", verifyAccessToken, tripRemember, trip.validate, catcher(Trip.create));
-router.get("/remember/latest", verifyAccessToken, catcher(Trip.LatestRemember));
+router.get("/remember/latest", verifyAccessToken, user.IsAllowed(roles.REQUESTER), catcher(Trip.LatestRemember));
 router
   .route('/:tripId')
   .get(catcher(Trip.getOne))
