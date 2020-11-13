@@ -82,7 +82,7 @@ const logout = () => {
         expect(res.body).to.have.property('message', 'Profile updated sucessfully');
         done(err);
       });
-  });
+  }).timeout(50000);
 
   it('should raise the validation error', (done) => {
     chai
@@ -105,7 +105,7 @@ const logout = () => {
         expect(res.body).to.have.property('error', 'father_name length must be at least 3 characters long');
         done(err);
       });
-  });
+  }).timeout(50000);
 
   it('should raise the image error', (done) => {
     chai
@@ -124,11 +124,13 @@ const logout = () => {
       .field('marital_status', "Single")
       .attach('profile_image',path.join(__dirname,'assets/user.js') )
       .end((err, res) => {
+        
         expect(res).to.have.status(400);
         expect(res.body).to.have.property('error', 'Profile Image has to be an image type');
+        
         done(err);
       });
-  });
+  }).timeout(50000);
 
   it('should be able to logout once is logged in', (done) => {
     chai

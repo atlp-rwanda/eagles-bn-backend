@@ -20,28 +20,38 @@ export default class userValidations {
     return next();
   }
 
-  static profileValidate(req, res, next) {
-    const auth = Joi.object({
-      birth_date: Joi.string().min(3),
-      preferred_language: Joi.string().min(3).max(20),
-      preferred_currency: Joi.string().min(3).max(20),
-      where_you_live: Joi.string().min(3).max(20).required(),
-      father_name: Joi.string().min(3).max(20),
-      mother_name: Joi.string().min(3).max(20),
-      gender: Joi.string().min(3).max(20).required(),
-      profile_image: Joi.any(),
-      phone_number: Joi.string().min(10).max(14),
-      nationality: Joi.string().min(3).max(20).required(),
-      marital_status: Joi.string().min(3).max(20).required(),
-    });
-    const authError = auth.validate(req.body);
-    if (authError.error) {
-      return res.send({
-        error: authError.error.details[0].message.split('"').join(''),
-      });
+
+
+    static profileValidate(req,res,next){
+        try
+        {
+            const auth = Joi.object({
+                birth_date:Joi.string().min(3),
+                preferred_language:Joi.string().min(3).max(20),
+                preferred_currency:Joi.string().min(3).max(20),
+                where_you_live:Joi.string().min(3).max(20).required(),
+                father_name:Joi.string().min(3).max(20),
+                mother_name:Joi.string().min(3).max(20),
+                gender:Joi.string().min(3).max(20).required(),
+                profile_image:Joi.any(),
+                phone_number:Joi.string().min(10).max(14),
+                nationality:Joi.string().min(3).max(20).required(),
+                marital_status:Joi.string().min(3).max(20).required(),
+                role:Joi.string().min(3).max(20),
+                manager:Joi.string().min(3).max(20)
+            })
+            const authError=auth.validate(req.body);
+            if(authError.error){
+                return res.send({error:authError.error.details[0].message.split('"').join('')})
+            }
+            return next()
+        }
+        catch(err)
+        {
+            return res.status(500).send({err:err})
+        }
     }
-    return next();
-  }
+
 
   static verifyToken(req, res, next) {
     try {

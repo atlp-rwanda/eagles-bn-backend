@@ -30,5 +30,7 @@ router.delete(
   user.IsAllowed(roles.ADMIN),
   catcher(AccomodationController.destroy)
 );
+router.post("/:id/like", verifyAccessToken, AccomodationController.like);
+router.post("/:id/feedback", verifyAccessToken, AccomodationController.feedback);
 
 export default router;
