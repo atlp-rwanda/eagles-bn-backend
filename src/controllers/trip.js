@@ -71,7 +71,7 @@ export default class Trip {
     for (const by in req.query) {
       let query = req.query[by];
       if (by === 'from' || by === 'to' || by === 'requester_id') {
-        query = +query;
+        query = parseInt(query, 10);
         queries.push({ [by]: query });
       } else {
         queries.push({ [by]: { [Op.like]: `%${query}%` } });
