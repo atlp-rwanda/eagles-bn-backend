@@ -1,19 +1,20 @@
 /* eslint-disable linebreak-style */
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import mailgun from 'mailgun-js';
-import dotenv from 'dotenv';
-import { encryptPassword, verifyLink } from '../helpers';
-import { User as _user } from '../database/models/index';
-import { onError, onSuccess } from '../utils/response';
-import { signToken } from '../helpers/auth';
-import signAccessToken from '../helpers/jwt_helper';
-import client from '../config/redis_config';
-import { roleEntryValidation } from '../helpers/file-uploader';
-import { managers } from '../helpers/managers';
-import { roles } from '../helpers/roles';
-import _, { result } from 'lodash';
-import cloudinary from 'cloudinary';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import mailgun from "mailgun-js";
+import dotenv from "dotenv";
+import { encryptPassword, verifyLink } from "../helpers";
+import { User as _user } from "../database/models/index";
+import { onError, onSuccess } from "../utils/response";
+import { signToken } from "../helpers/auth";
+import signAccessToken from "../helpers/jwt_helper";
+import client from "../config/redis_config";
+import { roleEntryValidation } from '../helpers/file-uploader'
+import { managers } from '../helpers/managers'
+import { roles } from '../helpers/roles'
+import _, { result } from "lodash";
+// import cloudinary from 'cloudinary';
+import {cloudinaryUpload} from '../helpers/cloudinary-upload';
 
 dotenv.config();
 
@@ -21,13 +22,6 @@ const { DOMAIN_NAME } = process.env;
 const mg = mailgun({
   apiKey: process.env.MAILGUN_API_KEY,
   domain: DOMAIN_NAME,
-});
-// const DOMAIN = "sandbox2a5a88ce88af4fc8a90005f49041a655.mailgun.org";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export default class UserController {
@@ -228,52 +222,58 @@ export default class UserController {
     }
   }
 
-  static async userProfile(req, res) {
-    const { user } = req;
-    const image = req.files.profile_image;
-    if (image.type.split('/')[0] != 'image') {
+  static async userProfile (req, res) {
+    try{
+    const {user}=req
+    const image=req.files.profile_image
+    if(image.type.split('/')[0]!="image")
+    {
       return onError(res, 400, 'Profile Image has to be an image type');
     }
-    await cloudinary.uploader.upload(image.path, function (result, error) {
-      if (error) {
-        return onError(res, 500, 'Internal server error');
-      }
+    const imageUrl=await cloudinaryUpload(image.path)
       const {
-        birth_date,
-        preferred_language,
-        preferred_currency,
-        where_you_live,
-        father_name,
-        mother_name,
-        phone_number,
-        nationality,
-        marital_status,
-        gender,
-      } = req.body;
+          birth_date,
+          preferred_language,
+          preferred_currency,
+          where_you_live,
+          father_name,
+          mother_name,
+          phone_number,
+          nationality,
+          marital_status,
+          gender,
+          role,
+          manager
+        }=req.body;
 
-      const updatedUser = _user
-        .update(
-          {
-            birth_date,
-            preferred_language,
-            preferred_currency,
-            where_you_live,
-            father_name,
-            mother_name,
-            gender,
-            phone_number,
-            nationality,
-            marital_status,
-            profile_image: result.url,
-          },
-          { where: { id: user.id } }
-        )
-        .then((data) => {
+        const updatedUser= _user.update({ 
+          birth_date,
+          preferred_language,
+          preferred_currency,
+          where_you_live,
+          father_name,
+          mother_name,
+          gender,
+          phone_number,
+          nationality,
+          marital_status,
+          profile_image:imageUrl,
+          role,
+          manager
+        },
+        { where: { id: user.id }  })
+        .then((data)=>{
           return onSuccess(res, 201, 'Profile updated sucessfully');
         })
-        .catch((err) => {
+        .catch((err)=>{
           return onError(res, 500, 'Internal server error');
-        });
-    });
-  }
+        })
+      }
+      catch(err){
+        console.log("In try and catch funct", err)
+        return onError(res, 500, 'Internal server error');
+
+      }
+        
+}
 }

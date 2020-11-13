@@ -1207,6 +1207,139 @@
         }
       }
     },
+
+        "/accommodations/{id}/like": {
+            "post": {
+                "tags": ["Accommodations"],
+                "summary": "Like an Accommodation ",
+                "description": "",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+        
+                "parameters": [
+                {
+                    "in": "header",
+                    "name": "auth-token",
+                    "type": "string",
+                    "required": true,
+                    "description": "from logIn endpoint"
+                },
+        
+                {
+                    "in": "path",
+                    "name": "id",
+                    "type": "integer",
+                    "required": true,
+                    "description": ""
+                }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "You liked an accommodation Successfully!"
+                    },
+                    "400": {
+                        "description": "Accommodation you provided doesn't exist!"
+                    },
+                    "500": {
+                        "description": "Internal  error!"
+                    }
+                }
+            }
+        },
+
+        "/accommodations/{id}/feedback": {
+            "post": {
+                "tags": ["Accommodations"],
+                "summary": "Give feedback on Accommodation ",
+                "description": "",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+        
+                "parameters": [
+                {
+                    "in": "header",
+                    "name": "auth-token",
+                    "type": "string",
+                    "required": true,
+                    "description": "from logIn endpoint"
+                },
+        
+                {
+                    "in": "path",
+                    "name": "id",
+                    "type": "integer",
+                    "required": true,
+                    "description": ""
+                },
+                {
+                    "in": "formdata",
+                    "name": "body",
+                    "schema": { "$ref": "#/definitions/feedback" },
+                    "required": true
+                }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "You commented on Accommodation Successfully!"
+                    },
+                    "400": {
+                        "description": " provided Accommodation doesn't exist!"
+                    },
+                    "403":{
+                        "description":"Forbidden"
+                    },
+                    "500": {
+                        "description": "Internal  error!"
+                    }
+                }
+            }
+        },
+
+
+        "/trips/{id}/comment": {
+            "post": {
+                "tags": ["Trips"],
+                "summary": "Create a comment on trip request ",
+                "description": "",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+        
+                "parameters": [
+                {
+                    "in": "header",
+                    "name": "auth-token",
+                    "type": "string",
+                    "required": true,
+                    "description": "from logIn endpoint"
+                },
+        
+                {
+                    "in": "path",
+                    "name": "id",
+                    "type": "integer",
+                    "required": true,
+                    "description": "get it from trip table"
+                },
+                {
+                    "in": "body",
+                    "name": "body",
+                    "schema": { "$ref": "#/definitions/comment" },
+                    "required": true
+                }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "You created a comment Successfully!"
+                    },
+                    "400": {
+                        "description": "TripId you provided doesn't exist!"
+                    },
+                    "500": {
+                        "description": "Internal  error!"
+                    }
+                }
+            }
+        },
     "emailVerification": {
       "properties": {
         "isConfirmed": { "type": "Boolean" }
@@ -1266,6 +1399,14 @@
         }
       }
     },
+    "feedback":{
+      "required": ["feedback"],
+      "properties": {
+          "feedback": {
+              "type": "string"
+          }
+      }
+  },
     "Bookings": {
       "type": "object",
       "properties": {

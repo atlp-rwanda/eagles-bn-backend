@@ -5,6 +5,8 @@ import { accommodations } from "./accommodation.data";
 import signAccessToken from '../../helpers/jwt_helper';
 import models from '../../database/models';
 import { fakeCredentials } from '../mock-user.data';
+import { rooms } from '../room/room.data';
+import {mockTrip} from './trip.data'
 
 const chaiHttp = require("chai-http");
 
@@ -17,6 +19,7 @@ const accommodationTest = () => {
     before(async () => {
       const createdUser = await models.User.create(fakeCredentials);
       token = signAccessToken(createdUser.dataValues);
+      
     });
     after(async () => {
       await models.User.destroy({ where: { email: fakeCredentials.email } });
@@ -135,6 +138,115 @@ const accommodationTest = () => {
         });
     })
       .timeout(50000);
+
+
+      it("It should like with valid accommodation ID and token.", (done) => {
+        chai.request(app)
+          .post(`${route}/${accommodationId}/like`)
+          .set("auth-token", token)
+          .end((err, res) => {
+            expect(res)
+              .to
+              .have
+              .status(201);
+            done();
+          });
+      });
+      it("It should Unlike When the user liked for the second time.", (done) => {
+        chai.request(app)
+          .post(`${route}/${accommodationId}/like`)
+          .set("auth-token", token)
+          .end((err, res) => {
+            expect(res)
+              .to
+              .have
+              .status(201);
+            done();
+          });
+      });
+    
+      it("User shouldn't be able to provide feedback without wrong accommodation ID.", (done) => {
+        chai.request(app)
+        .post(`/api/accommodation/${accommodationId}/rooms`)
+        .set("auth-token", token)
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .field('price', rooms.valid.price)
+        .field('details', rooms.valid.details)
+        .attach('images', 'public/test_image.png')
+        .end((error, response)=>{
+          chai.request(app)
+          .post(`${route}/1234/feedback`)
+          .set("auth-token", token)
+          .send({
+            feedback:"An EndPoint  to register a record when a user likes the Accommodatio"
+          }).end((err, res) => {
+            console.log("************************************* ", res.body)
+            expect(res)
+              .to
+              .have
+              .status(404);
+            done();
+          });
+        });
+    });  
+
+      it("User shouldn't be able to provide feedback without a trip.", (done) => {
+        chai.request(app)
+        .post(`/api/accommodation/${accommodationId}/rooms`)
+        .set("auth-token", token)
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .field('price', rooms.valid.price)
+        .field('details', rooms.valid.details)
+        .attach('images', 'public/test_image.png')
+        .end((error, response)=>{
+          chai.request(app)
+          .post(`${route}/${accommodationId}/feedback`)
+          .set("auth-token", token)
+          .send({
+            feedback:"An EndPoint  to register a record when a user likes the Accommodatio"
+          }).end((err, res) => {
+            console.log("************************************* ", res.body)
+            expect(res)
+              .to
+              .have
+              .status(403);
+            done();
+          });
+        });
+    });  
+
+      it("User shouldn't be able to provide feedback on with pending trip.", (done) => {
+        chai.request(app)
+        .post(`/api/accommodation/${accommodationId}/rooms`)
+        .set("auth-token", token)
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .field('price', rooms.valid.price)
+        .field('details', rooms.valid.details)
+        .attach('images', 'public/test_image.png')
+        .end((error, response)=>{
+          chai.request(app)
+          .post("/api/trips")
+          .set("auth-token", token)
+          .send(mockTrip)
+          .end((erro, respon)=>{
+          chai.request(app)
+          .post(`${route}/${accommodationId}/feedback`)
+          .set("auth-token", token)
+          .send({
+            feedback:"An EndPoint  to register a record when a user likes the Accommodatio"
+          }).end((err, res) => {
+            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ", res.body)
+            expect(res)
+              .to
+              .have
+              .status(404);
+            done();
+          });
+        });
+      });
+    });
+
+    
     it("It should not create accommodation with no token", (done) => {
       chai.request(app)
         .post(route)
@@ -210,6 +322,11 @@ const accommodationTest = () => {
           done();
         });
     });
+
+  
+    
+
+
   });
 };
 export default accommodationTest;
