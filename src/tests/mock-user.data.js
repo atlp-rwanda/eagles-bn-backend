@@ -9,3 +9,12 @@ export const fakeCredentials = {
   manager: "Doe",
   password: "test1234",
 };
+export const fakeRequesterCredentials = {
+  first_name: "Fake",
+  last_name: "User",
+  email: "fakerequester@gmail.com",
+  role: roles.REQUESTER,
+  manager: "Doe",
+  password: "test1234",
+  remember_travel: true
+};

@@ -1,5 +1,5 @@
 import multer from "multer";
-import Joi from 'joi'
+import Joi from 'joi';
 import { cloudinaryUpload } from './cloudinary-upload';
 
 export const imagesUpload = async (req) => {

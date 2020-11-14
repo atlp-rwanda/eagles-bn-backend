@@ -1,101 +1,121 @@
-import chai, { expect } from 'chai';
-import { it, after } from 'mocha';
-import chaiHttp from 'chai-http';
-import signAccessToken from '../helpers/jwt_helper';
-import app from '../index';
-import { Trips } from '../database/models';
+import chai, { expect } from "chai";
+import { it, after, before } from "mocha";
+import chaiHttp from "chai-http";
+import signAccessToken from "../helpers/jwt_helper";
+import app from "../index";
+import { Trips, User } from "../database/models";
+import { fakeRequesterCredentials } from './mock-user.data';
 
 chai.use(chaiHttp);
-
+let token;
+let tripID;
+let rememberOffToken;
 export default () => {
   const mockTrip = {
     from: 1,
     to: [2],
-    departure_date: '2020-11-02T12:32:53.258Z',
-    return_date: '2020-11-12T12:32:53.258Z',
-    reasons: 'trabajo en el mundogjyjb6ts',
+    departure_date: "2020-11-02T12:32:53.258Z",
+    return_date: "2020-11-12T12:32:53.258Z",
+    reasons: "trabajo en el mundogjyjb6ts",
     accommodation_id: 1,
-    trip_type: 'return trip',
+    trip_type: "return trip",
+    name: "Alain",
+    email: "alainmucyo3@gmail.com",
+    passport: "1233333",
+    id_number: "22222222",
+    phone: "+2507888888",
+    gender: "Male",
+    marital_status: "Single"
   };
-  after(async () => {
-    await Trips.destroy({ where: mockTrip });
+  before(async () => {
+    await Trips.destroy({ where: { email: mockTrip.email } });
+    await User.destroy({ where: { password: fakeRequesterCredentials.password } });
+    const { dataValues: user } = await User.create(fakeRequesterCredentials);
+    token = await signAccessToken(user);
+    const { dataValues: rememberUser } = await User.create({ ...fakeRequesterCredentials, email: "alainmucyo@gmail.com", remember_travel: false });
+    rememberOffToken = await signAccessToken(rememberUser);
+    await Trips.create({ ...mockTrip, reasons: "Hello", requester_id: user.id });
   });
-  it('creates a trip', async () => {
-    const token = await signAccessToken({ id: 3, email: 'fake@gmail.com' });
+  after(async () => {
+    await Trips.destroy({ where: { email: mockTrip.email } });
+    await User.destroy({ where: { password: fakeRequesterCredentials.password } });
+  });
+  it("creates a trip", async () => {
     const res = await chai
       .request(app)
-      .post('/api/trips')
-      .set('auth-token', token)
+      .post("/api/trips")
+      .set("auth-token", token)
       .send(mockTrip);
-
-    expect(res).to.have.property('status', 201);
+    tripID = res.body.data.id;
+    expect(res).to.have.property("status", 201);
   });
   it("fail to create a trip if null 'from' location (validations)", async () => {
-    const token = await signAccessToken({ id: 3, email: 'fake@gmail.com' });
     const res2 = await chai
       .request(app)
-      .post('/api/trips')
-      .set('auth-token', token)
+      .post("/api/trips")
+      .set("auth-token", token)
       .send({ ...mockTrip, from: null });
 
-    expect(res2).to.have.property('status', 400);
+    expect(res2).to.have.property("status", 400);
   });
-  it('updates a trip', async () => {
-    const token = await signAccessToken({ id: 1, email: 'fake@gmail.com' });
+  it("updates a trip", async () => {
     const res = await chai
       .request(app)
-      .patch('/api/trips/1')
-      .set('auth-token', token)
+      .patch(`/api/trips/${tripID}`)
+      .set("auth-token", token)
       .send({ from: 4 });
 
-    expect(res).to.have.property('status', 200);
-    expect(res.body.data).to.have.property('from', 4);
+    expect(res).to.have.property("status", 200);
+    expect(res.body.data).to.have.property("from", 4);
   });
-  it('fail to update a trip on invalid id', async () => {
-    const token = await signAccessToken({ id: 1, email: 'fake@gmail.com' });
+  it("fail to update a trip on invalid id", async () => {
     const res = await chai
       .request(app)
-      .patch('/api/trips/0')
-      .set('auth-token', token)
+      .patch("/api/trips/0")
+      .set("auth-token", token)
       .send({ from: 4 });
 
-    expect(res).to.have.property('status', 404);
+    expect(res).to.have.property("status", 404);
   });
-  it('fail to update a trip on invalid data', async () => {
-    const token = await signAccessToken({ id: 1, email: 'fake@gmail.com' });
+  it("fail to update a trip on invalid data", async () => {
     const res = await chai
       .request(app)
-      .patch('/api/trips/1')
-      .set('auth-token', token)
+      .patch(`/api/trips/${tripID}`)
+      .set("auth-token", token)
       .send({ from: false });
 
-    expect(res).to.have.property('status', 400);
+    expect(res).to.have.property("status", 400);
   });
-  it('gets all your trips', async () => {
-    const token = await signAccessToken({ id: 1, email: 'fake@gmail.com' });
+  it("gets all your trips", async () => {
     const res = await chai
       .request(app)
-      .get('/api/trips')
-      .set('auth-token', token);
+      .get("/api/trips")
+      .set("auth-token", token);
 
-    expect(res).to.have.property('status', 200);
+    expect(res).to.have.property("status", 200);
 
     // Must fail because of null id
-    const token2 = await signAccessToken({ email: 'fake@gmail.com' });
+    const token2 = await signAccessToken({ email: "fake@gmail.com" });
     const res2 = await chai
       .request(app)
-      .get('/api/trips')
-      .set('auth-token', token2);
+      .get("/api/trips")
+      .set("auth-token", token2);
 
-    expect(res2).to.have.property('status', 500);
+    expect(res2).to.have.property("status", 500);
+  });
+  it("gets your trip", async () => {
+    const res = await chai
+      .request(app)
+      .get(`/api/trips/${tripID}`)
+      .set("auth-token", token);
+
+    expect(res).to.have.property("status", 200);
   });
   it('search through your trips', async () => {
-    const token = await signAccessToken({ id: 1, email: 'fake@gmail.com' });
     const res = await chai
       .request(app)
       .get('/api/trips/search?from=1&status=way')
       .set('auth-token', token);
-    // console.log(res.body);
     expect(res).to.have.property('status', 200);
   });
   it('fail to search through your trips on fake query', async () => {
@@ -107,40 +127,45 @@ export default () => {
 
     expect(res2).to.have.property('status', 400);
   });
-  it('gets your trip', async () => {
-    const token = await signAccessToken({ id: 1, email: 'fake@gmail.com' });
+  it("gets latest remember trip", async () => {
     const res = await chai
       .request(app)
-      .get('/api/trips/1')
-      .set('auth-token', token);
+      .get(`/api/trips/remember/latest`)
+      .set("auth-token", token);
 
-    expect(res).to.have.property('status', 200);
+    expect(res).to.have.property("status", 200);
   });
-  it('fails to get undefined trip', async () => {
-    const token = await signAccessToken({ id: 1, email: 'fake@gmail.com' });
+  it("fail to get latest remember trip when remember is off", async () => {
+    const res = await chai
+      .request(app)
+      .get(`/api/trips/remember/latest`)
+      .set("auth-token", rememberOffToken);
+
+    expect(res).to.have.property("status", 400);
+  });
+  it("fails to get undefined trip", async () => {
     const res2 = await chai
       .request(app)
-      .get('/api/trips/undefined')
-      .set('auth-token', token);
+      .get("/api/trips/undefined")
+      .set("auth-token", token);
 
-    expect(res2).to.have.property('status', 500);
+    expect(res2).to.have.property("status", 500);
   });
-  it('fails to get a trip on invalid id', async () => {
-    const token = await signAccessToken({ id: 1, email: 'fake@gmail.com' });
+  it("fails to get a trip on invalid id", async () => {
     const res2 = await chai
       .request(app)
-      .get('/api/trips/0')
-      .set('auth-token', token);
+      .get("/api/trips/0")
+      .set("auth-token", token);
 
-    expect(res2).to.have.property('status', 404);
+    expect(res2).to.have.property("status", 404);
   });
-  it('fails to get a trip if not owner', async () => {
-    const token = await signAccessToken({ id: 0, email: 'fake@gmail.com' });
+  it("fails to get a trip if not owner", async () => {
+    const token2 = await signAccessToken({ id: 11111, email: "hello@gmail.com" });
     const res2 = await chai
       .request(app)
-      .get('/api/trips/1')
-      .set('auth-token', token);
+      .get(`/api/trips/${tripID}`)
+      .set("auth-token", token2);
 
-    expect(res2).to.have.property('status', 403);
+    expect(res2).to.have.property("status", 403);
   });
 };

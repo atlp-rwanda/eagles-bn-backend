@@ -15,26 +15,13 @@ router.use('/', authRoutes);
   userValidation.verifyToken,
   User.emailVerification
 );
-router.post('/login', User.login);
-router.post('/forgetPassword', User.forgetPassword);
-router.post('/logout', verifyAccessToken, User.logout);
-router.put('/resetPassword/:token/:email', User.resetPassword);
-router.get('/test-auth', verifyAccessToken, (req, res) => res.sendStatus(200));
-router.put(
-  '/roles/:id',
-  verifyAccessToken,
-  userValidation.isSuperAdmin(roles.SUPER_ADMIN),
-  User.changeRoles
-);
-router.post(
-  '/signup',
-  catcher(userValidation.signUpValidation),
-  User.userSignUp
-);
-router.patch(
-  '/profile',
-  verifyAccessToken,
-  catcher(userValidation.profileValidate),
-  User.userProfile
-);
+router.post("/login", User.login);
+router.post("/forgetPassword", User.forgetPassword);
+router.post("/logout", verifyAccessToken, User.logout);
+router.put("/resetPassword/:token/:email", User.resetPassword);
+router.get("/test-auth", verifyAccessToken, (req, res) => res.sendStatus(200));
+router.put('/roles/:id', verifyAccessToken, userValidation.isSuperAdmin(roles.SUPER_ADMIN), User.changeRoles);
+router.post('/signup', userValidation.signUpValidation, User.userSignUp);
+router.patch('/profile', verifyAccessToken, userValidation.profileValidate, User.userProfile);
+router.put('/remember-travel', verifyAccessToken, catcher(User.RememberTravel));
 export default router;

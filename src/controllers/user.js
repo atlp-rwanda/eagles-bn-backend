@@ -3,18 +3,18 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mailgun from "mailgun-js";
 import dotenv from "dotenv";
+import _, { result } from "lodash";
 import { encryptPassword, verifyLink } from "../helpers";
 import { User as _user } from "../database/models/index";
 import { onError, onSuccess } from "../utils/response";
 import { signToken } from "../helpers/auth";
 import signAccessToken from "../helpers/jwt_helper";
 import client from "../config/redis_config";
-import { roleEntryValidation } from '../helpers/file-uploader'
-import { managers } from '../helpers/managers'
-import { roles } from '../helpers/roles'
-import _, { result } from "lodash";
+import { roleEntryValidation } from '../helpers/file-uploader';
+import { managers } from '../helpers/managers';
+import { roles } from '../helpers/roles';
 // import cloudinary from 'cloudinary';
-import {cloudinaryUpload} from '../helpers/cloudinary-upload';
+import { cloudinaryUpload } from '../helpers/cloudinary-upload';
 
 dotenv.config();
 
@@ -26,7 +26,9 @@ const mg = mailgun({
 
 export default class UserController {
   static async userSignUp(req, res) {
-    const { first_name, last_name, email, password } = req.body;
+    const {
+      first_name, last_name, email, password
+    } = req.body;
     const foundUser = await _user.findOne({ where: { email } });
     if (foundUser) {
       return res.status(403).json({ error: 'Email is already in use' });
@@ -122,8 +124,7 @@ export default class UserController {
         req.params.token,
         foundUser.password
       );
-      if (!useremail)
-        return res.status(404).json({ message: 'user not email not found' });
+      if (!useremail) return res.status(404).json({ message: 'user not email not found' });
       await _user.update({ password }, { where: { email: useremail } });
       res.status(200).json({
         success: true,
@@ -221,59 +222,56 @@ export default class UserController {
       return onError(res, 500, 'Internal server error');
     }
   }
-
-  static async userProfile (req, res) {
-    try{
-    const {user}=req
-    const image=req.files.profile_image
-    if(image.type.split('/')[0]!="image")
-    {
-      return onError(res, 400, 'Profile Image has to be an image type');
-    }
-    const imageUrl=await cloudinaryUpload(image.path)
+  static async RememberTravel(req, res) {
+    const { id: userId } = req.user;
+    const { dataValues: user } = await _user.findByPk(userId);
+    _user.update({ remember_travel: !user.remember_travel }, { where: { id: userId } });
+    return onSuccess(res, 200, `Remember status updated to ${!user.remember_travel ? "yes" : "no"}`);
+  }
+  static async userProfile(req, res) {
+    try {
+      const { user } = req;
+      const image = req.files.profile_image;
+      if (image.type.split('/')[0] != "image") {
+        return onError(res, 400, 'Profile Image has to be an image type');
+      }
+      const imageUrl = await cloudinaryUpload(image.path);
       const {
-          birth_date,
-          preferred_language,
-          preferred_currency,
-          where_you_live,
-          father_name,
-          mother_name,
-          phone_number,
-          nationality,
-          marital_status,
-          gender,
-          role,
-          manager
-        }=req.body;
+        birth_date,
+        preferred_language,
+        preferred_currency,
+        where_you_live,
+        father_name,
+        mother_name,
+        phone_number,
+        nationality,
+        marital_status,
+        gender,
+        role,
+        manager
+      } = req.body;
 
-        const updatedUser= _user.update({ 
-          birth_date,
-          preferred_language,
-          preferred_currency,
-          where_you_live,
-          father_name,
-          mother_name,
-          gender,
-          phone_number,
-          nationality,
-          marital_status,
-          profile_image:imageUrl,
-          role,
-          manager
-        },
-        { where: { id: user.id }  })
-        .then((data)=>{
-          return onSuccess(res, 201, 'Profile updated sucessfully');
-        })
-        .catch((err)=>{
-          return onError(res, 500, 'Internal server error');
-        })
-      }
-      catch(err){
-        console.log("In try and catch funct", err)
-        return onError(res, 500, 'Internal server error');
-
-      }
-        
-}
+      const updatedUser = _user.update({
+        birth_date,
+        preferred_language,
+        preferred_currency,
+        where_you_live,
+        father_name,
+        mother_name,
+        gender,
+        phone_number,
+        nationality,
+        marital_status,
+        profile_image: imageUrl,
+        role,
+        manager
+      },
+      { where: { id: user.id } })
+        .then((data) => onSuccess(res, 201, 'Profile updated sucessfully'))
+        .catch((err) => onError(res, 500, 'Internal server error'));
+    } catch (err) {
+      console.log("In try and catch funct", err);
+      return onError(res, 500, 'Internal server error');
+    }
+  }
 }
