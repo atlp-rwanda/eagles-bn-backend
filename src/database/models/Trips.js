@@ -25,6 +25,9 @@ class Trips extends Sequelize.Model {
     models.Trips.hasMany(models.Comment, {
       foreignKey: "tripId",
     });
+    Trips.belongsTo(models.Accommodation, {
+      foreignKey: "accommodation_id"
+    });
   }
 
   static init(sequelize, DataTypes) {
