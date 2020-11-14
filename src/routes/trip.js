@@ -10,7 +10,7 @@ import verifyAccessToken from '../middlewares/verifyToken';
 import tripRemember from '../middlewares/trip-remember';
 import user from '../validators/user';
 import { roles } from '../helpers/roles';
-
+import tripStatusValidation from '../validators/tripStatus'
 const router = Router();
 
 router.get('/', catcher(Trip.getAll));
@@ -18,10 +18,11 @@ router.get('/search', catcher(validation.search), catcher(Trip.search));
 
 router.post("/", verifyAccessToken, tripRemember, trip.validate, catcher(Trip.create));
 router.get("/remember/latest", verifyAccessToken, user.IsAllowed(roles.REQUESTER), catcher(Trip.LatestRemember));
+router.patch("/status/:tripId", tripStatusValidation, trip.isManager, catcher(Trip.update));
 router
-  .route('/:tripId')
-  .get(catcher(Trip.getOne))
-  .patch(trip.validateUpdate, catcher(Trip.update));
+    .route('/:tripId')
+    .get(catcher(Trip.getOne))
+    .patch(trip.validateUpdate, catcher(Trip.update));
 
 // Comment routes
 router.post('/:id/comment', commentValidation, catcher(comment.createComment));

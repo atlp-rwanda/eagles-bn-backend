@@ -6,9 +6,9 @@ import swaggerUi from "swagger-ui-express";
 import passport from "passport";
 import swaggerDocument from "../swagger.json";
 import {
-  facebookStrategy,
-  googleStrategy,
-  // jwtStrategy,
+    facebookStrategy,
+    googleStrategy,
+    // jwtStrategy,
 } from "./config/passport";
 import routes from "./routes/index";
 import multipart from 'connect-multiparty';
