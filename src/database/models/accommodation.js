@@ -18,6 +18,18 @@ module.exports = (sequelize, DataTypes) => {
         as: "rooms",
         onDelete: "cascade"
       });
+      Accommodation.hasMany(models.Rating, {
+        foreignKey: "accommodation_id",
+        onDelete: "CASCADE"
+      });
+      Accommodation.hasMany(models.Trips, {
+        foreignKey: "accommodation_id",
+        onDelete: "CASCADE"
+      });
+      Accommodation.hasMany(models.Rating,{
+        foreignKey: "accommodation_id",
+        onDelete: "CASCADE"
+      });
     }
   }
   Accommodation.init({

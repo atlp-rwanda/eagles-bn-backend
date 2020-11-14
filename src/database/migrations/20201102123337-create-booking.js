@@ -16,13 +16,13 @@ module.exports = {
           key: "id"
         }
       },
+      accommodation_id: {
+        allowNull: true,
+        type: Sequelize.INTEGER,
+      },
       room_id: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Rooms',
-          key: "id"
-        }
       },
       check_in_date: {
         type: Sequelize.DATE
