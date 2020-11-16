@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import models from '../database/models';
 import { NewError } from '../helpers/errors';
 import { imagesUpload } from '../helpers/file-uploader';
@@ -133,7 +134,7 @@ class Accommodation {
       console.log("======================Related trips:========================== ", relatedTrips);
       if (relatedTrips) {
         for (let i = 0; i < relatedTrips.length; i++) {
-          if (relatedTrips[i].status != "Approved") {
+          if (relatedTrips[i].status !== "Approved") {
             return res
               .status(404)
               .send({ message: `Your trip has to be approved first` });

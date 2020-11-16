@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import Router from "express";
 import { upload } from '../helpers/file-uploader';
 import RoomController from '../controllers/room';

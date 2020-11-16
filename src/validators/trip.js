@@ -1,4 +1,5 @@
-import Joi from 'joi';
+/* eslint-disable linebreak-style */
+import Joi from "joi";
 
 const tripValidation = (body) => {
   const tripValidationSchema = Joi.object({

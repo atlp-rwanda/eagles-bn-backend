@@ -47,7 +47,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       preferred_currency:{
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      notifyByEmail: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
       },
       birth_date:{
         type: Sequelize.DATE

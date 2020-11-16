@@ -1,10 +1,12 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable import/no-cycle */
 import models from '../database/models';
 
-async function createChat(user, message) {
-  const chat = await models.Chat.create({ userId: user.payload.id, message });
+export async function createChat(user, message) {
+  await models.Chat.create({ userId: user.payload.id, message });
 }
 
-async function getTheChats() {
+export async function getTheChats() {
   models.Chat.belongsTo(models.User, { foreignKey: 'userId' });
   return models.Chat.findAll({
     include: [models.User],
@@ -12,7 +14,7 @@ async function getTheChats() {
 }
 
 export default (io) => {
-  io.on('connection', (socket) => { 
+  io.on('connection', (socket) => {
     socket.on('msg', (data) => {
       const { user } = socket.request;
       console.log(user);

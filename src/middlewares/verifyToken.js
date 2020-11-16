@@ -22,6 +22,7 @@ const verifyAccessToken = async (req, res, next) => {
       }
     });
   } catch (error) {
+    console.log(error);
     return onError(res, 500, "Internal server error");
   }
 };

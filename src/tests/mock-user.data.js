@@ -16,5 +16,7 @@ export const fakeRequesterCredentials = {
   role: roles.REQUESTER,
   manager: "Doe",
   password: "test1234",
-  remember_travel: true
+  confirmPassword: 'test1234',
+  remember_travel: true,
+  notifyByEmail: true
 };

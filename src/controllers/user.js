@@ -27,7 +27,7 @@ const mg = mailgun({
 export default class UserController {
   static async userSignUp(req, res) {
     const {
-      first_name, last_name, email, password
+      first_name, last_name, email, password, role
     } = req.body;
     const foundUser = await _user.findOne({ where: { email } });
     if (foundUser) {
@@ -39,6 +39,7 @@ export default class UserController {
           first_name,
           last_name,
           email,
+          role
         },
         process.env.JWT_ACCOUNT_VEIRIFICATION,
         { expiresIn: '72h' }
@@ -234,7 +235,7 @@ export default class UserController {
     try {
       const { user } = req;
       const image = req.files.profile_image;
-      if (image.type.split('/')[0] != "image") {
+      if (image.type.split('/')[0] !== "image") {
         return onError(res, 400, 'Profile Image has to be an image type');
       }
       const imageUrl = await cloudinaryUpload(image.path);

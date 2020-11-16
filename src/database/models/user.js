@@ -4,6 +4,21 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
+      // define association here
+      User.hasMany(models.Notification, {
+        foreignKey: 'receiver',
+        as: 'notifications',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      User.hasMany(models.Trips, {
+        foreignKey: 'requester_id',
+        as: 'requester'
+      });
+      User.hasMany(models.Trips, {
+        foreignKey: 'manager_id',
+        as: 'managers'
+      });
       User.hasMany(models.Booking, {
         onDelete: 'CASCADE',
         foreignKey: "user_id"
@@ -61,7 +76,6 @@ module.exports = (sequelize, DataTypes) => {
     father_name: {
       type: DataTypes.STRING
     },
-
     mother_name: {
       type: DataTypes.STRING
     },
@@ -93,11 +107,14 @@ module.exports = (sequelize, DataTypes) => {
     remember_travel: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
-    }
+    },
+    notifyByEmail: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
   }, {
     sequelize,
     modelName: 'User',
-
   });
   return User;
 };

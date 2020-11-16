@@ -20,7 +20,6 @@
     </button>
     <script>
       var socket;
-
       function setUser() {
         const token = document.getElementById('auth-token').value;
         socket = io({ query: 'auth_token=' + token });

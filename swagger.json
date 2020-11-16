@@ -19,6 +19,10 @@
             "description": "Documentation of of BeareFoot Trips's operations"
         },
         {
+            "name": "Notification",
+            "description": "Documentation of of BeareFoot Notification's operations"
+        },
+        {
             "name": "Social Auth",
             "description": ""
         }
@@ -350,7 +354,7 @@
                 }
             }
         },
-        "/trips/status/{tripId}": {
+        "/trips/{tripId}/status/": {
             "patch": {
                 "tags": ["Trips"],
                 "security": [{
@@ -1309,7 +1313,126 @@
                     }
                 }
             }
-        }
+        },
+        "/notification/all":{
+            "get": {
+                "tags": ["Notification"],
+                "summary": "Get all notifications",
+                "description": "Get all notifications",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters":[
+                    {
+                        "in": "header",
+                        "name": "auth-token",
+                        "type": "string",
+                        "required": true
+                    }],
+                    "responses": {
+                      "200": {
+                        "description": "All Notifications Fetched Successfully!"
+                      },
+                      "401": {
+                          "description": "You are not allowed to perform this action"
+                      },
+                      "404": {
+                        "description": "No notification Yet!"
+                      },
+                      "500": {
+                        "description": "Internal Server error!"
+                      }
+                      }
+                    }
+                  },
+        "/notification/preferences":{
+            "patch": {
+                "tags": ["Notification"],
+                "summary": "Update notifications method for the User",
+                "description": "Update User notifications method",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters":[
+                    {
+                        "in": "header",
+                        "name": "auth-token",
+                        "type": "string",
+                        "required": true
+                    }],
+                    "responses": {
+                      "200": {
+                        "description": "Notifications method updated successfully!"
+                      },
+              
+                      "401": {
+                        "description": "You are not allowed to perform this action"
+                      },
+                      "500": {
+                        "description": "Internal Server error!"
+                      }
+                      }
+                    }
+                  },
+        "/notification/unread":{
+            "get": {
+                "tags": ["Notification"],
+                "summary": "Get unread notifications",
+                "description": "Get unread notifications",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters":[
+                    {
+                        "in": "header",
+                        "name": "auth-token",
+                        "type": "string",
+                        "required": true
+                      }],
+                      "responses": {
+                        "200": {
+                          "description": "Unread Notifications fetched successfully!"
+                        },
+                        "401": {
+                          "description": "You are not allowed to perform this action"
+                        },
+                        "404": {
+                          "description": "All notification readed"
+                        },
+                        "500": {
+                          "description": "Internal Server error!"
+                        }
+                      }
+                      }
+                      
+                    },  
+        "/notification/readall":{
+            "put": {
+                "tags": ["Notification"],
+                "summary": "mark notifications as read",
+                "description": "mark notifications as read",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters":[
+                    {
+                        "in": "header",
+                        "name": "auth-token",
+                        "type": "string",
+                        "required": true
+                    }],
+                    "responses": {
+                      "200": {"description": "All Notifications marked as read successfully!"
+                    },
+            
+                    "401": {
+                      "description": "You are not allowed to perform this action"
+                    },
+                    "400": {
+                      "description": "All notification are already marked as read"
+                    },
+                    "500": {
+                      "description": "Internal Server error!"
+                    }
+                  }
+                }
+              }
     },
     "securityDefinitions": {
         "AuthToken": {

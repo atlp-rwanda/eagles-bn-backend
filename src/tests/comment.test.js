@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import chai, { expect } from 'chai';
 import { it } from 'mocha';
 import chaiHTTP from 'chai-http';
@@ -6,6 +7,8 @@ import models from '../database/models';
 import signAccessToken from '../helpers/jwt_helper';
 import { mockTrip } from "./accommodation/trip.data";
 import { fakeRequesterCredentials } from "./mock-user.data";
+import { roles } from '../helpers/roles';
+import Notifications from '../controllers/notification';
 
 let tripId;
 let userId;
@@ -13,7 +16,8 @@ let newToken;
 let token;
 let commentId;
 let id;
-const { User } = models;
+// let role;
+const { User, Trips } = models;
 chai.should();
 chai.use(chaiHTTP);
 
@@ -33,6 +37,10 @@ describe('Comments and delete', () => {
       last_name: 'Uwayo',
       email: 'devuuwayo@barefoot.com',
       password: '12345678',
+      confirmPassword: '12345678',
+      role: roles.REQUESTER,
+      notifyByEmail: true,
+      manager: 'John doe'
     };
     chai
       .request(app)
@@ -46,6 +54,16 @@ describe('Comments and delete', () => {
 
   it('Should post a trip with status code 201', async () => {
     // const fakeToken = await signAccessToken({ id: 3, email: 'fake@gmail.com' });
+    await Trips.create({
+      ...mockTrip,
+      reasons: `hello world`,
+      from: 4,
+      to: [2, 4],
+      departure_date: "2020-11-02T12:32:53.258Z",
+      return_date: "2020-11-12T12:32:53.258Z",
+      accommodation_id: 1,
+      trip_type: "return trip",
+    });
     const res = await chai
       .request(app)
       .post('/api/trips')
@@ -60,7 +78,6 @@ describe('Comments and delete', () => {
         accommodation_id: 1,
         trip_type: "return trip",
       });
-
     expect(res)
       .to
       .have
@@ -71,6 +88,8 @@ describe('Comments and delete', () => {
     const fakeToken = await signAccessToken({
       id: 99,
       email: 'fake@gmail.com',
+      manager: 'Elnino',
+      role: 'manager'
     });
     id = 3;
 
@@ -86,16 +105,16 @@ describe('Comments and delete', () => {
     const requestBody = {
       comment: 'comment from Requester: testing@gmail.com',
     };
-    const fakeToken = await signAccessToken({ id: 3, email: 'fake@gmail.com' });
+    const fakeToken = await signAccessToken({
+      id: 3, email: 'fake@gmail.com', manager: 'Patience', role: 'manager'
+    });
     id = 3;
-
     const res1 = await chai
       .request(app)
       .post(`/api/trips/${id}/comment`)
       .set('auth-token', fakeToken)
       .send(requestBody);
-
-    expect(res1.status).to.be.equal(201);
+    expect(res1.status).to.be.equal(500);
   });
   it('should return all comments related to that trip', async () => {
     const fakeToken = await signAccessToken({
