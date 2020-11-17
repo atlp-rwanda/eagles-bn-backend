@@ -30,6 +30,11 @@ module.exports = {
       check_out_date: {
         type: Sequelize.DATE
       },
+      status: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        defaultValue: 'Pending'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

@@ -657,6 +657,91 @@
                 }
             }
         },
+        "/accommodations/{id}/like": {
+          "post": {
+              "tags": ["Accommodations"],
+              "summary": "Like an Accommodation ",
+              "description": "",
+              "consumes": ["application/json"],
+              "produces": ["application/json"],
+
+              "parameters": [{
+                      "in": "header",
+                      "name": "auth-token",
+                      "type": "string",
+                      "required": true,
+                      "description": "from logIn endpoint"
+                  },
+
+                  {
+                      "in": "path",
+                      "name": "id",
+                      "type": "integer",
+                      "required": true,
+                      "description": ""
+                  }
+              ],
+              "responses": {
+                  "201": {
+                      "description": "You liked an accommodation Successfully!"
+                  },
+                  "400": {
+                      "description": "Accommodation you provided doesn't exist!"
+                  },
+                  "500": {
+                      "description": "Internal  error!"
+                  }
+              }
+          }
+      },
+
+      "/accommodations/{id}/feedback": {
+          "post": {
+              "tags": ["Accommodations"],
+              "summary": "Give feedback on Accommodation ",
+              "description": "",
+              "consumes": ["application/x-www-form-urlencoded"],
+              "produces": ["application/json"],
+
+              "parameters": [{
+                      "in": "header",
+                      "name": "auth-token",
+                      "type": "string",
+                      "required": true,
+                      "description": "from logIn endpoint"
+                  },
+
+                  {
+                      "in": "path",
+                      "name": "id",
+                      "type": "integer",
+                      "required": true,
+                      "description": ""
+                  },
+                  {
+                      "in": "formdata",
+                      "name": "feedback",
+                      "schema": { "$ref": "#/definitions/feedback" },
+                      "required": true
+                  }
+              ],
+              "responses": {
+                  "201": {
+                      "description": "You commented on Accommodation Successfully!"
+                  },
+                  "400": {
+                      "description": " provided Accommodation doesn't exist!"
+                  },
+                  "403": {
+                      "description": "Forbidden"
+                  },
+                  "500": {
+                      "description": "Internal  error!"
+                  }
+              }
+          }
+      },
+
         "/accommodation/{accommodationID}/rooms": {
             "parameters": [{
                 "name": "accommodationID",
@@ -1086,6 +1171,44 @@
                 }
             }
         },
+        "/rooms/bookings/{id}": {
+            "put": {
+                "tags": ["Bookings"],
+                "summary": "Approve or Reject booking",
+                "description": "user Approve or regect if is manager and is owner if he/she logged in",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [{
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "auth-token",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Booking"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
+        },
         "/rooms/booking/{id}": {
             "delete": {
                 "tags": ["Bookings"],
@@ -1360,91 +1483,6 @@
             }
         },
 
-        "/accommodations/{id}/like": {
-            "post": {
-                "tags": ["Accommodations"],
-                "summary": "Like an Accommodation ",
-                "description": "",
-                "consumes": ["application/json"],
-                "produces": ["application/json"],
-
-                "parameters": [{
-                        "in": "header",
-                        "name": "auth-token",
-                        "type": "string",
-                        "required": true,
-                        "description": "from logIn endpoint"
-                    },
-
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "type": "integer",
-                        "required": true,
-                        "description": ""
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "You liked an accommodation Successfully!"
-                    },
-                    "400": {
-                        "description": "Accommodation you provided doesn't exist!"
-                    },
-                    "500": {
-                        "description": "Internal  error!"
-                    }
-                }
-            }
-        },
-
-        "/accommodations/{id}/feedback": {
-            "post": {
-                "tags": ["Accommodations"],
-                "summary": "Give feedback on Accommodation ",
-                "description": "",
-                "consumes": ["application/x-www-form-urlencoded"],
-                "produces": ["application/json"],
-
-                "parameters": [{
-                        "in": "header",
-                        "name": "auth-token",
-                        "type": "string",
-                        "required": true,
-                        "description": "from logIn endpoint"
-                    },
-
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "type": "integer",
-                        "required": true,
-                        "description": ""
-                    },
-                    {
-                        "in": "formdata",
-                        "name": "body",
-                        "schema": { "$ref": "#/definitions/feedback" },
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "You commented on Accommodation Successfully!"
-                    },
-                    "400": {
-                        "description": " provided Accommodation doesn't exist!"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "500": {
-                        "description": "Internal  error!"
-                    }
-                }
-            }
-        },
-
 
         "/trips/{id}/comment": {
             "post": {
@@ -1589,6 +1627,14 @@
                     "type": "string"
                 },
                 "check_out_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "Booking": {
+            "type": "object",
+            "properties": {
+                "status": {
                     "type": "string"
                 }
             }

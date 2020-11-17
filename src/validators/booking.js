@@ -14,4 +14,15 @@ export default class validatingSchema {
     }
     return next();
   }
+
+  static async validatingState(req, res, next) {
+    const validatingStatus = Joi.object({
+      status: Joi.string().valid('Rejected', 'Approved')
+    });
+    const { error } = validatingStatus.validate(req.body);
+    if (error) {
+      return onError(res, 400, error.details[0].message.split('"').join(''));
+    }
+    return next();
+  }
 }
