@@ -7,6 +7,8 @@ const signAccessToken = (userInfo) => {
     const payload = {
       id: userInfo.id,
       email: userInfo.email,
+      first_name: userInfo.first_name,
+      last_name: userInfo.last_name,
       role: userInfo.role
     };
     const token = jwt.sign({ payload }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
