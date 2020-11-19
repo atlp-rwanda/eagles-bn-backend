@@ -222,12 +222,14 @@ export default class UserController {
       return onError(res, 500, 'Internal server error');
     }
   }
+
   static async RememberTravel(req, res) {
     const { id: userId } = req.user;
     const { dataValues: user } = await _user.findByPk(userId);
     _user.update({ remember_travel: !user.remember_travel }, { where: { id: userId } });
     return onSuccess(res, 200, `Remember status updated to ${!user.remember_travel ? "yes" : "no"}`);
   }
+
   static async userProfile(req, res) {
     try {
       const { user } = req;

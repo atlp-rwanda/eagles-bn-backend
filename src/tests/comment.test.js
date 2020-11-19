@@ -52,7 +52,13 @@ describe('Comments and delete', () => {
       .set('auth-token', newToken)
       .send({
         ...mockTrip,
-        reasons: `hello againnn`
+        reasons: `hello againnn`,
+        from: 4,
+        to: [2, 4],
+        departure_date: "2020-11-02T12:32:53.258Z",
+        return_date: "2020-11-12T12:32:53.258Z",
+        accommodation_id: 1,
+        trip_type: "return trip",
       });
 
     expect(res)
