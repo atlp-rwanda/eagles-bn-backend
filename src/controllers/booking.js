@@ -1,4 +1,4 @@
-import { Booking as roomBooking } from '../database/models/index';
+import { Booking as roomBooking, Room } from '../database/models/index';
 import { onError, onSuccess } from '../utils/response';
 
 export default class RoomBooking {
@@ -6,9 +6,12 @@ export default class RoomBooking {
     try {
       const { check_in_date, check_out_date } = req.body;
       const user_id = req.user.id;
+      const { room_id } = req.params;
+      const { dataValues: room } = await Room.findByPk(room_id);
       const booking = await roomBooking.create({
         user_id,
-        room_id: req.params.room_id,
+        room_id,
+        accommodation_id: room.accommodation_id,
         check_in_date,
         check_out_date,
       });

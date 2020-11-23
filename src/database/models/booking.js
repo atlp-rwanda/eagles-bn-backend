@@ -22,7 +22,9 @@ module.exports = (sequelize, DataTypes) => {
     room_id: DataTypes.INTEGER,
     accommodation_id: DataTypes.INTEGER,
     check_in_date: DataTypes.DATE,
-    check_out_date: DataTypes.DATE
+    check_out_date: DataTypes.DATE,
+    status: DataTypes.ENUM("pending", "approved", "rejected"),
+    status_updated_at: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Booking',

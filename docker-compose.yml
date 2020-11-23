@@ -9,7 +9,7 @@ services:
     # volumes:
     #   - ./pgdata:/var/lib/postgresql/data
     ports:
-      - "5431:5432"
+      - "5432:5432"
 
   web:
     environment:
@@ -29,5 +29,17 @@ services:
     working_dir: /usr/app
     depends_on:
       - db
-    ports: [${PORT}=${PORT}]
+    ports:
+      - 4000:4000
     restart: always
+
+  redis_server:
+    image: redis:latest
+    container_name: redis_server
+    volumes:
+      - ./redis_data:/data
+    restart: always
+    expose:
+      - "6379"
+    ports:
+      - "6379:6379"

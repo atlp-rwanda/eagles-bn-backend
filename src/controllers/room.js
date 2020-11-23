@@ -5,7 +5,6 @@ import { imagesUpload } from '../helpers/file-uploader';
 class RoomController {
   static async index(req, res) {
     const { accommodation } = req.params;
-    // eslint-disable-next-line max-len
     const rooms = await models.Room.findAll({
       where: { accommodation_id: accommodation },
     });
