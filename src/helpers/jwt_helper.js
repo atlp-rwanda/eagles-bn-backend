@@ -9,7 +9,8 @@ const signAccessToken = (userInfo) => {
       email: userInfo.email,
       first_name: userInfo.first_name,
       last_name: userInfo.last_name,
-      role: userInfo.role
+      role: userInfo.role,
+      manager: userInfo.manager
     };
     const token = jwt.sign({ payload }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
     client.set(payload.id, token);

@@ -2,10 +2,10 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import { after } from "mocha";
+import path from 'path';
 import user from './assets/user';
 import { User } from "../database/models";
 import server from '../index';
-import path from  'path';
 
 const { expect } = chai;
 chai.use(chaiHttp);
@@ -36,7 +36,6 @@ const logout = () => {
     expect(res).to.have.status(200);
   });
 
-  
   it('should not update the profile without the token', (done) => {
     chai
       .request(server)
@@ -52,10 +51,10 @@ const logout = () => {
       .field('phone_number', "078999999999")
       .field('nationality', "Burundian")
       .field('marital_status', "Single")
-      .attach('profile_image',path.join(__dirname,'assets/girl.JPG') )
+      .attach('profile_image', path.join(__dirname, 'assets/girl.JPG'))
       .end((err, res) => {
         expect(res).to.have.status(401);
-        expect(res.body).to.have.property( "error", "Unauthorized");
+        expect(res.body).to.have.property("error", "Unauthorized");
         done(err);
       });
   });
@@ -76,7 +75,7 @@ const logout = () => {
       .field('phone_number', "078999999999")
       .field('nationality', "Burundian")
       .field('marital_status', "Single")
-      .attach('profile_image',path.join(__dirname,'assets/girl.JPG') )
+      .attach('profile_image', path.join(__dirname, 'assets/girl.JPG'))
       .end((err, res) => {
         expect(res).to.have.status(201);
         expect(res.body).to.have.property('message', 'Profile updated sucessfully');
@@ -99,7 +98,7 @@ const logout = () => {
       .field('phone_number', "078999999999")
       .field('nationality', "Burundian")
       .field('marital_status', "Single")
-      .attach('profile_image',path.join(__dirname,'assets/girl.JPG') )
+      .attach('profile_image', path.join(__dirname, 'assets/girl.JPG'))
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.have.property('error', 'father_name length must be at least 3 characters long');
@@ -122,12 +121,11 @@ const logout = () => {
       .field('phone_number', "078999999999")
       .field('nationality', "Burundian")
       .field('marital_status', "Single")
-      .attach('profile_image',path.join(__dirname,'assets/user.js') )
+      .attach('profile_image', path.join(__dirname, 'assets/user.js'))
       .end((err, res) => {
-        
         expect(res).to.have.status(400);
         expect(res.body).to.have.property('error', 'Profile Image has to be an image type');
-        
+
         done(err);
       });
   }).timeout(50000);
@@ -172,8 +170,7 @@ const logout = () => {
         expect(res).to.have.status(500);
         done(err);
       });
-  });  
-  
+  });
 };
 
 export default logout;

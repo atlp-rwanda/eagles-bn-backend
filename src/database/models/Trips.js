@@ -1,8 +1,7 @@
+/* eslint-disable linebreak-style */
 /* jshint indent: 2 */
 
 const Sequelize = require("sequelize");
-
-module.exports = (sequelize, DataTypes) => Trips.init(sequelize, DataTypes);
 
 class Trips extends Sequelize.Model {
   static associate(models) {
@@ -11,7 +10,7 @@ class Trips extends Sequelize.Model {
       foreignKey: "requester_id",
     });
     models.Trips.belongsTo(models.User, {
-      as: "manager",
+      as: "managers",
       foreignKey: "manager_id",
     });
     models.Trips.belongsTo(models.Location, {
@@ -24,6 +23,7 @@ class Trips extends Sequelize.Model {
     });
     models.Trips.hasMany(models.Comment, {
       foreignKey: "tripId",
+      as: 'Comments'
     });
     Trips.belongsTo(models.Accommodation, {
       foreignKey: "accommodation_id"
@@ -76,7 +76,7 @@ class Trips extends Sequelize.Model {
           allowNull: true,
         },
         reasons: {
-          type: DataTypes.STRING(255),
+          type: DataTypes.TEXT,
           allowNull: true,
           unique: "Trips_reasons_key",
         },
@@ -144,3 +144,5 @@ class Trips extends Sequelize.Model {
     return Trips;
   }
 }
+
+module.exports = (sequelize, DataTypes) => Trips.init(sequelize, DataTypes);

@@ -1,3 +1,5 @@
+/* eslint-disable linebreak-style */
 import EventEmitter from "events";
 
-export default new EventEmitter();
+const emitter = new EventEmitter();
+export default emitter;

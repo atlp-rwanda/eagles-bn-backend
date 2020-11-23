@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import app from "../index";
 
 import { User, User as _user } from "../database/models";
@@ -116,6 +117,17 @@ describe("User roles API", () => {
         done();
       });
   });
+  it("PUT /api/user/roles/:id It should return 400 if there is no request body", (done) => {
+    chai
+      .request(app)
+      .put(`/api/user/roles/3001`)
+      .set("auth-token", token)
+      .end((error, response) => {
+        if (error) return done(error);
+        response.should.have.status(400);
+        done();
+      });
+  });
 
   it("PUT /api/user/roles/:id It should return 404 on user role update", (done) => {
     const role = {
@@ -144,6 +156,21 @@ describe("User roles API", () => {
       .end((error, response) => {
         if (error) return done(error);
         response.should.have.status(401);
+        done();
+      });
+  });
+  it("PUT /api/user/roles/:id It should return 500 if something is not right", (done) => {
+    const role = {
+      role: "manager",
+    };
+    chai
+      .request(app)
+      .put(`/api/user/roles/1000`)
+      .set('auth-token', 'kkrje')
+      .send(role)
+      .end((error, response) => {
+        if (error) return done(error);
+        response.should.have.status(500);
         done();
       });
   });

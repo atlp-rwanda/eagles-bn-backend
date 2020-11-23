@@ -1,4 +1,7 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable import/no-cycle */
 import models from '../database/models';
+import Notifications from './notification';
 
 export default class Comment {
   static async getAllComments(req, res) {
@@ -33,6 +36,7 @@ export default class Comment {
         tripId,
         comment,
       });
+      await Notifications.sendNotification(`${saveComment.tripId}`, `Commented by ${req.user.role}`, res);
       return res.status(201).send({
         saveComment,
         message: `You Successfully commented on ${tripId}`,

@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* eslint-disable import/no-mutable-exports */
 import redis from 'redis';
 

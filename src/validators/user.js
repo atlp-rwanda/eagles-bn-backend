@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import Joi from 'joi';
@@ -33,7 +34,8 @@ export default class userValidations {
       nationality: Joi.string().min(3).max(20).required(),
       marital_status: Joi.string().min(3).max(20).required(),
       role: Joi.string().min(3).max(20),
-      manager: Joi.string().min(3).max(20) });
+      manager: Joi.string().min(3).max(20)
+    });
     const authError = auth.validate(req.body);
     if (authError.error) {
       return res.send({ error: authError.error.details[0].message.split('"').join('') });
@@ -43,7 +45,6 @@ export default class userValidations {
   static verifyToken(req, res, next) {
     try {
       const { token } = req.params;
-
       const decodedToken = jwt.verify(
         token,
         process.env.JWT_ACCOUNT_VEIRIFICATION
@@ -66,7 +67,7 @@ export default class userValidations {
 
   static isSuperAdmin(role) {
     return (req, res, next) => {
-      if (req.user.role != role) {
+      if (req.user.role !== role) {
         return res.status(403).send({ error: 'Not Allowed' });
       }
       next();
@@ -75,7 +76,7 @@ export default class userValidations {
 
   static IsAllowed(role) {
     return (req, res, next) => {
-      if (req.user.role != role) {
+      if (req.user.role !== role) {
         return res.status(403).send({ error: 'Not Allowed' });
       }
       next();

@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import chai, { expect } from "chai";
 import { it, after } from "mocha";
 import chaiHttp from "chai-http";
@@ -71,6 +72,14 @@ describe(` POST /api/accommodation Rating`, () => {
       .send(creatRating);
     expect(res).to.have.property("status", 200);
   });
+  it("it should return 500 if something went wrong", async () => {
+    const res = await chai
+      .request(app)
+      .post(`/api/accommodations/5/rating`)
+      .set('auth-token', 'fsjsjkk')
+      .send(creatRating);
+    expect(res).to.have.property("status", 500);
+  });
 
   it("it should not creates a rating with pending trip", async () => {
     const userData = await User.create(userInfo);
@@ -131,6 +140,16 @@ describe(` POST /api/accommodation Rating`, () => {
 
   it("it should not delete a rating for bad request", async () => {
     const userData = await User.create(userInfo);
+    const accessToken = await signAccessToken({ id: userData.id, email: 'real1@gmail.com', role: "request" });
+    const res = await chai
+      .request(app)
+      .delete(`/api/accommodations/ratings/1`)
+      .set('auth-token', accessToken);
+    expect(res).to.have.property("status", 403);
+  });
+  it("it should 403", async () => {
+    const userData = await User.create(userInfo);
+    await Trips.create(trip);
     const accessToken = await signAccessToken({ id: userData.id, email: 'real1@gmail.com', role: "request" });
     const res = await chai
       .request(app)

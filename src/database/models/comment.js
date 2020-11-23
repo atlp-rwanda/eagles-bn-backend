@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
@@ -5,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       comment.belongsTo(models.Trips, {
         foreignKey: "tripId",
+        as: 'Trips'
       });
     }
   }

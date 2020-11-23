@@ -1,26 +1,29 @@
 /* eslint-disable linebreak-style */
+/* eslint-disable import/no-cycle */
 import "@babel/polyfill";
 import express from "express";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import passport from "passport";
+import path from 'path';
+import multipart from 'connect-multiparty';
 import swaggerDocument from "../swagger.json";
 
 import {
-    facebookStrategy,
-    googleStrategy,
-    // jwtStrategy,
+  facebookStrategy,
+  googleStrategy,
+  // jwtStrategy,
 } from "./config/passport";
 import routes from "./routes/index";
-import multipart from 'connect-multiparty';
-var multipartMiddleware = multipart();
 import bookings from "./routes/booking";
-import rating from "./routes/rating"
-import accomodationRoutes from "./routes/accomodation";
-import roomRoutes from "./routes/room";
+
+import rating from "./routes/rating";
 import chat from './controllers/chat';
 import socketAuth from './middlewares/socketio.auth';
-import signAccessToken from './helpers/jwt_helper'
+import notification from './routes/notification';
+import socketHelper from './helpers/socketHelper';
+
+const multipartMiddleware = multipart();
 
 dotenv.config();
 const serverPort = process.env.PORT || 4000;
@@ -30,8 +33,7 @@ const io = require("socket.io")(http);
 // const http = require("http").Server(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(googleStrategy);
@@ -43,13 +45,21 @@ app.use("/api", routes);
 app.use("/api/user", routes);
 app.use("/api/rooms", bookings);
 app.use("/api/accommodations", rating);
+app.use('/api/notification', notification);
 app.get("/chatBot", (req, res) => {
   res.sendFile(`${__dirname}/chatBot.html`);
+});
+
+app.get('/notification', (req, res) => {
+  res.sendFile(path.resolve(`${__dirname}../../public/notification.html`));
 });
 io.on("connection", (socket) => {
   console.log("user connected");
   socket.on("chat message", (msg) => {
     io.emit("chat message", msg);
+  });
+  socket.on("notification", (data) => {
+    io.emit("notification", data);
   });
   socket.on("disconnect", () => {
     console.log("user disconnected");
@@ -57,10 +67,10 @@ io.on("connection", (socket) => {
 });
 io.use(socketAuth);
 chat(io);
-
+socketHelper(io);
+export { io };
 http.listen(
   serverPort,
   console.log(`Server has started on port ${serverPort}`)
 );
-
 export default app;

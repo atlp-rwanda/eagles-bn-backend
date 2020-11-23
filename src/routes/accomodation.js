@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import Router from 'express';
 import AccomodationController from '../controllers/accomodation';
 import accommodationValidator from '../middlewares/accommodation';
