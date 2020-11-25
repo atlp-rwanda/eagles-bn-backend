@@ -40,63 +40,54 @@ module.exports = {
         defaultValue: false,
         allowNull: false,
       },
-      birth_date:{
+      preferred_currency: {
+        type: Sequelize.STRING
+      },
+      birth_date: {
         type: Sequelize.DATE
       },
       preferred_language: {
         type: Sequelize.STRING
       },
-      preferred_currency:{
+      where_you_live: {
         type: Sequelize.STRING
       },
-      birth_date:{
-        type: Sequelize.DATE
+      profile_image: {
+        type: Sequelize.TEXT
       },
-      preferred_language: {
+      father_name: {
         type: Sequelize.STRING
       },
-      preferred_currency:{
+
+      mother_name: {
         type: Sequelize.STRING
       },
-      where_you_live:{
-          type: Sequelize.STRING
-        },
-      profile_image:{
-          type: Sequelize.TEXT
-        },
-        father_name:{
-          type: Sequelize.STRING
-        },
 
-        mother_name:{
-          type: Sequelize.STRING
-        },
+      phone_number: {
+        type: Sequelize.STRING
+      },
 
-        phone_number:{
-          type: Sequelize.STRING
-        },
+      nationality: {
+        type: Sequelize.STRING
+      },
 
-        nationality:{
-          type: Sequelize.STRING
-        },
-
-      marital_status:{
-          type: Sequelize.ENUM,
-          values: [
-            'Not specified',
-            'Single',
-            'Married',
-           ],
-           defaultValue: 'Single'
-        },
-        gender:{
-          type: Sequelize.ENUM,
-          values: [
+      marital_status: {
+        type: Sequelize.ENUM,
+        values: [
+          'Not specified',
+          'Single',
+          'Married',
+        ],
+        defaultValue: 'Single'
+      },
+      gender: {
+        type: Sequelize.ENUM,
+        values: [
           'Male',
           'Female',
         ],
         defaultValue: 'Female'
-        },
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

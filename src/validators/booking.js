@@ -7,6 +7,7 @@ export default class validatingSchema {
     const validatingDate = Joi.object({
       check_in_date: Joi.date().iso().min(Date()).required(),
       check_out_date: Joi.date().iso().min(Joi.ref('check_in_date')).required(),
+      redirect_url: Joi.string().required()
     });
     const { error } = validatingDate.validate(req.body);
     if (error) {

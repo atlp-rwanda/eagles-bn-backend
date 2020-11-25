@@ -1075,15 +1075,12 @@
                 "description": "user creating booking if he/she logged in",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
+                "security": [{
+                    "AuthToken": []
+                }],
                 "parameters": [{
                         "name": "room_id",
                         "in": "path",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "auth-token",
-                        "in": "header",
                         "required": true,
                         "type": "string"
                     },
@@ -1104,6 +1101,30 @@
                         "description": "Server error"
                     }
                 }
+            }
+        },
+        "/rooms/booking/transaction/{reference_id}/verify": {
+            "get": {
+              "summary": "Verify transaction status",
+                "tags": [
+                  "Bookings"
+                ],
+              "parameters": [
+                  {
+                      "name": "reference_id",
+                      "in": "path",
+                      "required": true,
+                      "type": "string"
+                  }
+              ],
+              "responses": {
+                "404": {
+                  "description": "Transaction not found"
+                },
+                  "200": {
+                    "description": "Transaction found"
+                  }
+              }
             }
         },
         "/rooms/{room_id}/bookings/": {
@@ -1589,6 +1610,9 @@
                     "type": "string"
                 },
                 "check_out_date": {
+                    "type": "string"
+                },
+                "redirect_url": {
                     "type": "string"
                 }
             }
