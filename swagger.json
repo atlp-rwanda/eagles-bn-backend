@@ -161,7 +161,7 @@
                 }],
                 "summary": "update user role",
                 "description": "updating user role if logged in as super admin",
-                "consumes": ["multipart/form-data"],
+                "consumes": ["application/json"],
                 "produces": ["application/json"],
                 "parameters": [{
                         "name": "id",
@@ -662,89 +662,89 @@
             }
         },
         "/accommodations/{id}/like": {
-          "post": {
-              "tags": ["Accommodations"],
-              "summary": "Like an Accommodation ",
-              "description": "",
-              "consumes": ["application/json"],
-              "produces": ["application/json"],
+            "post": {
+                "tags": ["Accommodations"],
+                "summary": "Like an Accommodation ",
+                "description": "",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
 
-              "parameters": [{
-                      "in": "header",
-                      "name": "auth-token",
-                      "type": "string",
-                      "required": true,
-                      "description": "from logIn endpoint"
-                  },
+                "parameters": [{
+                        "in": "header",
+                        "name": "auth-token",
+                        "type": "string",
+                        "required": true,
+                        "description": "from logIn endpoint"
+                    },
 
-                  {
-                      "in": "path",
-                      "name": "id",
-                      "type": "integer",
-                      "required": true,
-                      "description": ""
-                  }
-              ],
-              "responses": {
-                  "201": {
-                      "description": "You liked an accommodation Successfully!"
-                  },
-                  "400": {
-                      "description": "Accommodation you provided doesn't exist!"
-                  },
-                  "500": {
-                      "description": "Internal  error!"
-                  }
-              }
-          }
-      },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "type": "integer",
+                        "required": true,
+                        "description": ""
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "You liked an accommodation Successfully!"
+                    },
+                    "400": {
+                        "description": "Accommodation you provided doesn't exist!"
+                    },
+                    "500": {
+                        "description": "Internal  error!"
+                    }
+                }
+            }
+        },
 
-      "/accommodations/{id}/feedback": {
-          "post": {
-              "tags": ["Accommodations"],
-              "summary": "Give feedback on Accommodation ",
-              "description": "",
-              "consumes": ["application/x-www-form-urlencoded"],
-              "produces": ["application/json"],
+        "/accommodations/{id}/feedback": {
+            "post": {
+                "tags": ["Accommodations"],
+                "summary": "Give feedback on Accommodation ",
+                "description": "",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
 
-              "parameters": [{
-                      "in": "header",
-                      "name": "auth-token",
-                      "type": "string",
-                      "required": true,
-                      "description": "from logIn endpoint"
-                  },
+                "parameters": [{
+                        "in": "header",
+                        "name": "auth-token",
+                        "type": "string",
+                        "required": true,
+                        "description": "from logIn endpoint"
+                    },
 
-                  {
-                      "in": "path",
-                      "name": "id",
-                      "type": "integer",
-                      "required": true,
-                      "description": ""
-                  },
-                  {
-                      "in": "formdata",
-                      "name": "feedback",
-                      "schema": { "$ref": "#/definitions/feedback" },
-                      "required": true
-                  }
-              ],
-              "responses": {
-                  "201": {
-                      "description": "You commented on Accommodation Successfully!"
-                  },
-                  "400": {
-                      "description": " provided Accommodation doesn't exist!"
-                  },
-                  "403": {
-                      "description": "Forbidden"
-                  },
-                  "500": {
-                      "description": "Internal  error!"
-                  }
-              }
-          }
-      },
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "type": "integer",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "in": "formdata",
+                        "name": "feedback",
+                        "schema": { "$ref": "#/definitions/feedback" },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "You commented on Accommodation Successfully!"
+                    },
+                    "400": {
+                        "description": " provided Accommodation doesn't exist!"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "500": {
+                        "description": "Internal  error!"
+                    }
+                }
+            }
+        },
 
         "/accommodation/{accommodationID}/rooms": {
             "parameters": [{
@@ -1314,125 +1314,122 @@
                 }
             }
         },
-        "/notification/all":{
+        "/notification/all": {
             "get": {
                 "tags": ["Notification"],
                 "summary": "Get all notifications",
                 "description": "Get all notifications",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
-                "parameters":[
-                    {
-                        "in": "header",
-                        "name": "auth-token",
-                        "type": "string",
-                        "required": true
-                    }],
-                    "responses": {
-                      "200": {
+                "parameters": [{
+                    "in": "header",
+                    "name": "auth-token",
+                    "type": "string",
+                    "required": true
+                }],
+                "responses": {
+                    "200": {
                         "description": "All Notifications Fetched Successfully!"
-                      },
-                      "401": {
-                          "description": "You are not allowed to perform this action"
-                      },
-                      "404": {
+                    },
+                    "401": {
+                        "description": "You are not allowed to perform this action"
+                    },
+                    "404": {
                         "description": "No notification Yet!"
-                      },
-                      "500": {
+                    },
+                    "500": {
                         "description": "Internal Server error!"
-                      }
-                      }
                     }
-                  },
-        "/notification/preferences":{
+                }
+            }
+        },
+        "/notification/preferences": {
             "patch": {
                 "tags": ["Notification"],
                 "summary": "Update notifications method for the User",
                 "description": "Update User notifications method",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
-                "parameters":[
-                    {
-                        "in": "header",
-                        "name": "auth-token",
-                        "type": "string",
-                        "required": true
-                    }],
-                    "responses": {
-                      "200": {
+                "parameters": [{
+                    "in": "header",
+                    "name": "auth-token",
+                    "type": "string",
+                    "required": true
+                }],
+                "responses": {
+                    "200": {
                         "description": "Notifications method updated successfully!"
-                      },
-              
-                      "401": {
+                    },
+
+                    "401": {
                         "description": "You are not allowed to perform this action"
-                      },
-                      "500": {
+                    },
+                    "500": {
                         "description": "Internal Server error!"
-                      }
-                      }
                     }
-                  },
-        "/notification/unread":{
+                }
+            }
+        },
+        "/notification/unread": {
             "get": {
                 "tags": ["Notification"],
                 "summary": "Get unread notifications",
                 "description": "Get unread notifications",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
-                "parameters":[
-                    {
-                        "in": "header",
-                        "name": "auth-token",
-                        "type": "string",
-                        "required": true
-                      }],
-                      "responses": {
-                        "200": {
-                          "description": "Unread Notifications fetched successfully!"
-                        },
-                        "401": {
-                          "description": "You are not allowed to perform this action"
-                        },
-                        "404": {
-                          "description": "All notification readed"
-                        },
-                        "500": {
-                          "description": "Internal Server error!"
-                        }
-                      }
-                      }
-                      
-                    },  
-        "/notification/readall":{
+                "parameters": [{
+                    "in": "header",
+                    "name": "auth-token",
+                    "type": "string",
+                    "required": true
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unread Notifications fetched successfully!"
+                    },
+                    "401": {
+                        "description": "You are not allowed to perform this action"
+                    },
+                    "404": {
+                        "description": "All notification readed"
+                    },
+                    "500": {
+                        "description": "Internal Server error!"
+                    }
+                }
+            }
+
+        },
+        "/notification/readall": {
             "put": {
                 "tags": ["Notification"],
                 "summary": "mark notifications as read",
                 "description": "mark notifications as read",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
-                "parameters":[
-                    {
-                        "in": "header",
-                        "name": "auth-token",
-                        "type": "string",
-                        "required": true
-                    }],
-                    "responses": {
-                      "200": {"description": "All Notifications marked as read successfully!"
+                "parameters": [{
+                    "in": "header",
+                    "name": "auth-token",
+                    "type": "string",
+                    "required": true
+                }],
+                "responses": {
+                    "200": {
+                        "description": "All Notifications marked as read successfully!"
                     },
-            
+
                     "401": {
-                      "description": "You are not allowed to perform this action"
+                        "description": "You are not allowed to perform this action"
                     },
                     "400": {
-                      "description": "All notification are already marked as read"
+                        "description": "All notification are already marked as read"
                     },
                     "500": {
-                      "description": "Internal Server error!"
+                        "description": "Internal Server error!"
                     }
-                  }
                 }
-              }
+            }
+        }
     },
     "securityDefinitions": {
         "AuthToken": {
