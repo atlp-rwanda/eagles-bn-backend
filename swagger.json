@@ -130,6 +130,111 @@
                 }
             }
         },
+
+        "/user/profile": {
+            "post": {
+                "tags": ["Users"],
+                "summary": "user update their profile",
+                "description": "",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                    "name": "auth-token",
+                    "in": "header",
+                    "required": true,
+                    "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "birth_date",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "preferred_language",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "preferred_currency",
+                        "type": "string"
+                    },
+                  
+                    {
+                        "in": "formData",
+                        "name": "where_you_live",
+                        "type": "string"
+                    },
+
+
+                    {
+                        "in": "formData",
+                        "name": "father_name",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "mother_name",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "phone_number",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "nationality",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "marital_status",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "gender",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "role",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "manager",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "profile_image",
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "successfully Updated your Profile",
+                        "schema": {
+                            "$ref": "#/definitions/profile"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500":{
+                        "description":"Internal Server Error"
+                    }
+                }
+            }
+        },
+
+
+
+
+
         "/user/login": {
             "post": {
                 "tags": ["Users"],
@@ -1505,6 +1610,62 @@
                 }
             }
         },
+
+
+        "profile": {
+            "type": "object",
+            "required": [
+                "auth-token"
+            ],
+            "properties": {
+                "auth-token": {
+                    "type": "string"
+                },
+                "birth_date": {
+                    "type": "string"
+                },
+                "preferred_language": {
+                    "type": "string"
+                },
+                "preferred_currency": {
+                    "type": "string"
+                },
+                "where_you_live": {
+                    "type": "string"
+                },
+                "father_name": {
+                    "type": "string"
+                },
+                "mother_name": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+
+                "nationality": {
+                    "type": "string"
+                },
+                "profile_image": {
+                    "type": "array",
+                    "xml": {
+                      "wrapped": true
+                    },
+                    "items": {
+                      "type": "string",
+                      "xml": {
+                        "name": "imageURL"
+                      }
+                    }
+                },
+                "manager": {
+                    "type": "string"
+                }
+            }
+        },
+
+
+
         "Trip": {
             "type": "object",
             "required": ["from", "to"],
