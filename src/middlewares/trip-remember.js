@@ -1,7 +1,6 @@
 import { Trips, User } from '../database/models';
 
 const tripRemember = async (req, res, next) => {
-  console.log("==================User ID=============================", req.user.id);
   const { dataValues: user } = await User.findByPk(req.user.id);
   if (user.remember_travel) {
     const latestTripValues = await Trips.findOne({

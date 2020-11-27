@@ -10,7 +10,8 @@ import catcher from '../utils/catcher';
 const router = Router();
 
 router.use('/', authRoutes);
-/* eslint-disable linebreak-style */ router.put(
+/* eslint-disable linebreak-style */ 
+router.put(
   '/email-verification/:token',
   userValidation.verifyToken,
   User.emailVerification

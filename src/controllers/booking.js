@@ -1,4 +1,5 @@
 import { Booking as roomBooking } from '../database/models/index';
+
 import { onError, onSuccess } from '../utils/response';
 
 export default class RoomBooking {
@@ -55,11 +56,34 @@ export default class RoomBooking {
     const { id } = req.user;
     const booking = await roomBooking.findOne({
       where: { id: b_id, user_id: id },
-    });
+});
     if (!booking) {
       return res.status(400).send({ error: 'room is not available' });
     }
     await booking.destroy();
     return onSuccess(res, 200, 'Booking Delete!!', booking);
+  }
+  static async changeBookingStatus(req,res){
+    try{
+      const  {book_id}  = req.params;
+      const  {status}  = req.body;
+      const booking = await roomBooking.findOne({
+        where: { id: book_id,}
+    })
+     if(booking.check_in_date < new Date()){
+       return onError(res, 400,`Booking ID ${book_id} is expired!` );
+      }
+      if(booking.paid=='false'){
+        return onError(res, 400,`Payment have to first be made!` );
+      }
+  if(booking.status==status){
+    return onSuccess(res, 208,`Booking of ID ${book_id} is Already ${status}!`);
+  }
+    await booking.update({status});
+    return onSuccess(res, 201,`Booking of ID ${book_id} is ${status} !` );
+  }
+   catch (error) {
+    return onError(res, 500, 'internal server error');
+  }
   }
 }

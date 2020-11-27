@@ -130,7 +130,6 @@ class Accommodation {
       const relatedTrips = await models.Trips.findAll({
         where: { requester_id: id }
       });
-      console.log("======================Related trips:========================== ", relatedTrips);
       if (relatedTrips) {
         for (let i = 0; i < relatedTrips.length; i++) {
           if (relatedTrips[i].status != "Approved") {

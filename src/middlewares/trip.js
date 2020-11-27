@@ -19,6 +19,7 @@ export default class Trip {
         next();
     }
     static isManager(req, res, next) {
+        
         if (req.user.role != roles.MANAGER) {
             return res.status(403).send({ error: "Not Allowed" });
         };

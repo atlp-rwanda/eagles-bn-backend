@@ -1,4 +1,4 @@
-/* eslint-disable import/no-mutable-exports */
+
 import redis from 'redis';
 
 const REDIS_PORT = process.env.REDIS_URL || 6379;

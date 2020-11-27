@@ -1,5 +1,5 @@
 /* eslint-disable linebreak-style */
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mailgun from "mailgun-js";
 import dotenv from "dotenv";
@@ -60,6 +60,7 @@ export default class UserController {
       };
       mg.messages().send(data, (error) => {
         if (error) {
+          console.log('*************************&&&&&&&&&&&&&&  ',error)
           return res.json({ error: error.message });
         }
         const user = _user.create({
