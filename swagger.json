@@ -68,6 +68,43 @@
                 }
             }
         },
+        "/user/resetPassword/{token}/{email}": {
+            "put": {
+              "tags": ["users"],
+              "summary": "reset Password",
+              "parameters": [
+                {
+                  "name": "token",
+                  "in": "path",
+                  "required": true,
+                  "type": "string"
+                },
+                {
+                  "name": "email",
+                  "in": "path",
+                  "required": true,
+                  "type": "string"
+                },
+                {
+                  "name": "password",
+                  "in": "body",
+                  "required": true,
+                  "schema": {
+                    "$ref": "#/definitions/user"
+                  }
+                }
+              ],
+              "produces": ["application/json"],
+              "responses": {
+                "200": {
+                  "description": "ok"
+                },
+                "400": {
+                  "description": "failed to change password."
+                }
+              }
+            }
+          },
         "/user/auth/facebook": {
             "get": {
                 "tags": ["Social Auth"],
@@ -297,21 +334,6 @@
                     "500": {
                         "description": "Internal Server Error"
                     }
-                }
-            }
-        },
-        "/user/resetPassword/{token}/{email}": {
-            "put": {
-                "tags": ["users"],
-                "summary": "reset Password",
-                "parameters": [{
-                    "name": "token",
-                    "in": "path",
-                    "required": true,
-                    "type": "string"
-                }],
-                "400": {
-                    "description": "Bad Request"
                 }
             }
         },

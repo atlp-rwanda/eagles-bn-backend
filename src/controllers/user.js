@@ -88,7 +88,7 @@ export default class UserController {
     }
   }
 
-  static async forgetPassword(req, res) {
+  static async forgetPassword(req, res, next) {
     const { email } = req.body;
     const foundUser = await _user.findOne({ where: { email } });
     if (foundUser) {
@@ -96,19 +96,18 @@ export default class UserController {
         { email: foundUser.email, _id: foundUser._id },
         foundUser.password,
         {
-          expiresIn: '24h',
+          expiresIn: "24h",
         }
       );
       const data = {
-        from: 'alexis2020@gmail.com',
+        from: "alexis2020@gmail.com",
         to: email,
-        subject: 'please reset your Password',
+        subject: "please reset your Password",
         html: `click this link to reset password http://localhost:4000/api/resetPassword/${token}/${email}`,
       };
-      mg.messages().send(data, () => {
+      mg.messages().send(data, (error) => {
         res.status(201).json({
-          token,
-          message: 'email has been sent please change your password',
+          message: "email has been sent please change your password",
         });
       });
     } else {
