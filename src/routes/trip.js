@@ -21,11 +21,11 @@ router.get('/search', catcher(validation.search), catcher(Trip.search));
 
 router.post("/", verifyAccessToken, tripRemember, trip.validate, catcher(Trip.create));
 router.get("/remember/latest", verifyAccessToken, user.IsAllowed(roles.REQUESTER), catcher(Trip.LatestRemember));
-router.patch("/:tripId/status", tripStatusValidation, trip.isManager, catcher(Trip.update));
+router.patch("/:tripId/status", trip.isManager, tripStatusValidation, catcher(Trip.update));
 router
-  .route('/:tripId')
-  .get(catcher(Trip.getOne))
-  .patch(trip.validateUpdate, catcher(Trip.update));
+    .route('/:tripId')
+    .get(catcher(Trip.getOne))
+    .patch(trip.validateUpdate, catcher(Trip.update));
 
 // Comment routes
 router.post('/:id/comment', commentValidation, verifyAccessToken, catcher(comment.createComment));
