@@ -8,7 +8,7 @@
   "require": [
     "@babel/register"
   ],
-  "exclude": ["src/database","coverage","nyc_output","src/tests"],
+  "exclude": ["src/database","coverage","nyc_output","src/tests", "public"],
   "sourceMap": false,
   "instrument": false,
   "all":true,

@@ -61,7 +61,6 @@ const notification = () => {
       .post("/api/trips")
       .set("auth-token", token)
       .send(mockTrip);
-    // tripID = res.body.data.id;
     expect(res).to.have.property("status", 201);
   });
   it('should insert notification into notification table', async () => {
@@ -71,10 +70,6 @@ const notification = () => {
   it('should send an email to right receipt', async () => {
     await sendEmail('example@gmail.com', 'Elnino', 'http:localhost:5500/api/trips/3/', 'This is notification email');
   });
-  // it('should display notification in real time with right receipt via Barefoot Nomad application', async () => {
-  //   const res = await socketIo.socket('3', 'notification', 'This is description');
-  //   expect(res).to.be.a('object');
-  // });
   it('should update notification preferences', (done) => {
     chai
       .request(app)
@@ -110,7 +105,13 @@ const notification = () => {
 
     expect(res).to.have.property("status", 200);
   });
-
+  it("should return 500 something wrong happen", async () => {
+    const res = await chai
+      .request(app)
+      .get("/api/notification/unread")
+      .set('auth-token', '1234rfgkjlfls');
+    expect(res).to.have.property("status", 500);
+  });
   it("It should return all notifications", async () => {
     const res = await chai
       .request(app)
@@ -159,6 +160,13 @@ const notification = () => {
       .send({ is_read: 'true' });
 
     expect(res).to.have.status(404);
+  });
+  it("It should return 404 if there is no unread notifications", async () => {
+    const res = await chai
+      .request(app)
+      .get("/notification");
+
+    expect(res).to.have.status(200);
   });
 };
 export default notification;

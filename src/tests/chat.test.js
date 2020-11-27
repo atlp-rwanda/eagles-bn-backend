@@ -1,15 +1,14 @@
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 import { it } from 'mocha';
-import chaiHTTP from 'chai-http';
 import io from 'socket.io-client';
 import request from 'request';
-import url from 'url';
-import app from '../index';
 import models from '../database/models';
 import signAccessToken from '../helpers/jwt_helper';
 
-const { assert } = chai;
 const serverPort = process.env.PORT || 4000;
+const password = 'test123';
+const email = 'test123';
+const mockUser = { first_name: 'john', last_name: 'john', email, password };
 
 describe('Chats', () => {
   describe('get chats', () => {
@@ -34,16 +33,13 @@ describe('Chats', () => {
         done();
       });
     });
-    // it('renders without crashing', () => {
-    //   const div = document.createElement('div');
-    //   ReactDOM.render(<app />, div);
-    // });
-    // it('should return a list, thats not empty', (done) => {
-    //   io.sockets.emit('newmsg', {
-    //     username: user.payload.first_name,
-    //     message: data.message,
-    //     date: new Date(),
-    //   });
-    // });
+    it('should connect to io sockets', async () => {
+      const user = await models.User.create(mockUser);
+      const token = signAccessToken({ id: user.id, email: user.email });
+      const client = io({ query: `auth_token=${token}`});
+      const data = client.on('connect');
+      console.log(data);
+      // expect()
+    });
   });
 });

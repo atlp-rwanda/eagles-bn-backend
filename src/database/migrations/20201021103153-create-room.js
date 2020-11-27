@@ -8,11 +8,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      price: {
-        type: Sequelize.INTEGER,
-      },
-      images: {
-        type: Sequelize.ARRAY(Sequelize.STRING)
+      price: Sequelize.INTEGER,
+      images: Sequelize.ARRAY(Sequelize.STRING),
+      available: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
       },
       accommodation_id: {
         type: Sequelize.INTEGER,

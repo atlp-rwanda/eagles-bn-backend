@@ -64,6 +64,7 @@ describe(` POST /api/accommodation Rating`, () => {
     User.destroy({ where: {} });
     Rating.destroy({ where: {} });
   });
+  
   it("it should creates a rating", async () => {
     const userData = await User.create(userInfo);
     await Trips.create(trip);
@@ -75,6 +76,7 @@ describe(` POST /api/accommodation Rating`, () => {
       .send(creatRating);
     expect(res).to.have.property("status", 200);
   });
+  
   it("it should return 401 if token is invalid", async () => {
     const res = await chai
       .request(app)
@@ -150,6 +152,24 @@ describe(` POST /api/accommodation Rating`, () => {
       .set('auth-token', accessToken);
     expect(res).to.have.property("status", 403);
   });
+
+  it.skip("it should delete a rating", async () => {
+    const userData = await User.create(userInfo);
+    const tripExample = await Trips.create(trip);
+    const rate = await Rating.create({ ...creatRate, trip_id: tripExample.id });
+    const accessToken = await signAccessToken({
+      id: userData.id,
+      email: 'real1@gmail.com',
+      role: 'requester',
+    });
+    const res = await chai
+      .request(app)
+      .delete(`/api/accommodations/ratings/${rate.id}`)
+      .set('auth-token', accessToken);
+
+    expect(res).to.have.property("status", 200);
+  });
+  
   it("it should 403", async () => {
     const userData = await User.create(userInfo);
     await Trips.create(trip);

@@ -3,7 +3,8 @@ import { it } from 'mocha';
 import chaiHttp from 'chai-http';
 import app from '../index';
 import signAccessToken from '../helpers/jwt_helper';
-import { Booking, User } from '../database/models';
+import { Booking, User, Accommodation } from '../database/models';
+import { signToken2 } from '../helpers/auth';
 
 chai.use(chaiHttp);
 
@@ -29,7 +30,7 @@ describe(` POST /api/rooms/1/booking/`, () => {
   afterEach(async () => {
     await cleanAlltables();
   });
-  it('it should creates a booking', async () => {
+  it('it should provide link for payment on create booking', async () => {
     const userData = await User.create(userInfo);
     const accessToken = await signAccessToken({
       id: userData.id,
@@ -37,11 +38,24 @@ describe(` POST /api/rooms/1/booking/`, () => {
     });
     const res = await chai
       .request(app)
-      .post(`/api/rooms/1/booking/`)
+      .post(`/api/rooms/2/booking/`)
       .set('auth-token', accessToken)
       .send(creatBooking);
 
     expect(res).to.have.property('status', 200);
+  });
+
+  it('it should redirect from payment to create booking', async () => {
+    const userData = await User.create(userInfo);
+    const bookingToken = signToken2({
+      ...creatBooking,
+      room_id: 2,
+      accommodation_id: 2,
+      user_id: userData.id
+    });
+    const res = await chai.request(app).get(`/api/rooms/2/booking?token=${bookingToken}`);
+
+    expect(res).to.have.property('status', 201);
   });
 
   it('it should not creates a booking', async () => {
@@ -203,5 +217,80 @@ describe(` POST /api/rooms/1/booking/`, () => {
       .delete(`/api/rooms/booking/${bookingKing.id}`)
       .set('auth-token', accessToken);
     expect(res).to.have.property('status', 200);
+  });
+  
+  it('should fail to approve own booking', async () => {
+    const userData = await User.create(userInfo);
+    const booking = await Booking.create({
+      ...creatBooking,
+      user_id: userData.id,
+      room_id: 2,
+      accommodation_id: 2,
+    });
+    const accessToken = await signAccessToken({
+      id: userData.id,
+      email: 'faking',
+    });
+    const res = await chai
+      .request(app)
+      .patch(`/api/rooms/booking/${booking.id}/approve`)
+      .set('auth-token', accessToken);
+      
+    expect(res).to.have.property('status', 404);
+  });
+
+  it('should fail to approve a booking on accommodation not yours', async () => {
+    const booker = await User.create({...userInfo, email: 'fakest'});
+    const userData = await User.create(userInfo);
+    const booking = await Booking.create({
+      ...creatBooking,
+      user_id: booker.id,
+      room_id: 2,
+      accommodation_id: 2,
+    });
+    const accessToken = await signAccessToken({
+      id: userData.id,
+      email: 'faking',
+    });
+    const res = await chai
+      .request(app)
+      .patch(`/api/rooms/booking/${booking.id}/approve`)
+      .set('auth-token', accessToken);
+      
+    expect(res).to.have.property('status', 403);
+  });
+
+  it('it should approve a booking ', async () => {
+    const userData = await User.create(userInfo);
+    const userData2 = await User.create({...userInfo, email: 'newOne'});
+    const accommodation = await Accommodation.create({ 
+      name: 'my accommodation', 
+      description: 'mine', 
+      host_id: userData.id 
+    });
+    const booking = await Booking.create({
+      ...creatBooking,
+      user_id: userData2.id,
+      room_id: 2,
+      accommodation_id: accommodation.id
+    });
+    const accessToken = await signAccessToken({
+      id: userData.id,
+      email: 'faking',
+    });
+    const res = await chai
+      .request(app)
+      .patch(`/api/rooms/booking/${booking.id}/approve`)
+      .set('auth-token', accessToken);
+      
+      expect(res).to.have.property('status', 200);
+
+    // should fail to approve already approved!
+    const res2 = await chai
+      .request(app)
+      .patch(`/api/rooms/booking/${booking.id}/approve`)
+      .set('auth-token', accessToken);
+      
+    expect(res2).to.have.property('status', 409);
   });
 });

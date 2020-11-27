@@ -19,13 +19,23 @@ export const signToken = (
   return token;
 };
 
+export const signToken2 = (
+  data,
+  secret = ACCESS_TOKEN_SECRET,
+  duration = null
+) => {
+  const tokenOptions = duration ? { expiresIn: duration } : undefined;
+  const token = sign(data, secret, tokenOptions);
+  return token;
+};
+
 export const encryptPassword = async (password) => {
   const salt = await genSalt(12);
   const hashed = await hash(password, salt);
   return hashed;
 };
 
-export const verifyLink = (token, secret) => {
+export const verifyLink = (token, secret=ACCESS_TOKEN_SECRET) => {
   try {
     const data = verify(token, secret);
     return data;
