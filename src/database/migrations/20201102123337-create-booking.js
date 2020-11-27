@@ -30,6 +30,15 @@ module.exports = {
       check_out_date: {
         type: Sequelize.DATE
       },
+      status: {
+        type: Sequelize.STRING,
+        defaultValue: 'onhold',
+    },
+    paid: {
+      type: Sequelize.TEXT,
+      defaultValue: 'false',
+      allowNull: false
+  },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
