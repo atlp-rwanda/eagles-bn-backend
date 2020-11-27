@@ -18,6 +18,7 @@ const logout = () => {
     email: "fake@gmail.com",
     first_name: "fake",
     last_name: "fakest",
+    isConfirmed: true,
     password: "$2b$08$DVCvWE8g6dyWgqE2F6pXSu7ihoG6S40n4JujBodZPTEvvd0voLQ92",
   };
   const fakeCredentials = {

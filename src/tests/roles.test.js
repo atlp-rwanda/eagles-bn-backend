@@ -20,6 +20,7 @@ describe("User roles API", () => {
     first_name: "fake",
     last_name: "fakest",
     role: "super-admin",
+    isConfirmed: true,
     password: "$2b$08$yL14cQRwHeHh/BWN3xAADuQg0zhzapYqZ12K7G69e.Mi/NTKu2PF2",
     confirmPassword: "$2b$08$yL14cQRwHeHh/BWN3xAADuQg0zhzapYqZ12K7G69e.Mi/NTKu2PF2"
   };
@@ -29,6 +30,7 @@ describe("User roles API", () => {
     first_name: "fake",
     last_name: "fakest",
     role: "requester",
+    isConfirmed: true,
     password: "$2b$08$DVCvWE8g6dyWgqE2F6pXSu7ihoG6S40n4JujBodZPTEvvd0voLQ92",
   };
   manager = {
@@ -37,6 +39,7 @@ describe("User roles API", () => {
     first_name: "fake",
     last_name: "fakest",
     role: "manager",
+    isConfirmed: true,
     password: "$2b$08$DVCvWE8g6dyWgqE2F6pXSu7ihoG6S40n4JujBodZPTEvvd0voLQ92",
   };
   before(async () => {
@@ -45,6 +48,7 @@ describe("User roles API", () => {
       email: "manager1@gmail.com",
       first_name: "fake",
       last_name: "fakest",
+      isConfirmed: true,
       role: "manager",
       password: "$2b$08$DVCvWE8g6dyWgqE2F6pXSu7ihoG6S40n4JujBodZPTEvvd0voLQ92",
     });

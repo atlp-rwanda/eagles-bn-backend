@@ -4,7 +4,7 @@ import app from '../../index';
 import { rooms } from './room.data';
 import signAccessToken from '../../helpers/jwt_helper';
 import models from '../../database/models';
-import { fakeCredentials } from '../mock-user.data';
+import { fakeManagerCredentials } from '../mock-user.data';
 import { accommodations } from '../accommodation/accommodation.data';
 
 const chaiHttp = require('chai-http');
@@ -17,7 +17,7 @@ let accommodationId;
 const roomTest = () => {
   describe('Room tests', () => {
     before(async () => {
-      const createdUser = await models.User.create(fakeCredentials);
+      const createdUser = await models.User.create(fakeManagerCredentials);
       const createdAccommodation = await models.Accommodation.create({
         name: 'Peponi Living',
         description: 'free wifi,gym',
@@ -34,7 +34,7 @@ const roomTest = () => {
       token = signAccessToken(createdUser.dataValues);
     });
     after(async () => {
-      await models.User.destroy({ where: { email: fakeCredentials.email } });
+      await models.User.destroy({ where: { email: fakeManagerCredentials.email } });
       await models.Accommodation.destroy({ where: { id: accommodationId } });
     });
     it('It should create room with valid data', (done) => {

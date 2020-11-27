@@ -34,7 +34,7 @@ const FBoptions = {
   clientID: process.env.FACEBOOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
   profileFields: ["id", "emails", "name", "displayName"],
-  callbackURL: `${process.env.BASE_URL}:${process.env.PORT}/api/user/auth/facebook/callback`,
+  callbackURL: `${process.env.BASE_URL}/api/user/auth/facebook/callback`,
 };
 
 /*

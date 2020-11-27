@@ -15,21 +15,21 @@ router.get('/:id', catcher(AccomodationController.show));
 router.post(
   '/',
   verifyAccessToken,
-  user.IsAllowed(roles.ADMIN),
+  user.IsAllowed(roles.MANAGER),
   accommodationValidator,
   catcher(AccomodationController.create)
 );
 router.put(
   '/:id',
   verifyAccessToken,
-  user.IsAllowed(roles.ADMIN),
+  user.IsAllowed(roles.MANAGER),
   accommodationValidator,
   catcher(AccomodationController.update)
 );
 router.delete(
   '/:id',
   verifyAccessToken,
-  user.IsAllowed(roles.ADMIN),
+  user.IsAllowed(roles.MANAGER),
   catcher(AccomodationController.destroy)
 );
 router.post("/:id/like", verifyAccessToken, AccomodationController.like);
