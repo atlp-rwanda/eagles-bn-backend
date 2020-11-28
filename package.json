@@ -9,7 +9,7 @@
         "migrate:test": "npx sequelize db:migrate --env test",
         "droptables:dev": "npx sequelize db:migrate:undo:all",
         "db:seed:test": "cross-env NODE_ENV=test sequelize db:seed:all",
-        "start": "npm run migrate:undo && npm run migrate && npm run build && node build",
+        "start": "npm run seed && npm run build && node build",
         "build": "babel ./src --out-dir build",
         "lint": "eslint --fix src",
         "dev": "nodemon --exec babel-node -r dotenv/config  src",

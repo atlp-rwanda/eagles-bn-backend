@@ -65,15 +65,6 @@ export default class userValidations {
     return passport.authenticate('jwt', { session: false })(req, res, next);
   }
 
-  static isSuperAdmin(role) {
-    return (req, res, next) => {
-      if (req.user.role !== role) {
-        return res.status(403).send({ error: 'Not Allowed' });
-      }
-      next();
-    };
-  }
-
   static IsAllowed(role) {
     return (req, res, next) => {
       if (req.user.role !== role) {

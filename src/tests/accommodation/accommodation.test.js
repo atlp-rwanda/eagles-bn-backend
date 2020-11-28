@@ -4,7 +4,7 @@ import app from "../../index";
 import { accommodations } from "./accommodation.data";
 import signAccessToken from '../../helpers/jwt_helper';
 import models from '../../database/models';
-import { fakeCredentials } from '../mock-user.data';
+import { fakeManagerCredentials } from '../mock-user.data';
 import { rooms } from '../room/room.data';
 import { mockTrip } from './trip.data';
 
@@ -17,11 +17,11 @@ let accommodationId;
 const accommodationTest = () => {
   describe("Accommodation", () => {
     before(async () => {
-      const createdUser = await models.User.create(fakeCredentials);
+      const createdUser = await models.User.create(fakeManagerCredentials);
       token = signAccessToken(createdUser.dataValues);
     });
     after(async () => {
-      await models.User.destroy({ where: { email: fakeCredentials.email } });
+      await models.User.destroy({ where: { email: fakeManagerCredentials.email } });
     });
     it("It should create accommodation with valid data", (done) => {
       chai.request(app)

@@ -11,7 +11,7 @@ export default class AccommodationRating {
         { requester_id: userId, status: "Approved", accommodation_id: req.params.accommodation_id }
       });
       if (!trip) {
-        return res.status(404).send({ error: 'Sorry you never been hare' });
+        return res.status(404).send({ error: 'Sorry you never been here' });
       }
       const Myrating = await Rating.findOne({
         where:

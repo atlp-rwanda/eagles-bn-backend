@@ -9,6 +9,14 @@ export const fakeCredentials = {
   manager: "Doe",
   password: "test1234",
 };
+export const fakeManagerCredentials = {
+  first_name: "Fake",
+  last_name: "User",
+  email: "fake@gmail.com",
+  role: roles.MANAGER,
+  manager: "Doe",
+  password: "test1234",
+};
 export const fakeRequesterCredentials = {
   first_name: "Fake",
   last_name: "User",
