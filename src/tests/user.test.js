@@ -121,7 +121,7 @@ describe(' POST /api/user/forgetPassword', () => {
 describe('USER SIGNUP TESTS', () => {
   before((done) => {
     models.User.destroy({
-      where: {},
+      where: { email: 's@ymail.com' },
       // truncate: true,
     }).then(() => {
       models.User.create({

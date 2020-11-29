@@ -65,7 +65,9 @@ describe("User roles API", () => {
     await User.destroy({ where: { email: "manager@gmail.com" } });
   });
   after(async () => {
-    User.destroy({ where: {} });
+    await User.destroy({ where: { email: "fake@gmail.com" } });
+    await User.destroy({ where: { email: "requester@gmail.com" } });
+    await User.destroy({ where: { email: "manager@gmail.com" } });
   });
   requesterLoginData = {
     email: "fake@gmail.com",
@@ -174,7 +176,7 @@ describe("User roles API", () => {
       .send(role)
       .end((error, response) => {
         if (error) return done(error);
-        response.should.have.status(500);
+        response.should.have.status(401);
         done();
       });
   });

@@ -9,7 +9,8 @@ chai.use(chaiHttp);
 
 const cleanAlltables = async () => {
   await Booking.destroy({ where: {} });
-  await User.destroy({ where: {} });
+  // await User.destroy({ where: {} });
+  await User.destroy({ where: { email: 'nklbigone@gmail.com' } });
 };
 describe(` POST /api/rooms/1/booking/`, () => {
   const creatBooking = {

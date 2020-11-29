@@ -1,5 +1,5 @@
-/* eslint-disable import/no-cycle */
 /* eslint-disable linebreak-style */
+/* eslint-disable import/no-cycle */
 /* eslint-disable max-len */
 import tripNotification from '../helpers/sendEmail';
 import Models from '../database/models';
@@ -20,8 +20,8 @@ class Notifications {
   static async sendNotification(trip, action, res) {
     const retrievedTrip = await importQuery.retrieveTrip(trip);
     const requester = await importQuery.userDetails(retrievedTrip.requester_id);
-    const manager = await User.findOne({ where: { manager: requester.manager } });
-    const url = `${process.env.BASE_URL}/api/trips/${retrievedTrip.id}/`;
+    const manager = await importQuery.userDetails(requester.manager);
+    const url = `https://eagles-bn-backend-staging.herokuapp.com/api/trips/${retrievedTrip.id}/`;
     const status = `REQUEST ${action}`;
     const appNotification = `<span style='color: #7FD8A7 ;'>${status}</span> <br> 
       <span style='color: #614e1f;'> Hello, you have new notification for travel which is ${action} for more details
@@ -47,76 +47,59 @@ class Notifications {
   // Disable/enable In-App/Email notifications
 
   static async changeMethod(req, res) {
-    try {
-      const {
-          body: {
-            notifyByEmail
-          },
-          user: {
-            email,
-          }
-        } = req,
-        byEmail = notifyByEmail.toLowerCase() === 'false';
-      await User.update({
-        notifyByEmail: byEmail,
-      }, { where: { email } });
-      return onSuccess(res, 200, 'Notification method changed Successfully');
-    } catch (error) {
-      return onError(res, 500, 'Internal server error');
-    }
+    const {
+        body: {
+          notifyByEmail
+        },
+        user: {
+          email,
+        }
+      } = req,
+      byEmail = notifyByEmail.toLowerCase() === 'false';
+    await User.update({
+      notifyByEmail: byEmail,
+    }, { where: { email } });
+    return onSuccess(res, 200, 'Notification method changed Successfully');
   }
 
   // view all notification
   static async getAllNotifications(req, res) {
-    try {
-      const { id } = req.user;
-      const notifications = await Notification.findAll({
-        where: {
-          receiver: id
-        },
-      });
+    const { id } = req.user;
+    const notifications = await Notification.findAll({
+      where: {
+        receiver: id
+      },
+    });
 
-      if (notifications.length === 0 || notifications.length === undefined) {
-        return onError(res, 404, 'You do not have a notification');
-      }
-      return onSuccess(res, 200, 'Notification fetched successfully', notifications);
-    } catch (error) {
-      return onError(res, 500, 'Internal server error');
+    if (notifications.length === 0 || notifications.length === undefined) {
+      return onError(res, 404, 'You do not have a notification');
     }
+    return onSuccess(res, 200, 'Notification fetched successfully', notifications);
   }
 
   // View all unread notifications
   static async unReadNotifications(req, res) {
-    try {
-      const { id } = req.user,
-        unRead = await Notification.findAll({
-          where: {
-            receiver: id,
-            is_read: false,
-          },
-        });
-      if (unRead.length === 0 || unRead.length === undefined) {
-        return onError(res, 404, 'There is no new notification you have!');
-      }
-      return onSuccess(res, 200, 'Unread notification fetched successfully!', unRead);
-    } catch (error) {
-      return onError(res, 500, 'Internal server error');
+    const { id } = req.user,
+      unRead = await Notification.findAll({
+        where: {
+          receiver: id,
+          is_read: false,
+        },
+      });
+    if (unRead.length === 0 || unRead.length === undefined) {
+      return onError(res, 404, 'There is no new notification you have!');
     }
+    return onSuccess(res, 200, 'Unread notification fetched successfully!', unRead);
   }
 
   // mark all notifications as read
   static async markAllNotificationAsRead(req, res) {
-    try {
-      const { id } = req.user;
+    const { id } = req.user;
+    await Notification.update({
+      is_read: true
+    }, { where: { receiver: id } });
 
-      await Notification.update({
-        is_read: true
-      }, { where: { receiver: id } });
-
-      return onSuccess(res, 200, 'All notificatons marked as read successfully!');
-    } catch (error) {
-      return onError(res, 500, 'Internal Server Error');
-    }
+    return onSuccess(res, 200, 'All notificatons marked as read successfully!');
   }
 }
 export default Notifications;

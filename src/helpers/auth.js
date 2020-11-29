@@ -1,7 +1,7 @@
 /* eslint-disable linebreak-style */
 import { config } from 'dotenv';
 import { sign, verify } from 'jsonwebtoken';
-import { genSalt, hash } from 'bcryptjs';
+import { genSalt, hash } from 'bcrypt';
 import user from '../database/models/user';
 import User from '../validators/user';
 

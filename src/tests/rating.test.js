@@ -53,6 +53,9 @@ describe(` POST /api/accommodation Rating`, () => {
     accommodation_id: 5,
     status: 'pending'
   };
+  before(async () => {
+    User.destroy({ where: {} });
+  });
   afterEach(async () => {
     await User.destroy({ where: { email: "real1@gmail.com" } });
     await Trips.destroy({ where: { reasons: "H. moon" } });
@@ -72,13 +75,13 @@ describe(` POST /api/accommodation Rating`, () => {
       .send(creatRating);
     expect(res).to.have.property("status", 200);
   });
-  it("it should return 500 if something went wrong", async () => {
+  it("it should return 401 if token is invalid", async () => {
     const res = await chai
       .request(app)
       .post(`/api/accommodations/5/rating`)
       .set('auth-token', 'fsjsjkk')
       .send(creatRating);
-    expect(res).to.have.property("status", 500);
+    expect(res).to.have.property("status", 401);
   });
 
   it("it should not creates a rating with pending trip", async () => {

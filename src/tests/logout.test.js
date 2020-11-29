@@ -163,12 +163,12 @@ const logout = () => {
         done(err);
       });
   });
-  it('should return 500', (done) => {
+  it('should return 401 if token is invalid', (done) => {
     chai.request(server)
       .post('/api/user/logout')
       .set(user.invalidToken)
       .end((err, res) => {
-        expect(res).to.have.status(500);
+        expect(res).to.have.status(401);
         done(err);
       });
   });

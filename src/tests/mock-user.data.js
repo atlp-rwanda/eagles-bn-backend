@@ -6,7 +6,6 @@ export const fakeCredentials = {
   last_name: "User",
   email: "fake@gmail.com",
   role: roles.ADMIN,
-  manager: "Doe",
   password: "test1234",
 };
 export const fakeManagerCredentials = {
@@ -14,7 +13,7 @@ export const fakeManagerCredentials = {
   last_name: "User",
   email: "fake@gmail.com",
   role: roles.MANAGER,
-  manager: "Doe",
+  manager: 3,
   password: "test1234",
 };
 export const fakeRequesterCredentials = {
@@ -22,9 +21,9 @@ export const fakeRequesterCredentials = {
   last_name: "User",
   email: "fakerequester@gmail.com",
   role: roles.REQUESTER,
-  manager: "Doe",
   password: "test1234",
   confirmPassword: 'test1234',
+  manager: 3,
   remember_travel: true,
   notifyByEmail: true
 };
