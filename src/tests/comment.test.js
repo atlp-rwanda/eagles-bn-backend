@@ -22,7 +22,8 @@ chai.should();
 chai.use(chaiHTTP);
 
 const cleanAlltables = async () => {
-  await User.destroy({ where: {} });
+  // await User.destroy({ where: {} });
+  await User.destroy({ where: { password: fakeRequesterCredentials.password } });
 };
 
 describe('Comments and delete', () => {
@@ -38,9 +39,6 @@ describe('Comments and delete', () => {
       email: 'devuuwayo@barefoot.com',
       password: '12345678',
       confirmPassword: '12345678',
-      role: roles.REQUESTER,
-      notifyByEmail: true,
-      manager: 'John doe'
     };
     chai
       .request(app)
@@ -114,7 +112,7 @@ describe('Comments and delete', () => {
       .post(`/api/trips/${id}/comment`)
       .set('auth-token', fakeToken)
       .send(requestBody);
-    expect(res1.status).to.be.equal(500);
+    expect(res1.status).to.be.equal(201);
   });
   it('should return all comments related to that trip', async () => {
     const fakeToken = await signAccessToken({

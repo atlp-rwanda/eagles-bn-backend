@@ -151,7 +151,7 @@ export default class UserController {
       if (role === roles.REQUESTER) {
         await _user.update({ role, manager: managers.DEFAULT_MANAGER }, { where: { id: userId } });
       } else {
-        await _user.update({ role, manager: '' }, { where: { id: userId } });
+        await _user.update({ role }, { where: { id: userId } });
       }
       return res.status(200).send({ message: `${user.first_name}'s role changed to ${role}` });
     } catch (error) {

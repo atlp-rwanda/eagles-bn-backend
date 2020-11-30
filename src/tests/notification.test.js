@@ -42,6 +42,19 @@ const notification = () => {
     await Trips.destroy({ where: { email: mockTrip.email } });
     await User.destroy({ where: { password: fakeRequesterCredentials.password } });
   });
+  let managerToken;
+  it('should login before view notification', async () => {
+    const admin = {
+      email: "eagleManager@eagles.com",
+      password: "SuperAdmin@eagles",
+    };
+    const res = await chai
+      .request(app)
+      .post('/api/user/login')
+      .send(admin);
+    managerToken = res.body.accessToken;
+    expect(res).to.have.status(200);
+  });
   it("creates a trip", async () => {
     const res = await chai
       .request(app)
@@ -76,7 +89,7 @@ const notification = () => {
         done();
       });
   });
-  it('should return 500 if something wrong happen', (done) => {
+  it('should return 401 if token is invalid', (done) => {
     chai
       .request(app)
       .patch('/api/notification/preferences')
@@ -85,8 +98,7 @@ const notification = () => {
         notifyByEmail: 'false'
       })
       .end((err, res) => {
-        expect(res).to.have.status(500);
-        expect(res.body).to.have.property('error', 'Internal server error');
+        expect(res).to.have.status(401);
         done();
       });
   });
@@ -94,51 +106,42 @@ const notification = () => {
     const res = await chai
       .request(app)
       .get("/api/notification/unread")
-      .set("auth-token", token);
+      .set("auth-token", managerToken);
 
     expect(res).to.have.property("status", 200);
   });
 
-  it("should return 500 something wrong happen", async () => {
-    const res = await chai
-      .request(app)
-      .get("/api/notification/unread")
-      .set('auth-token', '1234rfgkjlfls');
-    expect(res).to.have.property("status", 500);
-  });
   it("It should return all notifications", async () => {
     const res = await chai
       .request(app)
       .get(`/api/notification/all`)
-      .set("auth-token", token);
+      .set("auth-token", managerToken);
     expect(res).to.have.status(200);
     expect(res.body).to.have.property("message", "Notification fetched successfully");
   });
-  it("should retrun 500 something wrong happen", async () => {
+  it("should retrun 401 if token is invalid", async () => {
     const res = await chai
       .request(app)
       .get(`/api/notification/all`)
       .set('auth-token', '1234rfgkjlfls');
-    expect(res).to.have.status(500);
-    expect(res.body).to.have.property('error', 'Internal server error');
+    expect(res).to.have.status(401);
   });
   it("should mark all notifications as read", async () => {
     const res = await chai
       .request(app)
       .put(`/api/notification/readall`)
-      .set("auth-token", token)
+      .set("auth-token", managerToken)
       .send({ is_read: 'true' });
 
     expect(res).to.have.property("status", 200);
     expect(res.body).to.have.property("message", "All notificatons marked as read successfully!");
   });
-  it("should return 500 if something went wrong", async () => {
+  it("should return 401 if token is invalid", async () => {
     const res = await chai
       .request(app)
       .put(`/api/notification/readall`)
       .set('auth-token', 'wertyhfghfhnf');
-    expect(res).to.have.property("status", 500);
-    expect(res.body).to.have.property('error', 'Internal server error');
+    expect(res).to.have.property("status", 401);
   });
   it("It should return 404  if there is no notifications", async () => {
     await Notification.destroy({ where: {} });

@@ -45,8 +45,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'requester',
         },
         manager: {
-            type: DataTypes.STRING,
-            unique: true,
+            type: DataTypes.INTEGER,
             defaultValue: 3,
         },
         password: {

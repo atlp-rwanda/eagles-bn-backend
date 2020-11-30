@@ -27,7 +27,7 @@ module.exports = {
                 defaultValue: 'requester',
             },
             manager: {
-                type: Sequelize.STRING,
+                type: Sequelize.INTEGER,
                 allowNull: false,
                 defaultValue: 3,
             },

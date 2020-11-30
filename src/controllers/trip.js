@@ -82,12 +82,14 @@ export default class Trip {
   }
 
   static async create(req, res) {
+    console.log('requester id: ', req.user);
     const trip = await Trips.create({
       ...req.body,
-      manager_id: 4,
+      manager_id: 3,
       requester_id: req.user.id,
     });
     const saveTrip = await trip.save();
+    console.log('saved trip: ', saveTrip);
     await Notifications.sendNotification(saveTrip.id, 'Pending', res);
     return res.status(201).json({ status: 201, data: trip });
   }
