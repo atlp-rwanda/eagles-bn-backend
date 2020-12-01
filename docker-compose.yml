@@ -1,4 +1,4 @@
-version: "3.0"
+version: '3.0'
 services:
   db:
     environment:
@@ -9,11 +9,16 @@ services:
     # volumes:
     #   - ./pgdata:/var/lib/postgresql/data
     ports:
-      - "5431:5432"
+      - '5431:5432'
+  redisdb:
+    image: redis
+    ports:
+      - '6379:6379'
 
-  web:
+  backend:
     environment:
       - NODE_ENV=production
+      - REDIS_URL=redis://redis:6379
       - DB_HOST=${DB_HOST}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -29,5 +34,5 @@ services:
     working_dir: /usr/app
     depends_on:
       - db
-    ports: [${PORT}=${PORT}]
+    ports: ['${PORT}:${PORT}']
     restart: always

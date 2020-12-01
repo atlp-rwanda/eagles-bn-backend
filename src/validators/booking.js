@@ -5,8 +5,11 @@ const Joi = require('joi');
 export default class validatingSchema {
   static async validatingDate(req, res, next) {
     const validatingDate = Joi.object({
+      email: Joi.string().min(1),
+      phone: Joi.string().min(1),
+      fullname: Joi.string().min(1),
       check_in_date: Joi.date().iso().min(Date()).required(),
-      check_out_date: Joi.date().iso().min(Joi.ref('check_in_date')).required(),
+      check_out_date: Joi.date().iso().min(Joi.ref('check_in_date')).required()
     });
     const { error } = validatingDate.validate(req.body);
     if (error) {

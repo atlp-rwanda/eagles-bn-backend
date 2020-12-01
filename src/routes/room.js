@@ -1,6 +1,5 @@
 /* eslint-disable linebreak-style */
 import Router from "express";
-import { upload } from '../helpers/file-uploader';
 import RoomController from '../controllers/room';
 import roomValidation from '../validators/room';
 import verifyAccessToken from '../middlewares/verifyToken';

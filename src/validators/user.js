@@ -1,6 +1,5 @@
 /* eslint-disable linebreak-style */
 import jwt from 'jsonwebtoken';
-import passport from 'passport';
 import Joi from 'joi';
 
 export default class userValidations {
@@ -59,10 +58,6 @@ export default class userValidations {
       }
       return res.status(500).json({ Error: 'Internal Error!' });
     }
-  }
-
-  static auth(req, res, next) {
-    return passport.authenticate('jwt', { session: false })(req, res, next);
   }
 
   static IsAllowed(role) {

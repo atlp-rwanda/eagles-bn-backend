@@ -24,6 +24,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
+      status: {
+        allowNull: false,
+        defaultValue: 'pending',
+        type: Sequelize.STRING,
+      },
       check_in_date: {
         type: Sequelize.DATE
       },

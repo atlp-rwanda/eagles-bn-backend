@@ -15,12 +15,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "room_id",
         onDelete: 'CASCADE'
       });
+      Booking.belongsTo(models.Accommodation, {
+        as: "accommodation",
+        foreignKey: "accommodation_id",
+        onDelete: 'CASCADE'
+      });
     }
   }
   Booking.init({
     user_id: DataTypes.INTEGER,
     room_id: DataTypes.INTEGER,
     accommodation_id: DataTypes.INTEGER,
+    status: { type: DataTypes.STRING, defaultValue: 'pending' },
     check_in_date: DataTypes.DATE,
     check_out_date: DataTypes.DATE
   }, {

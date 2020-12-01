@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "1.0.0.",
+        "version": "1.0.0",
         "title": "BeareFoot Nomad",
         "description": "BeareFoot nomad is web Application will it solve the problems bearefoot nomad they are facing",
         "license": {
@@ -10,7 +10,8 @@
         }
     },
     "basePath": "/api",
-    "tags": [{
+    "tags": [
+        {
             "name": "Users",
             "description": "Documentation of of BeareFoot User's operations"
         },
@@ -167,7 +168,6 @@
                 }
             }
         },
-
         "/user/profile": {
             "post": {
                 "tags": ["Users"],
@@ -267,11 +267,6 @@
                 }
             }
         },
-
-
-
-
-
         "/user/login": {
             "post": {
                 "tags": ["Users"],
@@ -825,7 +820,6 @@
                 }
             }
         },
-
         "/accommodations/{id}/feedback": {
             "post": {
                 "tags": ["Accommodations"],
@@ -872,7 +866,6 @@
                 }
             }
         },
-
         "/accommodation/{accommodationID}/rooms": {
             "parameters": [{
                 "name": "accommodationID",
@@ -1179,6 +1172,42 @@
                 "parameters": [{
                         "name": "id",
                         "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "auth-token",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
+        },
+        "/rooms/booking/{booking_id}/{status}": {
+            "patch": {
+                "tags": ["Bookings"],
+                "summary": "creating booking",
+                "description": "user creating booking if he/she logged in",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [{
+                        "name": "booking_id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "status",
                         "required": true,
                         "type": "string"
                     },
@@ -1632,8 +1661,6 @@
                 }
             }
         },
-
-
         "profile": {
             "type": "object",
             "required": [
@@ -1685,9 +1712,6 @@
                 }
             }
         },
-
-
-
         "Trip": {
             "type": "object",
             "required": ["from", "to"],
@@ -1747,8 +1771,6 @@
                 }
             }
         },
-
-
         "/trips/{id}/comment": {
             "post": {
                 "tags": ["Trips"],

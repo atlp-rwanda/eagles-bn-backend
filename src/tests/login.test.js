@@ -59,14 +59,4 @@ export default () => {
       );
     });
   });
-  describe("Check auth: ", () => {
-    it("should return 401 status on no token", async () => {
-      const res = await chai
-        .request(app)
-        .get("/api/user/test-auth")
-        .set("Authorization", "no token");
-
-      expect(res).to.have.property("status", 401);
-    });
-  });
 };

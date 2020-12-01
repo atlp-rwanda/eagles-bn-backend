@@ -1,5 +1,5 @@
 /* eslint-disable linebreak-style */
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mailgun from "mailgun-js";
 import dotenv from "dotenv";
@@ -137,7 +137,6 @@ export default class UserController {
   }
 
   static async changeRoles(req, res) {
-    try {
       await roleEntryValidation.validateAsync(req.body).catch((err) =>
         res.status(400).send({ error: err.details[0].message.replace(/^"|"$/g, '') })
       );
@@ -154,13 +153,10 @@ export default class UserController {
         await _user.update({ role }, { where: { id: userId } });
       }
       return res.status(200).send({ message: `${user.first_name}'s role changed to ${role}` });
-    } catch (error) {
-      res.status(500).send({ error: error.message });
-    }
+ 
   }
 
   static async emailVerification(req, res) {
-    try {
       const user = await _user.findOne({
         where: { email: req.decoded.email },
       });
@@ -180,9 +176,6 @@ export default class UserController {
         status: 200,
         Message: 'User confirmed Successfully!',
       });
-    } catch (err) {
-      return res.status(500).send({ error: err });
-    }
   }
 
   static async login(req, res) {
@@ -207,13 +200,9 @@ export default class UserController {
   }
 
   static async logout(req, res) {
-    try {
-      const { id: userId } = req.user;
-      client.del(userId);
-      return onSuccess(res, 200, 'You logged out successfully.');
-    } catch (error) {
-      return onError(res, 500, 'Internal server error');
-    }
+    const { id: userId } = req.user;
+    client.del(userId);
+    return onSuccess(res, 200, 'You logged out successfully.');
   }
 
   static async RememberTravel(req, res) {
@@ -224,7 +213,6 @@ export default class UserController {
   }
 
   static async userProfile(req, res) {
-    try {
       const { user } = req;
       const image = req.files.profile_image;
       if (image.type.split('/')[0] !== "image") {
@@ -264,9 +252,5 @@ export default class UserController {
       { where: { id: user.id } })
         .then((data) => onSuccess(res, 201, 'Profile updated sucessfully'))
         .catch((err) => onError(res, 500, 'Internal server error'));
-    } catch (err) {
-      console.log("In try and catch funct", err);
-      return onError(res, 500, 'Internal server error');
-    }
   }
 }

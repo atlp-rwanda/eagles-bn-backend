@@ -5,11 +5,12 @@ import chaiHttp from "chai-http";
 import signAccessToken from "../helpers/jwt_helper";
 import app from "../index";
 import { Trips, User } from "../database/models";
-import { fakeRequesterCredentials } from './mock-user.data';
+import { fakeRequesterCredentials, fakeManagerCredentials } from './mock-user.data';
 
 chai.use(chaiHttp);
 let token;
 let tripID;
+let managerToken;
 let rememberOffToken;
 export default () => {
   const mockTrip = {
@@ -33,6 +34,8 @@ export default () => {
     await User.destroy({ where: { password: fakeRequesterCredentials.password } });
     const { dataValues: user } = await User.create(fakeRequesterCredentials);
     token = await signAccessToken(user);
+    const { dataValues: manager } = await User.create(fakeManagerCredentials);
+    managerToken = await signAccessToken(manager);
     const { dataValues: rememberUser } = await User.create({ ...fakeRequesterCredentials, email: "alainmucyo@gmail.com", remember_travel: false });
     rememberOffToken = await signAccessToken(rememberUser);
     await Trips.create({ ...mockTrip, reasons: "Hello", requester_id: user.id });
@@ -81,6 +84,24 @@ export default () => {
 
     expect(res).to.have.property("status", 200);
     expect(res.body.data).to.have.property("from", 4);
+  });
+  it("updates a trip status", async () => {
+    const res = await chai
+      .request(app)
+      .patch(`/api/trips/${tripID}/status`)
+      .set("auth-token", managerToken)
+      .send({ status: 'approved' });
+      
+    expect(res).to.have.property("status", 200);
+  });
+  it("fails to update a trip status on validation error", async () => {
+    const res = await chai
+      .request(app)
+      .patch(`/api/trips/${tripID}/status`)
+      .set("auth-token", managerToken)
+      .send({ status: 'exit' });
+      
+    expect(res).to.have.property("status", 400);
   });
   it("fail to update a trip on invalid id", async () => {
     const res = await chai
