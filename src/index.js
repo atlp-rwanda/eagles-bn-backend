@@ -2,6 +2,7 @@
 /* eslint-disable import/no-cycle */
 import "@babel/polyfill";
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import passport from "passport";
@@ -31,8 +32,9 @@ const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 // const http = require("http").Server(app);
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(passport.initialize());
 app.use(passport.session());
