@@ -189,8 +189,8 @@ export default class UserController {
     const user = await _user.findOne({where: { email: req.body.email },});
     if (!user) 
       return res.status(404).json({ status: 404, error: 'Invalid Email or Password' });
-    if (!user.isConfirmed) 
-      return res.status(403).json({ status: 403, error: 'Account not activated' });
+    // if (!user.isConfirmed) 
+    //   return res.status(403).json({ status: 403, error: 'Account not activated' });
     const validPassword = await bcrypt.compare(req.body.password,user.password);
     if (!validPassword) {
       return res.status(401).json({

@@ -15,7 +15,7 @@ export default class userValidations {
     });
     const authError = userValidationSchema.validate(req.body);
     if (authError.error) {
-      return res.send({ error: authError.error.details[0].message });
+      return res.status(400).send({ error: authError.error.details[0].message });
     }
     return next();
   }
