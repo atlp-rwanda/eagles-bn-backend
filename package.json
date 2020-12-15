@@ -4,7 +4,7 @@
     "description": "",
     "main": "src/index.js",
     "scripts": {
-        "migrate": "npx sequelize db:migrate && npx sequelize db:seed:all",
+        "migrate": "npx sequelize db:migrate",
         "migrate:undo": "npx sequelize db:migrate:undo:all",
         "migrate:test": "npx sequelize db:migrate --env test",
         "droptables:dev": "npx sequelize db:migrate:undo:all",
