@@ -16,6 +16,7 @@ router.use('/', authRoutes);
   User.emailVerification
 );
 router.post("/login", User.login);
+router.get("/current",verifyAccessToken, User.current);
 router.post("/forgetPassword", User.forgetPassword);
 router.post("/logout", verifyAccessToken, User.logout);
 router.put("/resetPassword/:token/:email", User.resetPassword);
