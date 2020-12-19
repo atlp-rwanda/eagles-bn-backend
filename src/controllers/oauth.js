@@ -5,7 +5,7 @@ import signAccessToken from '../helpers/jwt_helper';
 class Oauth {
   static async loginSuccess(req, res) {
     const token = await signAccessToken(req.user);
-    res.send({ message: "Login succeed", token });
+    res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}`);
   }
 }
 
