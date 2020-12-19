@@ -16,12 +16,13 @@ import tripStatusValidation from '../validators/tripStatus';
 
 const router = Router();
 
-router.get('/', user.IsAllowed(roles.MANAGER), catcher(Trip.getAll));
+router.get('/', catcher(Trip.getAll));
 router.get('/search', catcher(validation.search), catcher(Trip.search));
+router.get('/latest', catcher(Trip.latestTrips));
 
-router.post("/", verifyAccessToken, tripRemember, trip.validate, catcher(Trip.create));
-router.get("/remember/latest", verifyAccessToken, user.IsAllowed(roles.REQUESTER), catcher(Trip.LatestRemember));
-router.patch("/:tripId/status", trip.isManager, tripStatusValidation, catcher(Trip.update));
+router.post('/', verifyAccessToken, tripRemember, trip.validate, catcher(Trip.create));
+router.get('/remember/latest', verifyAccessToken, user.IsAllowed(roles.REQUESTER), catcher(Trip.LatestRemember));
+router.patch('/:tripId/status', trip.isManager, tripStatusValidation, catcher(Trip.update));
 router
   .route('/:tripId')
   .get(catcher(Trip.getOne))

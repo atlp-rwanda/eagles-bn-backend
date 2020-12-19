@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "room_id",
         onDelete: 'CASCADE'
       });
+      Booking.belongsTo(models.Accommodation, {
+        foreignKey: "accommodation_id"
+      });
     }
   }
   Booking.init({
@@ -29,4 +32,4 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'Bookings'
   });
   return Booking;
-}
+};

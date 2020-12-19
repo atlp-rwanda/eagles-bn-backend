@@ -184,17 +184,18 @@ export default class UserController {
       return res.status(500).send({ error: err });
     }
   }
+
   static async current(req, res) {
-    const {dataValues: user} = await _user.findByPk(req.user.id);
-    return res.send({data: {...user, password: null}});
+    const { dataValues: user } = await _user.findByPk(req.user.id);
+    return res.send({ data: { ...user, password: null } });
   }
+
   static async login(req, res) {
-    const user = await _user.findOne({where: { email: req.body.email },});
-    if (!user) 
-      return res.status(404).json({ status: 404, error: 'Invalid Email or Password' });
-    // if (!user.isConfirmed) 
+    const user = await _user.findOne({ where: { email: req.body.email }, });
+    if (!user) { return res.status(404).json({ status: 404, error: 'Invalid Email or Password' }); }
+    // if (!user.isConfirmed)
     //   return res.status(403).json({ status: 403, error: 'Account not activated' });
-    const validPassword = await bcrypt.compare(req.body.password,user.password);
+    const validPassword = await bcrypt.compare(req.body.password, user.password);
     if (!validPassword) {
       return res.status(401).json({
         status: 401,

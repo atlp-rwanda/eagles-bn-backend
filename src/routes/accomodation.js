@@ -2,7 +2,7 @@
 import Router from 'express';
 import AccomodationController from '../controllers/accomodation';
 import accommodationValidator from '../middlewares/accommodation';
-import feedbackValidation from "../validators/feedback"
+import feedbackValidation from "../validators/feedback";
 import verifyAccessToken from '../middlewares/verifyToken';
 import user from '../validators/user';
 import { roles } from '../helpers/roles';
@@ -11,6 +11,7 @@ import catcher from '../utils/catcher';
 const router = Router();
 
 router.get('/', catcher(AccomodationController.index));
+router.get("/popular", catcher(AccomodationController.popular));
 router.get('/:id', catcher(AccomodationController.show));
 router.post(
   '/',
@@ -33,6 +34,6 @@ router.delete(
   catcher(AccomodationController.destroy)
 );
 router.post("/:id/like", verifyAccessToken, AccomodationController.like);
-router.post("/:id/feedback", verifyAccessToken,feedbackValidation,AccomodationController.feedback);
+router.post("/:id/feedback", verifyAccessToken, feedbackValidation, AccomodationController.feedback);
 
 export default router;

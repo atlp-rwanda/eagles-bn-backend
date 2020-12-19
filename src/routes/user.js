@@ -6,6 +6,7 @@ import verifyAccessToken from '../middlewares/verifyToken';
 import { roles } from '../helpers/roles';
 import userValidation from '../validators/user';
 import catcher from '../utils/catcher';
+import Dashboard from '../controllers/dashboard';
 
 const router = Router();
 
@@ -16,7 +17,7 @@ router.use('/', authRoutes);
   User.emailVerification
 );
 router.post("/login", User.login);
-router.get("/current",verifyAccessToken, User.current);
+router.get("/current", verifyAccessToken, User.current);
 router.post("/forgetPassword", User.forgetPassword);
 router.post("/logout", verifyAccessToken, User.logout);
 router.put("/resetPassword/:token/:email", User.resetPassword);
@@ -25,4 +26,5 @@ router.put('/roles/:id', verifyAccessToken, userValidation.IsAllowed(roles.SUPER
 router.post('/signup', userValidation.signUpValidation, User.userSignUp);
 router.patch('/profile', verifyAccessToken, userValidation.profileValidate, User.userProfile);
 router.put('/remember-travel', verifyAccessToken, catcher(User.RememberTravel));
+router.get("/dashboard/requester", Dashboard.requesterDashboard);
 export default router;

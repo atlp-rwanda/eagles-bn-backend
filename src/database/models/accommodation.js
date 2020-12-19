@@ -26,9 +26,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "accommodation_id",
         onDelete: "CASCADE"
       });
-      Accommodation.hasMany(models.Rating,{
+      Accommodation.hasMany(models.Rating, {
         foreignKey: "accommodation_id",
         onDelete: "CASCADE"
+      });
+      Accommodation.hasMany(models.Booking, {
+        foreignKey: "accommodation_id",
       });
     }
   }
@@ -45,7 +48,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Accommodation',
-    tableName: 'Accommodations'
+    tableName: 'Accommodations',
+    freezeTableName: true
   });
   return Accommodation;
 };

@@ -1,14 +1,17 @@
 /* eslint-disable linebreak-style */
-import models from '../database/models';
+// import sequelize from 'sequelize';
+import models, { sequelize } from '../database/models';
 import { NewError } from '../helpers/errors';
 import { imagesUpload } from '../helpers/file-uploader';
+import { onSuccess } from '../utils/response';
 
 class Accommodation {
   static async index(req, res) {
     const accommodations = await models.Accommodation.findAll({
-      include: models.Location,
+      include: models.Location
     });
-    res.status(200).send({ data: accommodations });
+    res.status(200)
+      .send({ data: accommodations });
   }
 
   static async create(req, res) {
@@ -18,12 +21,13 @@ class Accommodation {
     const accommodation = await models.Accommodation.create({
       ...req.body,
       host_id,
-      images,
+      images
     });
-    res.status(201).send({
-      message: 'Accommodation Created successfully!',
-      data: accommodation,
-    });
+    res.status(201)
+      .send({
+        message: 'Accommodation Created successfully!',
+        data: accommodation
+      });
   }
 
   static async show(req, res) {
@@ -32,20 +36,23 @@ class Accommodation {
       where: { id: req.params.id },
       include: [
         { model: models.Location },
-        { model: models.Room, as: 'rooms' },
-      ],
+        {
+          model: models.Room,
+          as: 'rooms'
+        }
+      ]
     });
 
     if (!accommodation) return NewError(res, 404, 'Accommodation not found');
     res.send({
       message: 'Accommodation Found!',
-      data: accommodation,
+      data: accommodation
     });
   }
 
   static async update(req, res) {
     const accommodation = await models.Accommodation.findOne({
-      where: { id: req.params.id },
+      where: { id: req.params.id }
     });
 
     if (!accommodation) return NewError(res, 404, 'Accommodation not found');
@@ -53,28 +60,28 @@ class Accommodation {
     await models.Accommodation.update(
       {
         ...req.body,
-        images: images.length > 0 ? images : accommodation.images,
+        images: images.length > 0 ? images : accommodation.images
       },
       { where: { id: req.params.id } }
     );
     // eslint-disable-next-line max-len
     const updatedAccommodation = await models.Accommodation.findOne({
-      where: { id: req.params.id },
+      where: { id: req.params.id }
     });
     res.send({
       message: 'Accommodation Updated successfully!',
-      data: updatedAccommodation,
+      data: updatedAccommodation
     });
   }
 
   static async destroy(req, res) {
     const accommodation = await models.Accommodation.destroy({
-      where: { id: req.params.id },
+      where: { id: req.params.id }
     });
     if (!accommodation) return NewError(res, 404, 'Accommodation not found');
     res.send({
       message: 'Accommodation deleted successfully!',
-      data: null,
+      data: null
     });
   }
 
@@ -88,21 +95,28 @@ class Accommodation {
           .status(404)
           .send({ message: ` Accommodation of ID "${accommodationId}" does not Exist !` });
       }
-      const likeExist = await models.Like.findOne({ where: { userId: id, accommodationId } });
+      const likeExist = await models.Like.findOne({
+        where: {
+          userId: id,
+          accommodationId
+        }
+      });
       if (likeExist) {
         await likeExist.destroy();
-        return res.status(201).send({
-          message: `You unliked an accommodation of ID  ${accommodationId}`,
-        });
+        return res.status(201)
+          .send({
+            message: `You unliked an accommodation of ID  ${accommodationId}`
+          });
       }
       const savelike = await models.Like.create({
         userId: id,
-        accommodationId,
+        accommodationId
       });
-      return res.status(201).send({
-        message: `You liked an accommodation of ID  ${accommodationId}`,
-        data: savelike,
-      });
+      return res.status(201)
+        .send({
+          message: `You liked an accommodation of ID  ${accommodationId}`,
+          data: savelike
+        });
     } catch (err) {
       return NewError(res, 500, 'Server error');
     }
@@ -131,10 +145,10 @@ class Accommodation {
       const relatedTrips = await models.Trips.findAll({
         where: { requester_id: id }
       });
-      console.log("======================Related trips:========================== ", relatedTrips);
+      console.log('======================Related trips:========================== ', relatedTrips);
       if (relatedTrips) {
         for (let i = 0; i < relatedTrips.length; i++) {
-          if (relatedTrips[i].status !== "Approved") {
+          if (relatedTrips[i].status !== 'Approved') {
             return res
               .status(404)
               .send({ message: `Your trip has to be approved first` });
@@ -145,22 +159,48 @@ class Accommodation {
               accommodationId,
               feedback
             });
-            return res.status(201).send({
-              message: `You commented on accommodation of ID  ${accommodationId}`,
-              data: savefeedback,
-            });
+            return res.status(201)
+              .send({
+                message: `You commented on accommodation of ID  ${accommodationId}`,
+                data: savefeedback
+              });
           }
           return res
             .status(404)
             .send({ message: `Accommodation entered is different from the one on your trip` });
         }
       }
-      return res.status(403).send({
-        message: `To Comment On an Accommodation, you have to trip with us first`,
-      });
+      return res.status(403)
+        .send({
+          message: `To Comment On an Accommodation, you have to trip with us first`
+        });
     } catch (err) {
       return NewError(res, 500, 'Server error');
     }
   }
+
+  static async popular(req, res) {
+    /*  const accommodations = await models.Accommodation.findAll({
+       attributes: [
+         '"Accommodation".*',
+         [sequelize.literal('(SELECT COUNT(*) FROM "Bookings"
+         WHERE "Bookings".accommodation_id = "Accommodation".id)'),
+          'BookingCount']
+       ],
+       order: [[sequelize.literal('"BookingCount"'), "DESC"]]
+     }); */
+    const POPULAR_LIMIT = 2;
+    const query = `
+      SELECT "Accommodation".*,
+      (SELECT COUNT(*) FROM "Bookings"  WHERE "Bookings".accommodation_id = "Accommodation".id)
+      AS bookings_count
+      FROM "Accommodations" AS "Accommodation" 
+      ORDER BY bookings_count DESC
+      LIMIT ${POPULAR_LIMIT};
+    `;
+    const accommodations = await sequelize.query(query);
+    return onSuccess(res, 200, 'Popular accommodation', accommodations[0]);
+  }
 }
+
 export default Accommodation;
