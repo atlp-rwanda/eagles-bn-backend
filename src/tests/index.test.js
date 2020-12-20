@@ -26,7 +26,6 @@ describe("Logout test suit", () => {
 });
 
 // NOTIFICATION TEST SUIT
-
 describe('Barefoot nomad notification test', () => {
   describe('Notification operation', notification);
 })

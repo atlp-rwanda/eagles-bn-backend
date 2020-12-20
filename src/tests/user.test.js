@@ -1,35 +1,47 @@
 /* eslint-disable linebreak-style */
-import chai from 'chai';
+import chai, { expect, request } from 'chai';
 import { describe, it } from 'mocha';
-import jwt from 'jsonwebtoken';
 import chaiHttp from 'chai-http';
+import jwt from 'jsonwebtoken';
+import path from 'path';
 import app from '../index';
 import models from '../database/models';
 import { signToken } from '../helpers/auth';
+import signAccessToken from '../helpers/jwt_helper';
 
 chai.use(chaiHttp);
-const { expect } = chai;
-const { request } = chai;
 
 describe(' POST /api/user/resetPassword/', () => {
-  it('It should change password', (done) => {
+  it('It should not change password on no email supplied', (done) => {
     const userData = {
       first_name: 'alexis',
       last_name: 'work',
       email: 'nklbigone@gmail.com',
       password: 'alexis123',
     };
-    const token = jwt.sign(
-      {
-        email: userData.email,
-        first_name: userData.first_name,
-        last_name: userData.last_name,
-      },
-      userData.password,
-      {
-        expiresIn: '24h',
-      }
-    );
+    models.User.create(userData)
+      .then(({ password, first_name, last_name }) => {
+        const token = jwt.sign({ first_name, last_name }, password, { expiresIn: '24h' });
+        chai
+          .request(app)
+          .put(`/api/user/resetPassword/${token}/${userData.email}`)
+          .send(userData)
+          .end((err, response) => {
+            expect(response).to.have.status(404);
+            done();
+          });
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
+  it('It should change password', (done) => {
+    const userData = {
+      first_name: 'alexiss',
+      last_name: 'works',
+      email: 'nklbigones@gmail.com',
+      password: 'alexiss123',
+    };
     models.User.create(userData)
       .then((createdUser) => {
         const token = signToken(userData, createdUser.password);
@@ -47,31 +59,6 @@ describe(' POST /api/user/resetPassword/', () => {
         done(err);
       });
   });
-  //   it("It should not change password if token is invalid", (done) => {
-  //     const userData = {
-  //       first_name: "alexis",
-  //       last_name: "work",
-  //       email: "nklbigon@gmail.com",
-  //       password: "alexis123",
-  //     };
-  //     models.User.create(userData)
-  //       .then(() => {
-  //         const password = "alexis4321";
-  //         chai
-  //           .request(app)
-  //           .put(
-  //             "/api/user/resetPassword/:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJlbWFpbCI6Im5rbGJpZ29uZUBnbWFpbC5jb20iLCJpYXQiOjE2MDM3OTk2OTcsImV4cCI6MTYwMzg4NjA5N30.olo518Ek846j-XJsk_YH801HWY_UCKfEWwWWm8klsYc/:nklbigone@gmail.com"
-  //           )
-  //           .send({ password })
-  //           .end((err, response) => {
-  //             expect(response).to.have.status(400);
-  //             done();
-  //           });
-  //       })
-  //       .catch((err) => {
-  //         done(err);
-  //       });
-  //   });
 });
 describe(' POST /api/user/forgetPassword', () => {
   before(async () => {
@@ -104,7 +91,6 @@ describe(' POST /api/user/forgetPassword', () => {
         done(err);
       });
   });
-
   it('It should not find user', (done) => {
     const email = 'gone@gmail.com';
     chai
@@ -152,9 +138,6 @@ describe('USER SIGNUP TESTS', () => {
           done();
         });
     });
-  });
-
-  describe('POST/signup', () => {
     it('it should raise email existance error', (done) => {
       request(app)
         .post('/api/user/signup')
@@ -172,9 +155,6 @@ describe('USER SIGNUP TESTS', () => {
           done();
         });
     });
-  });
-
-  describe('POST/signup', () => {
     it('it should raise email format error', (done) => {
       request(app)
         .post('/api/user/signup')
@@ -186,7 +166,7 @@ describe('USER SIGNUP TESTS', () => {
           confirmPassword: '123456789',
         })
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.equal(400);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
           expect(res.body).to.have.property(
@@ -196,9 +176,6 @@ describe('USER SIGNUP TESTS', () => {
           done();
         });
     });
-  });
-
-  describe('POST/signup', () => {
     it('it should first_name validation error', (done) => {
       request(app)
         .post('/api/user/signup')
@@ -210,7 +187,7 @@ describe('USER SIGNUP TESTS', () => {
           confirmPassword: '123456789',
         })
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.equal(400);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
           expect(res.body).to.have.property(
@@ -220,21 +197,18 @@ describe('USER SIGNUP TESTS', () => {
           done();
         });
     });
-  });
-
-  describe('POST/signup', () => {
-    it('it should first_name validation error', (done) => {
+    it('it should last_name validation error', (done) => {
       request(app)
         .post('/api/user/signup')
         .send({
           first_name: 'Gahozo',
           last_name: '',
-          email: 'g@ymail',
+          email: 'goo@ymail.rw',
           password: '123456789',
           confirmPassword: '123456789',
         })
         .end((err, res) => {
-          expect(res.status).to.equal(200);
+          expect(res.status).to.equal(400);
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
           expect(res.body).to.have.property(
@@ -244,5 +218,91 @@ describe('USER SIGNUP TESTS', () => {
           done();
         });
     });
+  });
+});
+
+describe('USER PROFILE TESTS', () => {
+  beforeEach(async () => { await models.User.destroy({ where: { email: 'fake' } }); });
+  afterEach(async () => { await models.User.destroy({ where: { email: 'fake' } }); });
+  const userData = {
+    first_name: "Eagle",
+    last_name: "Doe",
+    email: "fake",
+    password: "password",
+    role: "manager",
+    manager: 3,
+    isConfirmed: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  it('fetches user profile', async () => {
+    const user = await models.User.create(userData);
+    const token = await signAccessToken(user);
+    const res = await chai.request(app).get('/api/user/profile').set('auth-token', token);
+    expect(res).to.have.property('status', 200);
+  });
+  it('updates user profile first_name', async () => {
+    const user = await models.User.create(userData);
+    const token = await signAccessToken(user);
+    const newFirstName = 'new one';
+    const res = await chai.request(app)
+      .patch('/api/user/profile')
+      .set('auth-token', token)
+      .send({ first_name: newFirstName });
+    expect(res).to.have.property('status', 200);
+    expect(res.body.data).to.have.property('first_name', newFirstName);
+  });
+  it('should fail to update user profile first_name on very long name', async () => {
+    const user = await models.User.create(userData);
+    const token = await signAccessToken(user);
+    const newFirstName = 'lorem ipsum dolor ipusi yacu ntgo ikeneye ko bino bintu byaza gukunda';
+    const res = await chai.request(app)
+      .patch('/api/user/profile')
+      .set('auth-token', token)
+      .send({ first_name: newFirstName });
+    expect(res).to.have.property('status', 400);
+  });
+  it('should update the profile image', async () => {
+    const user = await models.User.create(userData);
+    const token = await signAccessToken(user);
+    const res = await chai.request(app)
+      .patch('/api/user/profile/picture')
+      .set('Content-Type', 'multipart/form-data')
+      .set('auth-token', token)
+      .attach('profile_image', path.join(__dirname, 'assets/girl.JPG'));
+    expect(res).to.have.status(200);
+  });
+  it('should fail to update the profile image if not supported image', async () => {
+    const user = await models.User.create(userData);
+    const token = await signAccessToken(user);
+    const res = await chai.request(app)
+      .patch('/api/user/profile/picture')
+      .set('auth-token', token)
+      .attach('profile_image', path.join(__dirname, 'assets/fake.txt'));
+    expect(res).to.have.status(400);
+  });
+});
+
+describe('CURRENT SIGNED USER', () => {
+  beforeEach(async () => { await models.User.destroy({ where: { email: 'fake' } }); });
+  afterEach(async () => { await models.User.destroy({ where: { email: 'fake' } }); });
+  const userData = {
+    first_name: "Eagle",
+    last_name: "Doe",
+    email: "fake",
+    password: "password",
+    role: "manager",
+    manager: 3,
+    isConfirmed: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  it('fetches user', async () => {
+    const user = await models.User.create(userData);
+    const token = await signAccessToken(user);
+    const res = await chai.request(app).get('/api/user/current').set('auth-token', token);
+    expect(res).to.have.property('status', 200);
   });
 });

@@ -1,19 +1,17 @@
 /* eslint-disable linebreak-style */
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import mailgun from "mailgun-js";
-import dotenv from "dotenv";
-import _, { result } from "lodash";
-import { encryptPassword, verifyLink } from "../helpers";
-import { User as _user } from "../database/models/index";
-import { onError, onSuccess } from "../utils/response";
-import { signToken } from "../helpers/auth";
-import signAccessToken from "../helpers/jwt_helper";
-import client from "../config/redis_config";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import mailgun from 'mailgun-js';
+import dotenv from 'dotenv';
+import { encryptPassword, verifyLink } from '../helpers';
+import { User as _user } from '../database/models/index';
+import { onError, onSuccess } from '../utils/response';
+import { signToken } from '../helpers/auth';
+import signAccessToken from '../helpers/jwt_helper';
+import client from '../config/redis_config';
 import { roleEntryValidation } from '../helpers/file-uploader';
 import { managers } from '../helpers/managers';
 import { roles } from '../helpers/roles';
-// import cloudinary from 'cloudinary';
 import { cloudinaryUpload } from '../helpers/cloudinary-upload';
 
 dotenv.config();
@@ -26,9 +24,7 @@ const mg = mailgun({
 
 export default class UserController {
   static async userSignUp(req, res) {
-    const {
-      first_name, last_name, email, password, role
-    } = req.body;
+    const { first_name, last_name, email, password, role } = req.body;
     const foundUser = await _user.findOne({ where: { email } });
     if (foundUser) {
       return res.status(403).json({ error: 'Email is already in use' });
@@ -39,7 +35,7 @@ export default class UserController {
           first_name,
           last_name,
           email,
-          role
+          role,
         },
         process.env.JWT_ACCOUNT_VEIRIFICATION,
         { expiresIn: '72h' }
@@ -96,18 +92,18 @@ export default class UserController {
         { email: foundUser.email, _id: foundUser._id },
         foundUser.password,
         {
-          expiresIn: "24h",
+          expiresIn: '24h',
         }
       );
       const data = {
-        from: "alexis2020@gmail.com",
+        from: 'alexis2020@gmail.com',
         to: email,
-        subject: "please reset your Password",
+        subject: 'please reset your Password',
         html: `click this link to reset password http://localhost:4000/api/resetPassword/${token}/${email}`,
       };
       mg.messages().send(data, (error) => {
         res.status(201).json({
-          message: "email has been sent please change your password",
+          message: 'email has been sent please change your password',
         });
       });
     } else {
@@ -119,88 +115,62 @@ export default class UserController {
     const { email } = req.params;
     const foundUser = await _user.findOne({ where: { email } });
     const password = await encryptPassword(req.body.password);
-    try {
-      const { email: useremail } = verifyLink(
-        req.params.token,
-        foundUser.password
-      );
-      if (!useremail) return res.status(404).json({ message: 'user not email not found' });
-      await _user.update({ password }, { where: { email: useremail } });
-      res.status(200).json({
-        success: true,
-        message: 'Thank you! You can now use your new password to login!',
-      });
-    } catch (error) {
-      res.status(400).json({ message: 'you token are invalid' });
-      // const token = signToken(tokObj);
-    }
+    const { email: useremail } = verifyLink(
+      req.params.token,
+      foundUser.password
+    );
+    if (!useremail) return res.status(404).json({ message: 'user not email not found' });
+    await _user.update({ password }, { where: { email: useremail } });
+    res.status(200).json({
+      success: true,
+      message: 'Thank you! You can now use your new password to login!',
+    });
   }
 
   static async changeRoles(req, res) {
-    try {
-      await roleEntryValidation.validateAsync(req.body).catch((err) =>
-        res.status(400).send({ error: err.details[0].message.replace(/^"|"$/g, '') })
+    await roleEntryValidation.validateAsync(req.body).catch((err) =>
+      res.status(400).json({ error: err.details[0].message.replace(/^"|"$/g, '') })
+    );
+    const { role } = req.body;
+    const userId = req.params.id;
+    const user = await _user.findOne({ where: { id: userId } });
+    if (!user) return res.status(404).send({ error: 'User not found' });
+    if (user.role === role) return res.status(400).send({ error: `${user.first_name} is already ${role}` });
+    if (role === roles.REQUESTER) {
+      await _user.update(
+        { role, manager: managers.DEFAULT_MANAGER },
+        { where: { id: userId } }
       );
-      const { role } = req.body;
-      const userId = req.params.id;
-      const user = await _user.findOne({ where: { id: userId } });
-      if (!user) return res.status(404).send({ error: 'User not found' });
-      if (user.role === role) {
-        return res.status(400).send({ error: `${user.first_name} is already ${role}` });
-      }
-      if (role === roles.REQUESTER) {
-        await _user.update({ role, manager: managers.DEFAULT_MANAGER }, { where: { id: userId } });
-      } else {
-        await _user.update({ role }, { where: { id: userId } });
-      }
-      return res.status(200).send({ message: `${user.first_name}'s role changed to ${role}` });
-    } catch (error) {
-      res.status(500).send({ error: error.message });
-    }
+    } else await _user.update({ role }, { where: { id: userId } });
+    return res.status(200).send({ message: `${user.first_name}'s role changed to ${role}` });
   }
 
   static async emailVerification(req, res) {
-    try {
-      const user = await _user.findOne({
-        where: { email: req.decoded.email },
-      });
-      if (!user) {
-        return res.status(404).json({
-          status: 404,
-          Error: 'user Not Found',
-        });
-      }
+    const user = await _user.findOne({ where: { email: req.decoded.email } });
+    if (!user) return onError(res, 404, 'user Not Found');
 
-      await _user.update(
-        { isConfirmed: true },
-        { where: { email: req.decoded.email } }
-      );
+    await _user.update(
+      { isConfirmed: true },
+      { where: { email: req.decoded.email } }
+    );
 
-      return res.status(200).json({
-        status: 200,
-        Message: 'User confirmed Successfully!',
-      });
-    } catch (err) {
-      return res.status(500).send({ error: err });
-    }
+    return res.status(200).json({
+      status: 200,
+      Message: 'User confirmed Successfully!',
+    });
   }
+
   static async current(req, res) {
-    const {dataValues: user} = await _user.findByPk(req.user.id);
-    return res.send({data: {...user, password: null}});
+    const { dataValues: user } = await _user.findByPk(req.user.id);
+    return res.send({ data: { ...user, password: null } });
   }
+
   static async login(req, res) {
-    const user = await _user.findOne({where: { email: req.body.email },});
-    if (!user) 
-      return res.status(404).json({ status: 404, error: 'Invalid Email or Password' });
-    // if (!user.isConfirmed) 
-    //   return res.status(403).json({ status: 403, error: 'Account not activated' });
-    const validPassword = await bcrypt.compare(req.body.password,user.password);
-    if (!validPassword) {
-      return res.status(401).json({
-        status: 401,
-        error: 'Incorrect email or password',
-      });
-    }
+    const user = await _user.findOne({ where: { email: req.body.email } });
+    if (!user) return onError(res, 404, 'Invalid Email or Password');
+    if (!user.isConfirmed) return onError(res, 403, 'Account not activated');
+    const validPassword = await bcrypt.compare(req.body.password, user.password);
+    if (!validPassword) return onError(res, 401, 'Incorrect email or password');
     const token = await signAccessToken(user.dataValues);
     res.status(200).json({
       status: 200,
@@ -210,66 +180,72 @@ export default class UserController {
   }
 
   static async logout(req, res) {
-    try {
-      const { id: userId } = req.user;
-      client.del(userId);
-      return onSuccess(res, 200, 'You logged out successfully.');
-    } catch (error) {
-      return onError(res, 500, 'Internal server error');
-    }
+    const { id: userId } = req.user;
+    client.del(userId);
+    return onSuccess(res, 200, 'You logged out successfully.');
   }
 
   static async RememberTravel(req, res) {
     const { id: userId } = req.user;
     const { dataValues: user } = await _user.findByPk(userId);
-    _user.update({ remember_travel: !user.remember_travel }, { where: { id: userId } });
-    return onSuccess(res, 200, `Remember status updated to ${!user.remember_travel ? "yes" : "no"}`);
+    _user.update(
+      { remember_travel: !user.remember_travel },
+      { where: { id: userId } }
+    );
+    return onSuccess(
+      res,
+      200,
+      `Remember status updated to ${!user.remember_travel ? 'yes' : 'no'}`
+    );
+  }
+
+  static async profilePicture(req, res) {
+    const image = req.files.profile_image;
+    if (image.type.split('/')[0] !== 'image') {
+      return onError(res, 400, 'Profile Image has to be an image type');
+    }
+    const imageUrl = await cloudinaryUpload(image.path);
+    const [_, { dataValues: user }] = await _user.update({
+      profile_image: imageUrl,
+    }, {
+      where: { id: req.user.id },
+      returning: true,
+      plain: true,
+    });
+    return onSuccess(res, 200, 'Profile Picture updated sucessfully', user.profile_image);
+  }
+
+  static returnProfile(data) {
+    return {
+      birth_date: data.birth_date,
+      preferred_language: data.preferred_language,
+      preferred_currency: data.preferred_currency,
+      where_you_live: data.where_you_live,
+      father_name: data.father_name,
+      mother_name: data.mother_name,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      gender: data.gender,
+      phone_number: data.phone_number,
+      nationality: data.nationality,
+      marital_status: data.marital_status,
+      profile_image: data.profile_image
+    };
   }
 
   static async userProfile(req, res) {
-    try {
-      const { user } = req;
-      const image = req.files.profile_image;
-      if (image.type.split('/')[0] !== "image") {
-        return onError(res, 400, 'Profile Image has to be an image type');
-      }
-      const imageUrl = await cloudinaryUpload(image.path);
-      const {
-        birth_date,
-        preferred_language,
-        preferred_currency,
-        where_you_live,
-        father_name,
-        mother_name,
-        phone_number,
-        nationality,
-        marital_status,
-        gender,
-        role,
-        manager
-      } = req.body;
+    const [_, { dataValues: data }] = await _user.update(req.body, {
+      where: { id: req.user.id },
+      returning: true,
+      plain: true
+    });
 
-      const updatedUser = _user.update({
-        birth_date,
-        preferred_language,
-        preferred_currency,
-        where_you_live,
-        father_name,
-        mother_name,
-        gender,
-        phone_number,
-        nationality,
-        marital_status,
-        profile_image: imageUrl,
-        role,
-        manager
-      },
-      { where: { id: user.id } })
-        .then((data) => onSuccess(res, 201, 'Profile updated sucessfully'))
-        .catch((err) => onError(res, 500, 'Internal server error'));
-    } catch (err) {
-      console.log("In try and catch funct", err);
-      return onError(res, 500, 'Internal server error');
-    }
+    return onSuccess(res, 200, 'Profile updated sucessfully', UserController.returnProfile(data));
+  }
+
+  static async getProfile(req, res) {
+    const user = await _user.findByPk(req.user.id);
+
+    return onSuccess(res, 200, 'Profile updated sucessfully', UserController.returnProfile(user));
   }
 }

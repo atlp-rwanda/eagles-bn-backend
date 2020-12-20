@@ -48,6 +48,7 @@ const oauthTest = () => {
   it("oAuthLogin function", async () => {
     const req = { user: mockLoginUser };
     const res = {
+      redirect: mock(),
       status: () => ({
         json: () => undefined,
       }),
