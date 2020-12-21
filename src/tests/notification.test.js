@@ -45,8 +45,8 @@ const notification = () => {
   let managerToken;
   it('should login before view notification', async () => {
     const admin = {
-      email: "eagleManager@eagles.com",
-      password: "SuperAdmin@eagles",
+      email: "manager@eagles.com",
+      password: "password",
     };
     const res = await chai
       .request(app)

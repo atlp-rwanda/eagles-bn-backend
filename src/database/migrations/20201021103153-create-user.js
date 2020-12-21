@@ -88,19 +88,21 @@ module.exports = {
             marital_status: {
                 type: Sequelize.ENUM,
                 values: [
-                    'Not specified',
-                    'Single',
-                    'Married',
+                    '',
+                    'single',
+                    'married',
+                    'divorced',
+                    'widowed',
                 ],
-                defaultValue: 'Single'
+                defaultValue: 'single'
             },
             gender: {
                 type: Sequelize.ENUM,
                 values: [
-                    'Male',
-                    'Female',
+                    'male',
+                    'female',
                 ],
-                defaultValue: 'Female'
+                defaultValue: 'male'
             },
             createdAt: {
                 allowNull: false,

@@ -2,6 +2,7 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import Joi from 'joi';
+import { onError } from '../utils/response';
 
 export default class userValidations {
   static signUpValidation(req, res, next) {
@@ -15,30 +16,30 @@ export default class userValidations {
     });
     const authError = userValidationSchema.validate(req.body);
     if (authError.error) {
-      return res.status(400).send({ error: authError.error.details[0].message });
+      return res.status(400).json({ error: authError.error.details[0].message });
     }
     return next();
   }
 
   static profileValidate(req, res, next) {
     const auth = Joi.object({
-      birth_date: Joi.string().min(3),
-      preferred_language: Joi.string().min(3).max(20),
-      preferred_currency: Joi.string().min(3).max(20),
-      where_you_live: Joi.string().min(3).max(20).required(),
-      father_name: Joi.string().min(3).max(20),
-      mother_name: Joi.string().min(3).max(20),
-      gender: Joi.string().min(3).max(20).required(),
-      profile_image: Joi.any(),
-      phone_number: Joi.string().min(10).max(14),
-      nationality: Joi.string().min(3).max(20).required(),
-      marital_status: Joi.string().min(3).max(20).required(),
-      role: Joi.string().min(3).max(20),
-      manager: Joi.string().min(3).max(20)
+      birth_date: Joi.date().allow(null),
+      preferred_language: Joi.string().min(3).max(20).allow(null),
+      preferred_currency: Joi.string().min(3).max(20).allow(null),
+      where_you_live: Joi.string().min(3).max(20).allow(null),
+      first_name: Joi.string().min(3).max(20).allow(null),
+      last_name: Joi.string().min(3).max(20).allow(null),
+      father_name: Joi.string().min(3).max(20).allow(null),
+      mother_name: Joi.string().min(3).max(20).allow(null),
+      gender: Joi.string().min(3).max(20).allow(null),
+      phone_number: Joi.string().min(10).max(14).allow(null),
+      nationality: Joi.string().min(3).max(20).allow(null),
+      profile_image: Joi.any().allow(null),
+      marital_status: Joi.string().min(3).max(20).allow(null),
     });
     const authError = auth.validate(req.body);
     if (authError.error) {
-      return res.send({ error: authError.error.details[0].message.split('"').join('') });
+      return onError(res, 400, authError.error.details[0].message.split('"').join(''));
     } return next();
   }
 
@@ -59,10 +60,6 @@ export default class userValidations {
       }
       return res.status(500).json({ Error: 'Internal Error!' });
     }
-  }
-
-  static auth(req, res, next) {
-    return passport.authenticate('jwt', { session: false })(req, res, next);
   }
 
   static IsAllowed(role) {

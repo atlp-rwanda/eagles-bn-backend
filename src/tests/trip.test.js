@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 import chai, { expect } from "chai";
 import { it, after, before } from "mocha";
 import chaiHttp from "chai-http";
@@ -44,13 +43,14 @@ export default () => {
   let managerToken;
   it('should login before retrieve all trips', async () => {
     const admin = {
-      email: "eagleManager@eagles.com",
-      password: "SuperAdmin@eagles",
+      email: "manager@eagles.com",
+      password: "password",
     };
     const res = await chai
       .request(app)
       .post('/api/user/login')
       .send(admin);
+      console.log(res.body);
     managerToken = res.body.accessToken;
     expect(res).to.have.status(200);
   });

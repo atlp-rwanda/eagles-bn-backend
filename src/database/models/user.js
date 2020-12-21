@@ -89,19 +89,21 @@ module.exports = (sequelize, DataTypes) => {
         marital_status: {
             type: DataTypes.ENUM,
             values: [
-                'Not specified',
-                'Single',
-                'Married',
+                '',
+                'single',
+                'married',
+                'divorced',
+                'widowed',
             ],
-            defaultValue: 'Single'
+            defaultValue: 'single'
         },
         gender: {
             type: DataTypes.ENUM,
             values: [
-                'Male',
-                'Female',
+                'male',
+                'female',
             ],
-            defaultValue: 'Female'
+            defaultValue: 'male'
         },
         remember_travel: {
             type: DataTypes.BOOLEAN,

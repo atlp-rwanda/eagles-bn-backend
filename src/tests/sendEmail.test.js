@@ -30,8 +30,7 @@ describe("/api/", () => {
           last_name: "Uwayezu",
           email: "uwayezudavid96@gmail.com",
           password: "12345678",
-          confirmPassword: "12345678",
-          isConfirmed: false,
+          confirmPassword: "12345678"
         })
         .end((err, res) => {
           expect(res).to.have.status(200);

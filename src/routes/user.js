@@ -10,19 +10,18 @@ import catcher from '../utils/catcher';
 const router = Router();
 
 router.use('/', authRoutes);
-/* eslint-disable linebreak-style */ router.put(
-  '/email-verification/:token',
-  userValidation.verifyToken,
-  User.emailVerification
-);
 router.post("/login", User.login);
-router.get("/current",verifyAccessToken, User.current);
 router.post("/forgetPassword", User.forgetPassword);
-router.post("/logout", verifyAccessToken, User.logout);
-router.put("/resetPassword/:token/:email", User.resetPassword);
+router.get("/current", verifyAccessToken, catcher(User.current));
+router.post("/logout", verifyAccessToken, catcher(User.logout));
+router.put("/resetPassword/:token/:email", catcher(User.resetPassword));
 router.get("/test-auth", verifyAccessToken, (req, res) => res.sendStatus(200));
-router.put('/roles/:id', verifyAccessToken, userValidation.IsAllowed(roles.SUPER_ADMIN), User.changeRoles);
-router.post('/signup', userValidation.signUpValidation, User.userSignUp);
-router.patch('/profile', verifyAccessToken, userValidation.profileValidate, User.userProfile);
+router.put('/email-verification/:token', userValidation.verifyToken, catcher(User.emailVerification));
+router.put('/roles/:id', verifyAccessToken, userValidation.IsAllowed(roles.SUPER_ADMIN), catcher(User.changeRoles));
+router.patch('/profile', verifyAccessToken, userValidation.profileValidate, catcher(User.userProfile));
+router.patch('/profile/picture', verifyAccessToken, catcher(User.profilePicture));
 router.put('/remember-travel', verifyAccessToken, catcher(User.RememberTravel));
+router.post('/signup', userValidation.signUpValidation, User.userSignUp);
+router.get('/profile', verifyAccessToken, catcher(User.getProfile));
+
 export default router;
