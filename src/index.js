@@ -15,11 +15,10 @@ import routes from './routes/index';
 import chat from './controllers/chat';
 import socketAuth from './middlewares/socketio.auth';
 import socketHelper from './helpers/socketHelper';
-
 const multipartMiddleware = multipart();
 
 dotenv.config();
-const serverPort = process.env.PORT || 4000;
+const serverPort = process.env.PORT || 5000;
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);

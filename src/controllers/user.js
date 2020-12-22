@@ -248,4 +248,16 @@ export default class UserController {
 
     return onSuccess(res, 200, 'Profile updated sucessfully', UserController.returnProfile(user));
   }
+
+
+  static async fetchUsers(req, res) {
+    try {
+      const users=await _user.findAll()
+      return onSuccess(res, 200,users )
+    }
+    catch(err) {
+      console.log("In try and catch funct", err);
+      return onError(res, 500, 'Internal server error');
+    }
+  }
 }
