@@ -18,7 +18,7 @@ router.get('/', user.IsAllowed(roles.MANAGER), catcher(Trip.getAll));
 router.get('/search', catcher(validation.search), catcher(Trip.search));
 router.post("/", verifyAccessToken, tripRemember, trip.validate, catcher(Trip.create));
 router.get("/remember/latest", verifyAccessToken, user.IsAllowed(roles.REQUESTER), catcher(Trip.LatestRemember));
-router.patch("/:tripId/status", user.IsAllowed(roles.MANAGER), tripStatusValidation, catcher(Trip.update));
+router.patch("/:tripId/status", user.IsAllowed(roles.MANAGER), tripStatusValidation, catcher(Trip.updateTripStatus));
 router.route('/:tripId').get(catcher(Trip.getOne)).patch(trip.validateUpdate, catcher(Trip.update));
 router.post('/:id/comment', commentValidation, verifyAccessToken, catcher(comment.createComment));
 router.get('/:id/comments/:tripId', verifyAccessToken, comment.getAllComments);
