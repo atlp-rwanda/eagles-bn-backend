@@ -79,17 +79,21 @@ export default class Trip {
     await Notifications.sendNotification(saveTrip.id, 'Pending', res);
     return res.status(201).json({ status: 201, data: trip });
   }
+  static async updateTripStatus(req, res) {
+        const trip = await Trips.findOne({
+            where: {id: req.params.tripId, manager_id:req.user.id},
+        });
+    if (!trip) {
+        return res.status(404).json({status: 404, error: "Trip not found!"});
+    }
+    await trip.update(req.body);
+    return res.status(200).json({status: 200, message:"status updated successfully" });
+}
     static async update(req, res) {
-        const {status} = req.body;
         const {tripId} = req.params;
-        if (!status) {
             const trip = await Trips.findOne({
                 where: {id: tripId, requester_id: req.user.id},
             });
-        }
-        const trip = await Trips.findOne({
-            where: {id: req.params.tripId},
-        });
         if (!trip) {
             return res.status(404).json({status: 404, error: "Trip not found!"});
         }
