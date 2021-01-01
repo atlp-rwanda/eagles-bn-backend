@@ -20,6 +20,10 @@ router.put('/email-verification/:token', userValidation.verifyToken, catcher(Use
 router.put('/roles/:id', verifyAccessToken, userValidation.IsAllowed(roles.SUPER_ADMIN), catcher(User.changeRoles));
 router.patch('/profile', verifyAccessToken, userValidation.profileValidate, catcher(User.userProfile));
 router.patch('/profile/picture', verifyAccessToken, catcher(User.profilePicture));
+router.get("/users",verifyAccessToken, userValidation.IsAllowed(roles.SUPER_ADMIN),User.fetchUsers)
+// router.put('/roles/:id', verifyAccessToken, userValidation.isSuperAdmin(roles.SUPER_ADMIN), User.changeRoles);
+router.post('/signup', userValidation.signUpValidation, User.userSignUp);
+router.patch('/profile', verifyAccessToken, userValidation.profileValidate, User.userProfile);
 router.put('/remember-travel', verifyAccessToken, catcher(User.RememberTravel));
 router.post('/signup', userValidation.signUpValidation, User.userSignUp);
 router.get('/profile', verifyAccessToken, catcher(User.getProfile));
