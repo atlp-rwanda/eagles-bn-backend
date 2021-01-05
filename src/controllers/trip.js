@@ -1,14 +1,17 @@
-/* eslint-disable linebreak-style */
 /* eslint-disable import/no-cycle */
-import {Op} from 'sequelize';
+import { Op } from 'sequelize';
 import {
-    Trips, User, Location, Comment, Accommodation
+  Trips,
+  User,
+  Location,
+  Comment,
+  Accommodation
 } from "../database/models";
-import Notifications from './notification';
+import userServices from '../services/userServices';
 
 const toInclude = {
-    model: User,
-    attributes: ['first_name', 'last_name', 'email'],
+  model: User,
+  attributes: ['first_name', 'last_name', 'email'],
 };
 
 export default class Trip {
@@ -34,14 +37,19 @@ export default class Trip {
 
     static async getAll(req, res) {
         const trips = await Trips.findAll({
-            where: {[Op.or]: [{manager_id: req.user.id},{requester_id: req.user.id}]},
-            include: [{...toInclude, as: 'managers'}, {...toInclude, as: 'requester'}, {
-                model: Location,
-                as: 'departure',
-                attributes: ['name']
-            }, Accommodation],
+        where: { [Op.or]: [{ manager_id: req.user.id }, { requester_id: req.user.id }] },
+            include: [
+                { ...toInclude, as: 'managers' },
+                { ...toInclude, as: 'requester' },
+                {
+                    model: Location,
+                    as: 'departure',
+                    attributes: ['name']
+                },
+                Accommodation
+            ],
         });
-        return res.status(200).json({status: 200, data: trips});
+        return res.status(200).json({ status: 200, data: trips });
     }
 
     static async LatestRemember(req, res) {
@@ -68,27 +76,28 @@ export default class Trip {
     }
 
   static async create(req, res) {
-    console.log('requester id: ', req.user);
-    const trip = await Trips.create({
-      ...req.body,
-      manager_id: 3,
-      requester_id: req.user.id,
-    });
+    const { id } = req.user;
+    const {
+      id: requester_id,
+      manager: manager_id,
+    } = await userServices.findUser({ id });
+    const trip = await Trips.create({...req.body, manager_id, requester_id});
     const saveTrip = await trip.save();
     console.log('saved trip: ', saveTrip);
-    await Notifications.sendNotification(saveTrip.id, 'Pending', res);
     return res.status(201).json({ status: 201, data: trip });
   }
+
   static async updateTripStatus(req, res) {
         const trip = await Trips.findOne({
-            where: {id: req.params.tripId, manager_id:req.user.id},
+            where: {id: req.params.tripId, manager_id: req.user.id },
         });
-    if (!trip) {
-        return res.status(404).json({status: 404, error: "Trip not found!"});
+        if (!trip) {
+            return res.status(404).json({status: 404, error: "Trip not found!"});
+        }
+        await trip.update(req.body);
+        return res.status(200).json({status: 200, message: "status updated successfully" });
     }
-    await trip.update(req.body);
-    return res.status(200).json({status: 200, message:"status updated successfully" });
-}
+
     static async update(req, res) {
         const {tripId} = req.params;
             const trip = await Trips.findOne({
@@ -97,20 +106,8 @@ export default class Trip {
         if (!trip) {
             return res.status(404).json({status: 404, error: "Trip not found!"});
         }
-        await Notifications.sendNotification(trip.id, `Edited`, res);
         await trip.update(req.body);
         return res.status(200).json({status: 200, data: trip});
-    }
-
-    static async create(req, res) {
-        const trip = await Trips.create({
-            ...req.body,
-            manager_id: 4,
-            requester_id: req.user.id,
-        });
-        const saveTrip = await trip.save();
-        await Notifications.sendNotification(saveTrip.id, 'Pending', res);
-        return res.status(201).json({status: 201, data: trip});
     }
 
     static async search(req, res) {

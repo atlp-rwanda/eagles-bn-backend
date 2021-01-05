@@ -6,8 +6,14 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Notification.belongsTo(models.User, {
-        foreignKey: 'receiver',
-        as: 'users',
+        foreignKey: 'receiver_id',
+        as: 'receiver',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      Notification.belongsTo(models.User, {
+        foreignKey: 'creator_id',
+        as: 'creator',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
@@ -16,21 +22,29 @@ module.exports = (sequelize, DataTypes) => {
 
   Notification.init({
     tripId: {
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
-    receiver: {
-      type: DataTypes.INTEGER
+    creator_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    receiver_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     description: {
-      type: DataTypes.STRING(10485760)
+      type: DataTypes.STRING(10485760),
+      allowNull: false,
     },
     is_read: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      defaultValue: false,
     },
   }, {
     sequelize,
     modelName: 'Notification',
   });
+
   return Notification;
 };

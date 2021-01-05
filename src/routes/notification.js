@@ -1,22 +1,12 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable import/no-cycle */
-import express from 'express';
+import { Router } from 'express';
 import Notifications from '../controllers/notification';
-import Unread from '../middlewares/notification';
 import verifyToken from '../middlewares/verifyToken';
+import catcher from '../utils/catcher';
 
-const router = express.Router();
+const router = Router();
 
-// get all notification
-router.get('/all', verifyToken, Notifications.getAllNotifications);
+router.get('/', verifyToken, catcher(Notifications.getNotifications));
+router.patch('/read', verifyToken, catcher(Notifications.markAsRead));
+router.patch('/readall', verifyToken, catcher(Notifications.markAsRead));
 
-// change the way you recieve notification
-router.patch('/preferences', verifyToken, Notifications.changeMethod);
-
-// get unread notification
-router.get('/unread', verifyToken, Notifications.unReadNotifications);
-
-// mark all notifications as read
-
-router.put('/readall', verifyToken, Unread, Notifications.markAllNotificationAsRead);
 export default router;

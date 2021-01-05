@@ -11,8 +11,13 @@ module.exports = {
       tripId: {
         type: Sequelize.INTEGER
       },
-      receiver: {
-        type: Sequelize.INTEGER
+      creator_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      receiver_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
       },
       description: {
         type: Sequelize.STRING(10485760)
@@ -31,7 +36,7 @@ module.exports = {
       }
     });
   },
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('Notifications');
   },
 };

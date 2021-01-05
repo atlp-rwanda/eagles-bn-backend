@@ -2,9 +2,6 @@
 import { config } from 'dotenv';
 import { sign, verify } from 'jsonwebtoken';
 import { genSalt, hash } from 'bcrypt';
-import user from '../database/models/user';
-import User from '../validators/user';
-
 
 config();
 const { ACCESS_TOKEN_SECRET } = process.env;
@@ -25,7 +22,7 @@ export const encryptPassword = async (password) => {
   return hashed;
 };
 
-export const verifyLink = (token, secret) => {
+export const verifyLink = (token, secret = ACCESS_TOKEN_SECRET) => {
   try {
     const data = verify(token, secret);
     return data;
