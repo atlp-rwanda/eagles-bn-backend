@@ -1,9 +1,11 @@
 import Joi from "joi";
 
 const accommodationValidation = (body) => {
-  if (!Array.isArray(body.services)) body.services = JSON.parse(body.services);
-  if (!Array.isArray(body.amenities)) body.amenities = JSON.parse(body.amenities);
 
+  if (body.services && body.amenities) {
+    if (!Array.isArray(body.services)) body.services = JSON.parse(body.services);
+    if (!Array.isArray(body.amenities)) body.amenities = JSON.parse(body.amenities);
+  }
   const accommodationValidationSchema = Joi.object({
     name: Joi.string().min(3).required(),
     description: Joi.string().min(3).required(),
