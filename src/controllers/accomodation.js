@@ -13,8 +13,9 @@ class Accommodation {
 
   static async create(req, res) {
     const host_id = req.user.id;
-    if (!req.files || req.files.length <= 0 || req.files.length > 3) return NewError(res, 400, 'Invalid images');
+    if (!req.files || !req.files.images || req.files.images.length <= 0 || req.files.images.length > 3) return NewError(res, 400, 'Invalid images');
     const images = await imagesUpload(req);
+
     const accommodation = await models.Accommodation.create({
       ...req.body,
       host_id,
