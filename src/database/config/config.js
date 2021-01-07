@@ -1,15 +1,15 @@
-require("dotenv").config();
+require('dotenv').config();
 
 module.exports = {
   development: {
     url: process.env.DEV_DATABASE_URL,
-    dialect: "postgres",
+    dialect: 'postgres',
     password: process.env.DATABASE_PASSWORD,
     logging: false,
   },
   test: {
     url: process.env.TEST_DATABASE_URL,
-    dialect: "pg",
+    dialect: 'pg',
     password: process.env.DATABASE_PASSWORD,
     logging: false,
   },
