@@ -50,6 +50,7 @@ module.exports = {
         first_name: "Default_Requester",
         last_name: "Smith",
         email: "requester@eagles.com",
+        profile_image: "http://res.cloudinary.com/do9nypdlo/image/upload/v1609841186/nomad/2021-01-05T10:06:18.156Z.jpg",
         password: "$2b$10$E6fBTCtB5D3o8ynKPmoxD.zw0aaLD6s4Y49xgj2jfqQyJJID9V0Z6",
         role: "requester",
         manager: 3,

@@ -1,5 +1,4 @@
 import chai, { expect } from "chai";
-
 import app from "../../index";
 import { accommodations } from "./accommodation.data";
 import signAccessToken from '../../helpers/jwt_helper';

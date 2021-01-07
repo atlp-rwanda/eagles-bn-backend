@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
             User.hasMany(models.Notification, {
-                foreignKey: 'receiver',
+                foreignKey: 'receiver_id',
                 as: 'notifications',
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',

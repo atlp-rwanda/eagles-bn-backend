@@ -1,25 +1,24 @@
-/* eslint-disable linebreak-style */
-const { Model } = require("sequelize");
+import emitter from '../../utils/EventEmitters';
 
 module.exports = (sequelize, DataTypes) => {
-  class comment extends Model {
-    static associate(models) {
-      comment.belongsTo(models.Trips, {
-        foreignKey: "tripId",
-        as: 'Trips'
-      });
-    }
-  }
-  comment.init(
-    {
-      userId: DataTypes.INTEGER,
-      tripId: DataTypes.INTEGER,
-      comment: DataTypes.TEXT,
-    },
-    {
-      sequelize,
-      modelName: "Comment",
-    }
-  );
-  return comment;
+  const Comment = sequelize.define('Comment', {
+    userId: DataTypes.INTEGER,
+    tripId: DataTypes.INTEGER,
+    comment: DataTypes.TEXT,
+  },
+  {
+    sequelize,
+    modelName: "Comment",
+  });
+
+  Comment.associate = (models) => {
+    Comment.belongsTo(models.Trips, {
+      foreignKey: "tripId",
+      as: 'Trips'
+    });
+  };
+
+  Comment.afterCreate(({ dataValues }) => emitter.emit('comment added', dataValues));
+
+  return Comment;
 };

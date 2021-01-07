@@ -2,25 +2,37 @@
 module.exports = {
   up: (queryInterface) => queryInterface.bulkInsert('Notifications', [
     {
-      tripId: 1,
-      receiver: 1,
-      description: 'hello you have trip request',
-      is_read: true,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      tripId: 1,
-      receiver: 1,
-      description: "Manager has reject you request",
+      tripId: 6,
+      creator_id: 5,
+      receiver_id: 3,
+      description: 'requested a trip',
       is_read: false,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      tripId: 1,
-      receiver: 1,
-      description: 'Manager has approved your trip request',
+      tripId: 5,
+      creator_id: 4,
+      receiver_id: 3,
+      description: "requested a trip",
+      is_read: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      tripId: 3,
+      creator_id: 3,
+      receiver_id: 4,
+      description: "rejected your request",
+      is_read: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      tripId: 4,
+      creator_id: 3,
+      receiver_id: 5,
+      description: 'approved your request',
       is_read: false,
       createdAt: new Date(),
       updatedAt: new Date()

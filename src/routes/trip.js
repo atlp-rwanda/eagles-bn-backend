@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import { Router } from 'express';
 import Trip from '../controllers/trip';
 import trip from '../middlewares/trip';
