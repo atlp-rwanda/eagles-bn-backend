@@ -2,6 +2,7 @@
 import models from '../database/models';
 import { NewError } from '../helpers/errors';
 import { imagesUpload } from '../helpers/file-uploader';
+import { onSuccess } from '../utils/response';
 
 class Accommodation {
   static async index(req, res) {
@@ -13,7 +14,13 @@ class Accommodation {
 
   static async create(req, res) {
     const host_id = req.user.id;
-    if (!req.files || !req.files.images || req.files.images.length <= 0 || req.files.images.length > 3) return NewError(res, 400, 'Invalid images');
+    if (
+      !req.files ||
+      !req.files.images ||
+      req.files.images.length <= 0 ||
+      req.files.images.length > 3
+    )
+      return NewError(res, 400, 'Invalid images');
     const images = await imagesUpload(req);
 
     const accommodation = await models.Accommodation.create({
@@ -42,6 +49,13 @@ class Accommodation {
       message: 'Accommodation Found!',
       data: accommodation,
     });
+  }
+  static async getLocation(req, res) {
+    // eslint-disable-next-line max-len
+    const location = await models.Location.findAll();
+
+    if (!location) return NewError(res, 404, 'No location yet');
+    return onSuccess(res, 200, 'Location fetched successfully', location);
   }
 
   static async update(req, res) {
@@ -83,13 +97,17 @@ class Accommodation {
     try {
       const accommodationId = req.params.id;
       const { id } = req.user;
-      const accommodation = await models.Accommodation.findOne({ where: { id: accommodationId } });
+      const accommodation = await models.Accommodation.findOne({
+        where: { id: accommodationId },
+      });
       if (!accommodation) {
-        return res
-          .status(404)
-          .send({ message: ` Accommodation of ID "${accommodationId}" does not Exist !` });
+        return res.status(404).send({
+          message: ` Accommodation of ID "${accommodationId}" does not Exist !`,
+        });
       }
-      const likeExist = await models.Like.findOne({ where: { userId: id, accommodationId } });
+      const likeExist = await models.Like.findOne({
+        where: { userId: id, accommodationId },
+      });
       if (likeExist) {
         await likeExist.destroy();
         return res.status(201).send({
@@ -114,14 +132,16 @@ class Accommodation {
       const accommodationId = req.params.id;
       const { feedback } = req.body;
       const { id } = req.user;
-      const accommodation = await models.Accommodation.findOne({ where: { id: accommodationId } });
+      const accommodation = await models.Accommodation.findOne({
+        where: { id: accommodationId },
+      });
       if (!accommodation) {
-        return res
-          .status(404)
-          .send({ message: ` Accommodation of ID "${accommodationId}" does not Exist !` });
+        return res.status(404).send({
+          message: ` Accommodation of ID "${accommodationId}" does not Exist !`,
+        });
       }
       const relatedRooms = await models.Room.findAll({
-        where: { accommodation_id: accommodationId }
+        where: { accommodation_id: accommodationId },
       });
       if (!relatedRooms) {
         return res
@@ -130,12 +150,15 @@ class Accommodation {
       }
 
       const relatedTrips = await models.Trips.findAll({
-        where: { requester_id: id }
+        where: { requester_id: id },
       });
-      console.log("======================Related trips:========================== ", relatedTrips);
+      console.log(
+        '======================Related trips:========================== ',
+        relatedTrips
+      );
       if (relatedTrips) {
         for (let i = 0; i < relatedTrips.length; i++) {
-          if (relatedTrips[i].status !== "Approved") {
+          if (relatedTrips[i].status !== 'Approved') {
             return res
               .status(404)
               .send({ message: `Your trip has to be approved first` });
@@ -144,16 +167,16 @@ class Accommodation {
             const savefeedback = await models.Feedback.create({
               userId: id,
               accommodationId,
-              feedback
+              feedback,
             });
             return res.status(201).send({
               message: `You commented on accommodation of ID  ${accommodationId}`,
               data: savefeedback,
             });
           }
-          return res
-            .status(404)
-            .send({ message: `Accommodation entered is different from the one on your trip` });
+          return res.status(404).send({
+            message: `Accommodation entered is different from the one on your trip`,
+          });
         }
       }
       return res.status(403).send({
