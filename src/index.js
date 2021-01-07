@@ -14,6 +14,11 @@ import './utils/EventEmitters/index';
 import routes from './routes/index';
 import inAppNotifier from './utils/notifications';
 import socket from './utils/sockets';
+import chat from './controllers/chat';
+import socketAuth from './middlewares/socketio.auth';
+import socketHelper from './helpers/socketHelper';
+import Location from './controllers/accomodation';
+const multipartMiddleware = multipart();
 
 const serverPort = process.env.PORT;
 const app = express();
@@ -36,8 +41,27 @@ app.get('/chatBot', (req, res) => {
 
 inAppNotifier();
 socket.socketFunction.socketStartUp(server);
-
-server.listen(
+app.get('/notification', (req, res) => {
+  res.sendFile(path.resolve(`${__dirname}../../public/notification.html`));
+});
+app.get('/api/locations', Location.getLocation);
+io.on('connection', (socket) => {
+  console.log('user connected');
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+  socket.on('notification', (data) => {
+    io.emit('notification', data);
+  });
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+io.use(socketAuth);
+chat(io);
+socketHelper(io);
+export { io };
+http.listen(
   serverPort,
   console.log(`Server has started on port ${serverPort}`)
 );
